@@ -1,9 +1,12 @@
-tut
+tut 
 ===
 
-Some tutorials.
-
 If you are here to **read** tutorials, please go [here](out) and enjoy!
+
+![King Tut](tut.jpg)
+
+authors
+-------
 
 If you are here to **write** tutorials, here's what you do:
 
