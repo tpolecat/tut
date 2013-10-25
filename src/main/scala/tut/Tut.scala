@@ -20,7 +20,10 @@ object TutMain extends SafeApp {
 
   ////// TYPES FOR OUR WEE INTERPRETER
 
-  case class TState(isCode: Boolean, needsNL: Boolean, imain: IMain, pw: PrintWriter)
+  case class TState(isCode: Boolean, needsNL: Boolean, imain: IMain, pw: PrintWriter, partial: String = "") {
+    def +(s: String) = copy(partial = partial + "\n" + s, needsNL = false)
+  }
+
   type Tut[+A] = StateT[IO, TState, A]
   def state: Tut[TState] = get.lift[IO]
   def mod(f: TState => TState): Tut[Unit] = modify(f).lift[IO]
@@ -78,18 +81,26 @@ object TutMain extends SafeApp {
   def out(s: String): Tut[Unit] =
     state.map(_.pw.println(s))
 
-  def interp(s: String, lineNum: Int): Tut[Unit] =
-    (!s.trim.isEmpty).whenM[Tut,Unit] {
+  def success: Tut[Unit] =
+    mod(s => s.copy(needsNL = true, partial = ""))
+
+  def incomplete(s: String): Tut[Unit] =
+    mod(_ + s)
+
+  def error(n: Int): Tut[Unit] =
+    (Console.err.println(f"\terror reported at source line $n%d")).point[Tut]
+
+  def interp(text: String, lineNum: Int): Tut[Unit] =
+    (!text.trim.isEmpty).whenM[Tut,Unit] {
       for {
-        n <- state.map(_.needsNL)
-        _ <- n.whenM(out(""))
-        _ <- out("scala> " + s)
-        i <- state.map(_.imain)
-        r <- IO(i.interpret(s)).liftIO[Tut] >>= {
-          case Results.Success => ().point[Tut]
-          case _ => (Console.err.println(f"\terror reported at source line $lineNum%d")).point[Tut]
+        s <- state
+        _ <- s.needsNL.whenM(out(""))
+        _ <- out(s.partial.isEmpty.fold("scala> ", "     | ") + text)
+        r <- IO(s.imain.interpret(s.partial + "\n" + text)).liftIO[Tut] >>= {
+          case Results.Success    => success
+          case Results.Incomplete => incomplete(text)
+          case Results.Error      => error(lineNum)
         }
-        _ <- mod(s => s.copy(needsNL = true))
       } yield ()
     }
 

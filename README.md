@@ -17,5 +17,5 @@ If you are here to **write** tutorials, here's what you do:
 
 Known limitations:
 
-- You can't do multiline expressions yet. It's on the list.
+- You can't do `:paste`-style definitions that are compiled together.
 

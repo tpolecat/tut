@@ -37,8 +37,9 @@ Let's define `Functor` for a simple container type.
 ```scala
 import scalaz.Functor  
 case class Box[A](a:A)
-
-implicit val boxFunctor = new Functor[Box] { def map[A, B](fa: Box[A])(f: A => B): Box[B] = Box(f(fa.a)) }
+implicit val boxFunctor = new Functor[Box] { 
+  def map[A, B](fa: Box[A])(f: A => B): Box[B] = Box(f(fa.a)) 
+}
 val F = Functor[Box] 
 ```
 
