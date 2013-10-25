@@ -1,22 +1,38 @@
-TL;DR a FUNCTOR is something you can map over. Familiar examples include List and Option; less familiar examples include functions, where you can map over the result type. 
+Functor
+=======
 
-More formally, a COVARIANT FUNCTOR is a defined by a type constructor F[_] together with a 
-function where the following laws hold:
+TL;DR a **Functor** is something you can map over. Familiar examples include `List` and `Option`; less familiar 
+examples include functions, where you can map over the result type. 
 
-        map : (A => B) => F[A] => F[B]
+Definition
+----------
+
+More formally, a **Covariant Functor** is a defined by a type constructor `F[_]` together with a function 
+
+    map : (A => B) => F[A] => F[B]
+
+where the following laws hold:
 
 1. `map identity = identity`
 2. `(map f) compose (map g) = map (f compose g)`
   
-Note that `map` is sometimes called `fmap`, and the argument order is sometimes reversed.
+In the above laws `=` means equivalence, not value equality; i.e., replacing one with the other will not change 
+the meaning of your program. Note that `map` is sometimes called `fmap`, and the argument order is sometimes reversed.
 
-SCALAZ provides the typeclass `Functor[F[_]]` which defines `map` as
 
-        def map[A, B](fa: F[A])(f: A => B): F[B]
+Scalaz Representation
+---------------------
+
+Scalaz provides the typeclass `Functor[F[_]]` which defines `map` as
+
+    def map[A, B](fa: F[A])(f: A => B): F[B]
   
 together with trait `FunctorLaw` which encodes the laws stated above.
 
-Let's define Functor for a simple container type.
+Examples
+--------
+
+Let's define `Functor` for a simple container type.
 
 ```scala
 scala> import scalaz.Functor  
@@ -26,17 +42,14 @@ scala> case class Box[A](a:A)
 defined class Box
 
 scala> implicit val boxFunctor = new Functor[Box] { def map[A, B](fa: Box[A])(f: A => B): Box[B] = Box(f(fa.a)) }
-boxFunctor: scalaz.Functor[Box] = $anon$1@50547a2
+boxFunctor: scalaz.Functor[Box] = $anon$1@634366f3
 
 scala> val F = Functor[Box] 
-F: scalaz.Functor[Box] = $anon$1@50547a2
+F: scalaz.Functor[Box] = $anon$1@634366f3
 
 ```
 
-INSTANCES have the following operations:
-
-`map`, also called `apply`
-
+The fundamental `map` operation (which we defined) is also called `apply`.
 
 ```scala
 scala> F.map(Box("123"))(_.length)
@@ -50,7 +63,7 @@ res2: Box[Int] = Box(3)
 
 ```
 
-`lift` takes `A => B` to `F[A] => F[B]`
+We can use `lift` to take a function `A => B` to `F[A] => F[B]`
 
 ```scala
 scala> F.lift((s:String) => s.length)(Box("123"))
@@ -58,7 +71,7 @@ res3: Box[Int] = Box(3)
 
 ```
 
-`strengthL` and `strengthR` inject a constant paired element
+The operations `strengthL` and `strengthR` inject a constant paired element.
 
 ```scala
 scala> F.strengthL(1, Box("abc"))
