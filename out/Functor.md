@@ -42,13 +42,18 @@ scala> Set(1,2,3,4,5,6).map(_ / 2) // Breaks parametricity; behavior depends on 
 res3: scala.collection.immutable.Set[Int] = Set(2, 0, 3, 1)
 ```
 
-## Scalaz
+## Scalaz Representation
 
 Scalaz provides the typeclass `Functor[F[_]]` which defines `map` as
 
     def map[A, B](fa: F[A])(f: A => B): F[B]
   
 together with trait `FunctorLaw` which encodes the laws stated above.
+
+Because Scala's `for` comprehensions desugar into calls to a set of methods that includes `map` and 
+does not take implicit conversions into account, it is common practice to define `map` as an 
+instance method on `A` and delegate to this method from the `Functor[A]` implementation.
+
 
 ### Functor Instance
 
@@ -66,13 +71,13 @@ defined class Box2
 scala> implicit val boxFunctor = new Functor[Box2] { 
      |   def map[A, B](fa: Box2[A])(f: A => B): Box2[B] = Box2(f(fa.fst), f(fa.snd)) 
      | }
-boxFunctor: scalaz.Functor[Box2] = $anon$1@5b5db3e
+boxFunctor: scalaz.Functor[Box2] = $anon$1@60e38f37
 
 scala> val F = Functor[Box2] 
-F: scalaz.Functor[Box2] = $anon$1@5b5db3e
+F: scalaz.Functor[Box2] = $anon$1@60e38f37
 ```
 
-#### Function Lifting Operations
+#### Function Lifting
 
 The fundamental `map` operation (which we defined) is also called `apply`.
 
@@ -107,20 +112,126 @@ scala> F.mapply(10)(Box2(add1 _, times2 _))
 res8: Box2[Int] = Box2(11,20)
 ```
 
-#### Pairing Operations
+#### Pairing
 
-The operations `strengthL` and `strengthR` inject a constant paired element.
+We can turn `A` into `(A,A)`.
+
+```scala
+scala> F.fpair(Box2(true, false))
+res9: Box2[(Boolean, Boolean)] = Box2((true,true),(false,false))
+```
+
+Or do this by injecting a constant of any type `B` on the right or left.
 
 ```scala
 scala> F.strengthL(1, Box2("abc", "x"))
-res9: Box2[(Int, String)] = Box2((1,abc),(1,x))
+res10: Box2[(Int, String)] = Box2((1,abc),(1,x))
 
 scala> F.strengthR(Box2("abc", "x"), 1)
-res10: Box2[(String, Int)] = Box2((abc,1),(x,1))
+res11: Box2[(String, Int)] = Box2((abc,1),(x,1))
 ```
 
+Or pair each element with the result of applying a function.
 
+```scala
+scala> F.fproduct(Box2("foo", "x"))(_.length)
+res12: Box2[(String, Int)] = Box2((foo,3),(x,1))
+```
 
+#### Miscellaneous
+
+We can empty our value of any information, retaining only structure:
+
+```scala
+scala> F.void(Box2("foo", "x"))
+res13: Box2[Unit] = Box2((),())
+```
+
+We can turn a disjunction of `F`s into an `F` of disjunctions. This uses the disjunction type `\/`
+from scalaz, which has the same meaning as `Either` but is a bit more convenient to use.
+
+```scala
+scala> import scalaz.syntax.id._
+import scalaz.syntax.id._
+
+scala> F.counzip(Box2(1, 2).left[Box2[String]])
+res14: Box2[scalaz.\/[Int,String]] = Box2(-\/(1),-\/(2))
+
+scala> F.counzip(Box2(1, 2).right[Box2[String]])
+res15: Box2[scalaz.\/[String,Int]] = Box2(\/-(1),\/-(2))
+```
+
+#### Operations on Functors Themselves
+
+So far we have seen operations that Functors provide for the types they describe. But Functors are
+also values that can be composed in several ways.
+
+**TODO**
+
+### Functor Syntax
+
+Scalaz provides syntax for types that have a `Functor` instance. Many of the operations we have
+already seen are available this way:
+
+```scala
+scala> import scalaz.syntax.functor._ // the syntax comes from here
+import scalaz.syntax.functor._
+
+scala> val b2 = Box2("foo", "x")
+b2: Box2[String] = Box2(foo,x)
+
+scala> b2.map(_.length)
+res16: Box2[Int] = Box2(3,1)
+
+scala> b2.strengthL(true)
+res17: Box2[(Boolean, String)] = Box2((true,foo),(true,x))
+
+scala> b2.strengthR(true)
+res18: Box2[(String, Boolean)] = Box2((foo,true),(x,true))
+
+scala> b2.fpair
+res19: Box2[(String, String)] = Box2((foo,foo),(x,x))
+
+scala> b2.fproduct(_.length)
+res20: Box2[(String, Int)] = Box2((foo,3),(x,1))
+
+scala> b2.void
+res21: Box2[Unit] = Box2((),())
+```
+
+The  `as` operation (also called `>|`) replaces all elements with the given constant, preserving
+structure. Note the similarity to the `void` operation.
+
+```scala
+scala> b2 as 123
+res22: Box2[Int] = Box2(123,123)
+
+scala> b2 >| false
+res23: Box2[Boolean] = Box2(false,false)
+```
+
+The `fpoint` operation lifts the parameterized type into a given `Applicative`.
+
+```scala
+scala> import scalaz.std.list._
+import scalaz.std.list._
+
+scala> b2.fpoint[List]
+res24: Box2[List[String]] = Box2(List(foo),List(x))
+
+scala> import scalaz.std.option._
+import scalaz.std.option._
+
+scala> b2.fpoint[Option]
+res25: Box2[Option[String]] = Box2(Some(foo),Some(x))
+```
+
+The `distribute`, `cosequence`, and `cotraverse` operations require a `Distributive` instance for the
+target type. **TODO**
+
+### Provided Functor Instances
+
+**TODO**
 
 
 

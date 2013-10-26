@@ -34,13 +34,18 @@ These examples of `map` are _not_ consistent with the defintion of Functor, so b
 Set(1,2,3,4,5,6).map(_ / 2) // Breaks parametricity; behavior depends on concrete element type
 ```
 
-## Scalaz
+## Scalaz Representation
 
 Scalaz provides the typeclass `Functor[F[_]]` which defines `map` as
 
     def map[A, B](fa: F[A])(f: A => B): F[B]
   
 together with trait `FunctorLaw` which encodes the laws stated above.
+
+Because Scala's `for` comprehensions desugar into calls to a set of methods that includes `map` and 
+does not take implicit conversions into account, it is common practice to define `map` as an 
+instance method on `A` and delegate to this method from the `Functor[A]` implementation.
+
 
 ### Functor Instance
 
@@ -57,7 +62,7 @@ implicit val boxFunctor = new Functor[Box2] {
 val F = Functor[Box2] 
 ```
 
-#### Function Lifting Operations
+#### Function Lifting
 
 The fundamental `map` operation (which we defined) is also called `apply`.
 
@@ -81,17 +86,90 @@ def times2(n:Int) = n * 2
 F.mapply(10)(Box2(add1 _, times2 _))
 ```
 
-#### Pairing Operations
+#### Pairing
 
-The operations `strengthL` and `strengthR` inject a constant paired element.
+We can turn `A` into `(A,A)`.
+
+```scala
+F.fpair(Box2(true, false))
+```
+
+Or do this by injecting a constant of any type `B` on the right or left.
 
 ```scala
 F.strengthL(1, Box2("abc", "x"))
 F.strengthR(Box2("abc", "x"), 1)
 ```
 
+Or pair each element with the result of applying a function.
 
+```scala
+F.fproduct(Box2("foo", "x"))(_.length)
+```
 
+#### Miscellaneous
+
+We can empty our value of any information, retaining only structure:
+
+```scala
+F.void(Box2("foo", "x"))
+```
+
+We can turn a disjunction of `F`s into an `F` of disjunctions. This uses the disjunction type `\/`
+from scalaz, which has the same meaning as `Either` but is a bit more convenient to use.
+
+```scala
+import scalaz.syntax.id._
+F.counzip(Box2(1, 2).left[Box2[String]])
+F.counzip(Box2(1, 2).right[Box2[String]])
+```
+
+#### Operations on Functors Themselves
+
+So far we have seen operations that Functors provide for the types they describe. But Functors are
+also values that can be composed in several ways.
+
+**TODO**
+
+### Functor Syntax
+
+Scalaz provides syntax for types that have a `Functor` instance. Many of the operations we have
+already seen are available this way:
+
+```scala
+import scalaz.syntax.functor._ // the syntax comes from here
+val b2 = Box2("foo", "x")
+b2.map(_.length)
+b2.strengthL(true)
+b2.strengthR(true)
+b2.fpair
+b2.fproduct(_.length)
+b2.void
+```
+
+The  `as` operation (also called `>|`) replaces all elements with the given constant, preserving
+structure. Note the similarity to the `void` operation.
+
+```scala
+b2 as 123
+b2 >| false
+```
+
+The `fpoint` operation lifts the parameterized type into a given `Applicative`.
+
+```scala
+import scalaz.std.list._
+b2.fpoint[List]
+import scalaz.std.option._
+b2.fpoint[Option]
+```
+
+The `distribute`, `cosequence`, and `cotraverse` operations require a `Distributive` instance for the
+target type. **TODO**
+
+### Provided Functor Instances
+
+**TODO**
 
 
 
