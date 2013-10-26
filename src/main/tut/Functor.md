@@ -63,4 +63,5 @@ The operations `strengthL` and `strengthR` inject a constant paired element.
 F.strengthL(1, Box("abc"))
 F.strengthR(Box(1), "abc")
 ```
-  
+
+

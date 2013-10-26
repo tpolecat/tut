@@ -44,10 +44,10 @@ defined class Box
 scala> implicit val boxFunctor = new Functor[Box] { 
      |   def map[A, B](fa: Box[A])(f: A => B): Box[B] = Box(f(fa.a)) 
      | }
-boxFunctor: scalaz.Functor[Box] = $anon$1@3074fc1f
+boxFunctor: scalaz.Functor[Box] = $anon$1@4402630e
 
 scala> val F = Functor[Box] 
-F: scalaz.Functor[Box] = $anon$1@3074fc1f
+F: scalaz.Functor[Box] = $anon$1@4402630e
 ```
 
 The fundamental `map` operation (which we defined) is also called `apply`.
@@ -79,4 +79,5 @@ res4: Box[(Int, String)] = Box((1,abc))
 scala> F.strengthR(Box(1), "abc")
 res5: Box[(Int, String)] = Box((1,abc))
 ```
-  
+
+

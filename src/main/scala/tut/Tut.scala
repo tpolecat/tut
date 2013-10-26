@@ -11,6 +11,7 @@ import scala.tools.nsc.Settings
 import scala.tools.nsc.interpreter.IMain
 import scala.tools.nsc.interpreter.Results
 
+import java.io.Closeable
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
@@ -52,6 +53,9 @@ object TutMain extends SafeApp {
       _ <- IO(w.close)
       _ <- IO(o.close)
     } yield ()  
+
+  def closing[A <: Closeable, B](a: => A)(f: A => IO[B]): IO[B] =
+    IO(a) >>= (a => f(a).ensuring(IO(a.close)))
 
   def newInterpreter(pw: PrintWriter): IO[IMain] =
     IO(new IMain(new Settings <| (_.embeddedDefaults[TutMain.type]), pw))
