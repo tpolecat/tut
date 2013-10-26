@@ -55,13 +55,13 @@ scala> val intCombiner = new Combiner[Int] {
      |   def combine(a: Int, b: Int) = a + b
      |   def zero = 0
      | }
-intCombiner: Combiner[Int] = $anon$1@43b8b8df
+intCombiner: Combiner[Int] = $anon$1@248a5f5e
 
 scala> genericSum(List(1, 2, 3), intCombiner)
 res3: Int = 6
 ```
 
-So `genericSum` works for _any type at all_, as long as you supply an appropriate `Combiner` for that type. This is the *typeclass pattern*: `Combiner` is the typeclass, and the `genericSum` method demands *evidence* that `A` has an associated *instance*.
+So `genericSum` works for _any type at all_, as long as you supply an appropriate `Combiner` for that type. This is the **typeclass pattern**: `Combiner` is the typeclass, and the `genericSum` method demands **evidence** that `A` has an associated **instance**.
 
 Typeclass parameters are usually implicit, so let's rewrite a little:
 
@@ -75,13 +75,13 @@ Let's make our instance implicit, and declare another one:
 
 ```scala
 scala> implicit val IntCombiner = intCombiner // from above
-IntCombiner: Combiner[Int] = $anon$1@43b8b8df
+IntCombiner: Combiner[Int] = $anon$1@248a5f5e
 
 scala> implicit val BooleanCombiner = new Combiner[Boolean] {
      |   def combine(a: Boolean, b: Boolean): Boolean = a && b
      |   def zero = true
      | }
-BooleanCombiner: Combiner[Boolean] = $anon$1@66f47331
+BooleanCombiner: Combiner[Boolean] = $anon$1@56a82304
 
 scala> genericSum2(List(1, 2, 3))
 res4: Int = 6
@@ -194,7 +194,7 @@ res15: (Int, ((Boolean, Int), List[Char])) = (10,((true,15),List(a, b, c, d)))
 
 Ok that's it for now. A few final notes:
 
-* Congratulations, you have done some abstract algebra! The mathy name for `Combiner` is *Monoid*. In order to be correct we have to show that `zero |+| a == a` and `a |+| zero == a`. We have not done that here. With some luck we will do that in another example.
+* Congratulations, you have done some abstract algebra! The mathy name for `Combiner` is **Monoid**. In order to be correct we have to show that `zero |+| a == a` and `a |+| zero == a`. We have not done that here. With some luck we will do that in another example.
 
 * We defined the additive monoid for integers and the conjunctive monoid for booleans, but both types have consistent monoids for other operations. What are they?
 

@@ -47,7 +47,7 @@ val intCombiner = new Combiner[Int] {
 genericSum(List(1, 2, 3), intCombiner)
 ```
 
-So `genericSum` works for _any type at all_, as long as you supply an appropriate `Combiner` for that type. This is the *typeclass pattern*: `Combiner` is the typeclass, and the `genericSum` method demands *evidence* that `A` has an associated *instance*.
+So `genericSum` works for _any type at all_, as long as you supply an appropriate `Combiner` for that type. This is the **typeclass pattern**: `Combiner` is the typeclass, and the `genericSum` method demands **evidence** that `A` has an associated **instance**.
 
 Typeclass parameters are usually implicit, so let's rewrite a little:
 
@@ -150,7 +150,7 @@ a |+| b
 
 Ok that's it for now. A few final notes:
 
-* Congratulations, you have done some abstract algebra! The mathy name for `Combiner` is *Monoid*. In order to be correct we have to show that `zero |+| a == a` and `a |+| zero == a`. We have not done that here. With some luck we will do that in another example.
+* Congratulations, you have done some abstract algebra! The mathy name for `Combiner` is **Monoid**. In order to be correct we have to show that `zero |+| a == a` and `a |+| zero == a`. We have not done that here. With some luck we will do that in another example.
 
 * We defined the additive monoid for integers and the conjunctive monoid for booleans, but both types have consistent monoids for other operations. What are they?
 
