@@ -55,7 +55,7 @@ scala> val intCombiner = new Combiner[Int] {
      |   def combine(a: Int, b: Int) = a + b
      |   def zero = 0
      | }
-intCombiner: Combiner[Int] = $anon$1@1538b034
+intCombiner: Combiner[Int] = $anon$1@43b8b8df
 
 scala> genericSum(List(1, 2, 3), intCombiner)
 res3: Int = 6
@@ -75,13 +75,13 @@ Let's make our instance implicit, and declare another one:
 
 ```scala
 scala> implicit val IntCombiner = intCombiner // from above
-IntCombiner: Combiner[Int] = $anon$1@1538b034
+IntCombiner: Combiner[Int] = $anon$1@43b8b8df
 
 scala> implicit val BooleanCombiner = new Combiner[Boolean] {
      |   def combine(a: Boolean, b: Boolean): Boolean = a && b
      |   def zero = true
      | }
-BooleanCombiner: Combiner[Boolean] = $anon$1@427ce5fc
+BooleanCombiner: Combiner[Boolean] = $anon$1@66f47331
 
 scala> genericSum2(List(1, 2, 3))
 res4: Int = 6

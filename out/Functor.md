@@ -44,10 +44,10 @@ defined class Box
 scala> implicit val boxFunctor = new Functor[Box] { 
      |   def map[A, B](fa: Box[A])(f: A => B): Box[B] = Box(f(fa.a)) 
      | }
-boxFunctor: scalaz.Functor[Box] = $anon$1@4402630e
+boxFunctor: scalaz.Functor[Box] = $anon$1@528c1c10
 
 scala> val F = Functor[Box] 
-F: scalaz.Functor[Box] = $anon$1@4402630e
+F: scalaz.Functor[Box] = $anon$1@528c1c10
 ```
 
 The fundamental `map` operation (which we defined) is also called `apply`.
