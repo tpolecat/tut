@@ -47,11 +47,7 @@ Scalaz provides the typeclass `Functor[F[_]]` which defines `map` as
 
     def map[A, B](fa: F[A])(f: A => B): F[B]
   
-together with trait `FunctorLaw` which encodes the laws stated above.
-
-Because Scala's `for` comprehensions desugar into calls to a set of methods that includes `map` and 
-does not take implicit conversions into account, it is common practice to define `map` as an 
-instance method on `A` and delegate to this method from the `Functor[A]` implementation.
+together with trait `FunctorLaw` which encodes the laws stated above (this can be used for testing that a given functor instance is lawful).
 
 
 ### Functor Instance
