@@ -32,6 +32,7 @@ These examples of `map` are _not_ consistent with the defintion of Functor, so b
 ```scala
 "abc".map(_.toUpper) // String has the wrong kind (i.e,. type-level arity)
 Set(1,2,3,4,5,6).map(_ / 2) // Breaks parametricity; behavior depends on concrete element type
+collection.mutable.ArrayBuffer(1,2,3).map(identity) // mutable; violates identity law
 ```
 
 ## Scalaz Representation
@@ -129,7 +130,31 @@ F.counzip(Box2(1, 2).right[Box2[String]])
 So far we have seen operations that Functors provide for the types they describe. But Functors are
 also values that can be composed in several ways.
 
-**TODO**
+We can `compose` functors, which lets us `map` over nested structures.
+
+```scala
+import scalaz.std.option._; import scalaz.std.list._ // functor instances
+val f = Functor[List] compose Functor[Option] 
+f.map(List(Some(1), None, Some(3)))(_ + 1)
+```
+
+We can also `bicompose` a functor with a **bifunctor** (tutorial forthcoming), yielding a new bifunctor.
+
+```scala
+// import scalaz.std.either._ // either bifunctor instance
+// val f = Functor[List] bicompose Bifunctor[Either]
+// f.bimap(List(Left(1), Right(2), Left(3)))(_ + 1, _ + 2)
+"(Requires scalaz 7.1)"
+```
+
+The `product` of two functors is a functor over pairs.
+
+```scala
+val f = Functor[List] product Functor[Option]
+f.map((List(1,2,3), Some(4)))(_ + 1)
+```
+
+**TODO**: `icompose`
 
 ### Functor Syntax
 
@@ -158,7 +183,7 @@ b2 >| false
 The `fpoint` operation lifts the parameterized type into a given `Applicative`.
 
 ```scala
-import scalaz.std.list._
+import scalaz.std.list._ 
 b2.fpoint[List]
 import scalaz.std.option._
 b2.fpoint[Option]
