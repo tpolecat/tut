@@ -1,7 +1,11 @@
 # Functor
 
-TL;DR a **Functor** is something you can map over. Familiar examples include `List` and `Option`; less familiar examples include functions, where you can map over the result type. 
+Executive summary:
 
+ - A **Functor** is something you can map over. 
+ - Mapping with the `identity` function has no effect.
+ - Familiar examples include `List` and `Option`.
+ - Less familiar examples include functions, where you can map over the result type. 
 
 ## Definition
 
@@ -15,6 +19,8 @@ where the following laws hold:
 2. `(map f) compose (map g)` means the same thing as `map (f compose g)`
   
 Note that `map` is sometimes called `fmap`, and the argument order is sometimes reversed.
+
+In common usage we say that type `A` *is* a functor when it is possible to define an instance of `Functor[A]`. Some people prefer to say that `A` *has* a functor.
 
 ## Standard Library
 
@@ -74,10 +80,10 @@ defined class Box2
 scala> implicit val boxFunctor = new Functor[Box2] { 
      |   def map[A, B](fa: Box2[A])(f: A => B): Box2[B] = Box2(f(fa.fst), f(fa.snd)) 
      | }
-boxFunctor: scalaz.Functor[Box2] = $anon$1@5218486a
+boxFunctor: scalaz.Functor[Box2] = $anon$1@5fbe89f
 
 scala> val F = Functor[Box2] 
-F: scalaz.Functor[Box2] = $anon$1@5218486a
+F: scalaz.Functor[Box2] = $anon$1@5fbe89f
 ```
 
 #### Function Lifting
@@ -177,7 +183,7 @@ import scalaz.std.option._
 import scalaz.std.list._
 
 scala> val f = Functor[List] compose Functor[Option] 
-f: scalaz.Functor[[α]List[Option[α]]] = scalaz.Functor$$anon$1@177c27cf
+f: scalaz.Functor[[α]List[Option[α]]] = scalaz.Functor$$anon$1@42875cab
 
 scala> f.map(List(Some(1), None, Some(3)))(_ + 1)
 res17: List[Option[Int]] = List(Some(2), None, Some(4))
@@ -197,7 +203,7 @@ The `product` of two functors is a functor over pairs.
 
 ```scala
 scala> val f = Functor[List] product Functor[Option]
-f: scalaz.Functor[[α](List[α], Option[α])] = scalaz.Functor$$anon$2@75590dcd
+f: scalaz.Functor[[α](List[α], Option[α])] = scalaz.Functor$$anon$2@3f32d797
 
 scala> f.map((List(1,2,3), Some(4)))(_ + 1)
 res22: (List[Int], Option[Int]) = (List(2, 3, 4),Some(5))
@@ -276,58 +282,58 @@ import scalaz._
 import Scalaz._
 
 scala> Functor[java.util.concurrent.Callable]
-res33: scalaz.Functor[java.util.concurrent.Callable] = scalaz.std.java.util.concurrent.CallableInstances$$anon$1@3a6bc63e
+res33: scalaz.Functor[java.util.concurrent.Callable] = scalaz.std.java.util.concurrent.CallableInstances$$anon$1@5417ddae
 
 scala> Functor[List]
-res34: scalaz.Functor[List] = scalaz.std.ListInstances$$anon$1@591ebdf9
+res34: scalaz.Functor[List] = scalaz.std.ListInstances$$anon$1@67fc278e
 
 scala> Functor[Option]
-res35: scalaz.Functor[Option] = scalaz.std.OptionInstances$$anon$1@7ed1713c
+res35: scalaz.Functor[Option] = scalaz.std.OptionInstances$$anon$1@6aeac003
 
 scala> Functor[Stream]
-res36: scalaz.Functor[Stream] = scalaz.std.StreamInstances$$anon$1@2007b5ca
+res36: scalaz.Functor[Stream] = scalaz.std.StreamInstances$$anon$1@5ea58c79
 
 scala> Functor[Vector]
-res37: scalaz.Functor[Vector] = scalaz.std.IndexedSeqSubInstances$$anon$1@1a142f6e
+res37: scalaz.Functor[Vector] = scalaz.std.IndexedSeqSubInstances$$anon$1@6978475d
 ```
 
 Either and its projections have functors when partially applied:
 
 ```scala
 scala> Functor[({type λ[α] = Either[String, α]})#λ] // Either, if left type param is fixed
-res38: scalaz.Functor[[α]scala.util.Either[String,α]] = scalaz.std.EitherInstances$$anon$1@429b128b
+res38: scalaz.Functor[[α]scala.util.Either[String,α]] = scalaz.std.EitherInstances$$anon$1@2b187286
 
 scala> Functor[({type λ[α] = Either.RightProjection[String, α]})#λ] // Right projection, if left type param is fixed
-res39: scalaz.Functor[[α]Either.RightProjection[String,α]] = scalaz.std.EitherInstances$$anon$7@4c40ed23
+res39: scalaz.Functor[[α]Either.RightProjection[String,α]] = scalaz.std.EitherInstances$$anon$7@420d9fc8
 
 scala> Functor[({type λ[α] = Either.LeftProjection[α, String]})#λ] // Left projection, if right type param is fixed
-res40: scalaz.Functor[[α]Either.LeftProjection[α,String]] = scalaz.std.EitherInstances$$anon$4@b7aa9b0
+res40: scalaz.Functor[[α]Either.LeftProjection[α,String]] = scalaz.std.EitherInstances$$anon$4@72b47eb0
 ```
 
 Function types are functors over their return type:
 
 ```scala
 scala> Functor[({type λ[α] = String => α})#λ] 
-res41: scalaz.Functor[[α]String => α] = scalaz.std.FunctionInstances$$anon$2@35233419
+res41: scalaz.Functor[[α]String => α] = scalaz.std.FunctionInstances$$anon$2@136d81bc
 
 scala> Functor[({type λ[α] = (String, Int) => α})#λ] 
-res42: scalaz.Functor[[α](String, Int) => α] = scalaz.std.FunctionInstances$$anon$10@c500518
+res42: scalaz.Functor[[α](String, Int) => α] = scalaz.std.FunctionInstances$$anon$10@5933809c
 
 scala> Functor[({type λ[α] = (String, Int, Boolean) => α})#λ] // and so on, up to Function8
-res43: scalaz.Functor[[α](String, Int, Boolean) => α] = scalaz.std.FunctionInstances$$anon$9@6ddde53a
+res43: scalaz.Functor[[α](String, Int, Boolean) => α] = scalaz.std.FunctionInstances$$anon$9@1d3a0c98
 ```
 
 Tuple types are functors over their rightmost parameter:
 
 ```scala
 scala> Functor[({type λ[α] = (String, α)})#λ] 
-res44: scalaz.Functor[[α](String, α)] = scalaz.std.TupleInstances1$$anon$2@2c36afa0
+res44: scalaz.Functor[[α](String, α)] = scalaz.std.TupleInstances1$$anon$2@79cc8718
 
 scala> Functor[({type λ[α] = (String, Int, α)})#λ] 
-res45: scalaz.Functor[[α](String, Int, α)] = scalaz.std.TupleInstances1$$anon$3@5ba4deda
+res45: scalaz.Functor[[α](String, Int, α)] = scalaz.std.TupleInstances1$$anon$3@27465ef
 
 scala> Functor[({type λ[α] = (String, Int, Boolean, α)})#λ] // and so on, up to Tuple8
-res46: scalaz.Functor[[α](String, Int, Boolean, α)] = scalaz.std.TupleInstances0$$anon$27@1719a4f7
+res46: scalaz.Functor[[α](String, Int, Boolean, α)] = scalaz.std.TupleInstances0$$anon$27@79dbd06a
 ```
 
 **TODO** instances for scalaz types

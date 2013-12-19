@@ -1,7 +1,11 @@
 # Functor
 
-TL;DR a **Functor** is something you can map over. Familiar examples include `List` and `Option`; less familiar examples include functions, where you can map over the result type. 
+Executive summary:
 
+ - A **Functor** is something you can map over. 
+ - Mapping with the `identity` function has no effect.
+ - Familiar examples include `List` and `Option`.
+ - Less familiar examples include functions, where you can map over the result type. 
 
 ## Definition
 
@@ -15,6 +19,8 @@ where the following laws hold:
 2. `(map f) compose (map g)` means the same thing as `map (f compose g)`
   
 Note that `map` is sometimes called `fmap`, and the argument order is sometimes reversed.
+
+In common usage we say that type `A` *is* a functor when it is possible to define an instance of `Functor[A]`. Some people prefer to say that `A` *has* a functor.
 
 ## Standard Library
 
