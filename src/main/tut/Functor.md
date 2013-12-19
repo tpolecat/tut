@@ -194,7 +194,44 @@ target type. **TODO**
 
 ### Provided Functor Instances
 
-**TODO**
+Scalaz provides functor (or better) instances for the following stdlib types. In many cases the functor instance is provided by a subtype of `Functor` such as `Monad`.
+
+```scala
+import scalaz._; import Scalaz._ // get all
+Functor[java.util.concurrent.Callable]
+Functor[List]
+Functor[Option]
+Functor[Stream]
+Functor[Vector]
+```
+
+Either and its projections have functors when partially applied:
+
+```scala
+Functor[({type λ[α] = Either[String, α]})#λ] // Either, if left type param is fixed
+Functor[({type λ[α] = Either.RightProjection[String, α]})#λ] // Right projection, if left type param is fixed
+Functor[({type λ[α] = Either.LeftProjection[α, String]})#λ] // Left projection, if right type param is fixed
+```
+
+Function types are functors over their return type:
+
+```scala
+Functor[({type λ[α] = String => α})#λ] 
+Functor[({type λ[α] = (String, Int) => α})#λ] 
+Functor[({type λ[α] = (String, Int, Boolean) => α})#λ] // and so on, up to Function8
+```
+
+Tuple types are functors over their rightmost parameter:
+
+```scala
+Functor[({type λ[α] = (String, α)})#λ] 
+Functor[({type λ[α] = (String, Int, α)})#λ] 
+Functor[({type λ[α] = (String, Int, Boolean, α)})#λ] // and so on, up to Tuple8
+```
+
+**TODO** instances for scalaz types
+
+
 
 
 
