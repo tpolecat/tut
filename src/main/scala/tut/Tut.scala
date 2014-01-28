@@ -15,7 +15,9 @@ import java.io.Closeable
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
+import java.io.OutputStream
 import java.io.PrintWriter
+import java.io.Writer
 
 object TutMain extends SafeApp {
 
@@ -43,16 +45,19 @@ object TutMain extends SafeApp {
 
   def file(f: File): IO[Unit] = 
     for {
-      _ <- putStrLn(f.getPath)
+      _ <- putStrLn("[tut] running " + f.getPath)
       o <- IO(new FileOutputStream(new File("out", f.getName)))
-      w <- IO(new OutputStreamWriter(o, Encoding))
-      p <- IO(new PrintWriter(w))
-      i <- newInterpreter(p)
-      _ <- tut(f).eval(TState(false, false, i, p))
-      _ <- IO(p.close)
-      _ <- IO(w.close)
-      _ <- IO(o.close)
+      _ <- outputStream(f, o).ensuring(IO(o.close))
     } yield ()  
+
+  def outputStream(f: File, o: OutputStream): IO[Unit] = 
+    IO(new OutputStreamWriter(o, Encoding)) >>= (w => writer(f, w).ensuring(IO(w.close)))
+
+  def writer(f: File, w: Writer): IO[Unit] =
+    IO(new PrintWriter(w)) >>= (p => printWriter(f, p).ensuring(IO(p.close)))
+
+  def printWriter(f: File, p: PrintWriter): IO[Unit] =
+    newInterpreter(p) >>= (i => tut(f).eval(TState(false, false, i, p)))
 
   def closing[A <: Closeable, B](a: => A)(f: A => IO[B]): IO[B] =
     IO(a) >>= (a => f(a).ensuring(IO(a.close)))
@@ -92,7 +97,7 @@ object TutMain extends SafeApp {
     mod(_ + s)
 
   def error(n: Int): Tut[Unit] =
-    (Console.err.println(f"\terror reported at source line $n%d")).point[Tut]
+    (Console.err.println(f"[tut] \terror reported at source line $n%d")).point[Tut]
 
   def interp(text: String, lineNum: Int): Tut[Unit] =
     (!text.trim.isEmpty).whenM[Tut,Unit] {
