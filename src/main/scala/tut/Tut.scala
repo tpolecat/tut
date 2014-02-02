@@ -31,36 +31,39 @@ object TutMain extends SafeApp {
   def state: Tut[TState] = get.lift[IO]
   def mod(f: TState => TState): Tut[Unit] = modify(f).lift[IO]
 
+  ////// ON THE 7.1 TIP, WILL GO AWAY
+
+  implicit def resourceFromCloseable[A <: Closeable]: Resource[A] =
+    new Resource[A] {
+      def close(a: A) = IO(a.close)
+    }
+
   ////// ENTRY POINT
 
   override def runc: IO[Unit] = 
     for {
       d <- IO(new File("src/main/tut").listFiles.toList)
-      _ <- d.traverseU(file)
+      _ <- d.traverseU(in => go(in, new File("out", in.getName)))
     } yield ()
 
   ////// IO ACTIONS
 
   val Encoding = "UTF-8"
 
-  def file(f: File): IO[Unit] = 
+  def go(in: File, out: File): IO[Unit] = 
     for {
-      _ <- putStrLn("[tut] running " + f.getPath)
-      o <- IO(new FileOutputStream(new File("out", f.getName)))
-      _ <- outputStream(f, o).ensuring(IO(o.close))
-    } yield ()  
+      d0 <- IO(in.lastModified)
+      d1 <- IO(out.lastModified)
+      _  <- if (d0 > d1) putStrLn("[tut] compiling:  " + in.getPath) >> file(in, out) 
+            else         putStrLn("[tut] up to date: " + in.getPath)
+    } yield ()
 
-  def outputStream(f: File, o: OutputStream): IO[Unit] = 
-    IO(new OutputStreamWriter(o, Encoding)) >>= (w => writer(f, w).ensuring(IO(w.close)))
-
-  def writer(f: File, w: Writer): IO[Unit] =
-    IO(new PrintWriter(w)) >>= (p => printWriter(f, p).ensuring(IO(p.close)))
-
-  def printWriter(f: File, p: PrintWriter): IO[Unit] =
-    newInterpreter(p) >>= (i => tut(f).eval(TState(false, false, i, p)))
-
-  def closing[A <: Closeable, B](a: => A)(f: A => IO[B]): IO[B] =
-    IO(a) >>= (a => f(a).ensuring(IO(a.close)))
+  def file(in: File, out: File): IO[Unit] = 
+    IO(new FileOutputStream(out)).using           { (o: FileOutputStream) => // N.B. infers in 7.1
+    IO(new OutputStreamWriter(o, Encoding)).using { (w: OutputStreamWriter) => 
+    IO(new PrintWriter(w)).using                  { (p: PrintWriter) => 
+      newInterpreter(p) >>= (i => tut(in).eval(TState(false, false, i, p)))
+    }}}
 
   def newInterpreter(pw: PrintWriter): IO[IMain] =
     IO(new IMain(new Settings <| (_.embeddedDefaults[TutMain.type]), pw))
@@ -70,9 +73,9 @@ object TutMain extends SafeApp {
 
   ////// TUT ACTIONS
 
-  def tut(f: File): Tut[Unit] =
+  def tut(in: File): Tut[Unit] =
     for {
-      t <- lines(f).liftIO[Tut]
+      t <- lines(in).liftIO[Tut]
       _ <- t.zipWithIndex.traverseU { case (t, n) => line(t, n + 1) }
     } yield ()
 

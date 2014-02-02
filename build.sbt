@@ -1,3 +1,6 @@
+import sbt.Defaults.{runnerInit}
+import sbt.Attributed.{data}
+
 name := "tut"
 
 version := "0.1"
@@ -11,17 +14,11 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "org.scalaz" % "scalaz-core_2.10" % "7.0.2",
-  "org.scalaz" % "scalaz-effect_2.10" % "7.0.2",
+  "org.scalaz"     %% "scalaz-core"   % "7.0.4",
+  "org.scalaz"     %% "scalaz-effect" % "7.0.4",
+  "org.spire-math" %% "spire"         % "0.6.0",
+  "org.tpolecat"   %% "atto"          % "0.1",
   "org.scala-lang" % "scala-compiler" % scalaVersion.value,
-  "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-  "org.spire-math" %% "spire"       % "0.6.0",
-  "org.tpolecat"   %% "atto"        % "0.1"
+  "org.scala-lang" % "scala-reflect"  % scalaVersion.value
 )
-
-
-
-
-
-
 
