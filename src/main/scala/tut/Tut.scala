@@ -51,12 +51,9 @@ object TutMain extends SafeApp {
   val Encoding = "UTF-8"
 
   def go(in: File, out: File): IO[Unit] = 
-    for {
-      d0 <- IO(in.lastModified)
-      d1 <- IO(out.lastModified)
-      _  <- if (d0 > d1) putStrLn("[tut] compiling:  " + in.getPath) >> file(in, out) 
-            else         putStrLn("[tut] up to date: " + in.getPath)
-    } yield ()
+    IO(in.lastModified > out.lastModified).ifM(
+      putStrLn("[tut] compiling:  " + in.getPath) >> file(in, out),
+      putStrLn("[tut] up to date: " + in.getPath))
 
   def file(in: File, out: File): IO[Unit] = 
     IO(new FileOutputStream(out)).using           { (o: FileOutputStream) => // N.B. infers in 7.1
@@ -91,7 +88,7 @@ object TutMain extends SafeApp {
     } yield () 
 
   def out(s: String): Tut[Unit] =
-    state.map(_.pw.println(s))
+    state >>= (s => IO(s.pw.println(s)).liftIO[Tut])
 
   def success: Tut[Unit] =
     mod(s => s.copy(needsNL = true, partial = ""))
@@ -100,10 +97,10 @@ object TutMain extends SafeApp {
     mod(_ + s)
 
   def error(n: Int): Tut[Unit] =
-    (Console.err.println(f"[tut] \terror reported at source line $n%d")).point[Tut]
+    IO(Console.err.println(f"[tut] \terror reported at source line $n%d")).liftIO[Tut]
 
   def interp(text: String, lineNum: Int): Tut[Unit] =
-    (!text.trim.isEmpty).whenM[Tut,Unit] {
+    text.trim.isEmpty.unlessM[Tut,Unit] {
       for {
         s <- state
         _ <- s.needsNL.whenM(out(""))
@@ -117,3 +114,5 @@ object TutMain extends SafeApp {
     }
 
 }
+
+
