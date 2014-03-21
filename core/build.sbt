@@ -6,4 +6,4 @@ libraryDependencies ++= Seq(
   "org.scala-lang" %  "scala-compiler" % scalaVersion.value
 )
 
-seq(bintrayPublishSettings:_*)
+bintrayPublishSettings

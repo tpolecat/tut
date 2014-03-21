@@ -1,5 +1,11 @@
+import bintray.Keys._
+
 name := "tut-plugin"
 
 sbtPlugin := true
 
-seq(bintrayPublishSettings:_*)
+publishMavenStyle := false
+
+bintrayPublishSettings
+
+bintrayOrganization in bintray := Some("tpolecat")

@@ -12,7 +12,7 @@ object Plugin extends sbt.Plugin {
 
   override val settings =
     Seq(
-      libraryDependencies += "org.tpolecat" %% "tut-core" % "0.1-SNAPSHOT",
+      libraryDependencies += "org.tpolecat" %% "tut-core" % "0.1",
       tutSourceDirectory := sourceDirectory.value / "main" / "tut",
       tut := {
         val r   = (runner in (Compile, doc)).value
