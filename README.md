@@ -29,11 +29,18 @@ The code runs from top to bottom (imports and definitions from earlier code bloc
 
 Add the following to `project/plugins.sbt` in your project:
 
-    resolvers ++= "tpolecat" at "http://dl.bintray.com/tpolecat/maven"
+    resolvers += Resolver.url(
+      "tpolecat-sbt-plugin-releases",
+        url("http://dl.bintray.com/content/tpolecat/sbt-plugin-releases"))(
+            Resolver.ivyStylePatterns)
 
-    addSbtPlugin("org.tpolecat" % "tut" % "0.1")
+    addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.1")
 
-This will add the following to your SBT world:
+And add the following to `build.sbt`:
+
+    resolvers += "tpolecat" at "http://dl.bintray.com/tpolecat/maven"
+
+This is awkward, sorry. Hope to get rid of the second bit in the next release. In any case this will add the following to your SBT world:
 
 - `tutSourceDirectory` is where tut looks for input files. It is a file setting defaulting to `src/main/tut`.
 - `tut` is a task that interprets **all files** in `tutSourceDirectory` and writes output to `target/<scala-version>/tut`. If the code fails to compile or otherwise barfs, you will get an error that directs you to the line where the failure happened.
