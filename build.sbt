@@ -12,5 +12,5 @@ lazy val plugin = project.in(file("plugin"))
 
 seq(bintrayPublishSettings:_*)
 
-licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
+licenses in ThisBuild += ("MIT", url("http://opensource.org/licenses/MIT"))
 

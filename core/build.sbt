@@ -5,3 +5,5 @@ libraryDependencies ++= Seq(
   "org.scalaz"     %% "scalaz-effect"  % "7.0.6",
   "org.scala-lang" %  "scala-compiler" % scalaVersion.value
 )
+
+seq(bintrayPublishSettings:_*)
