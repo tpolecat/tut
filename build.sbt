@@ -1,24 +1,16 @@
-import sbt.Defaults.{runnerInit}
-import sbt.Attributed.{data}
+organization in ThisBuild := "org.tpolecat"
 
-name := "tut"
+version in ThisBuild := "0.1-SNAPSHOT"
 
-version := "0.1"
+scalaVersion in ThisBuild := "2.10.3"
 
-scalaVersion := "2.10.1"
+publishArtifact := false
 
-resolvers ++= Seq(
-  "snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
-  "releases"  at "http://oss.sonatype.org/content/repositories/releases",
-  "tpolecat"  at "http://dl.bintray.com/tpolecat/maven"
-)
+lazy val core = project.in(file("core"))
 
-libraryDependencies ++= Seq(
-  "org.scalaz"     %% "scalaz-core"   % "7.0.4",
-  "org.scalaz"     %% "scalaz-effect" % "7.0.4",
-  "org.spire-math" %% "spire"         % "0.6.0",
-  "org.tpolecat"   %% "atto"          % "0.1",
-  "org.scala-lang" % "scala-compiler" % scalaVersion.value,
-  "org.scala-lang" % "scala-reflect"  % scalaVersion.value
-)
+lazy val plugin = project.in(file("plugin"))
+
+seq(bintrayPublishSettings:_*)
+
+licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 

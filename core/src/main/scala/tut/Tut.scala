@@ -40,20 +40,23 @@ object TutMain extends SafeApp {
 
   ////// ENTRY POINT
 
-  override def runc: IO[Unit] = 
+  override def runl(args: List[String]): IO[Unit] = {
+    val (in, out) = (args(0), args(1)).umap(new File(_))
     for {
-      d <- IO(new File("src/main/tut").listFiles.toList)
-      _ <- d.traverseU(in => go(in, new File("out", in.getName)))
+      _ <- IO(out.mkdirs)
+      d <- IO(Option(in.listFiles).fold(List[File]())(_.toList))
+      _ <- d.traverseU(in => go(in, new File(out, in.getName)))
     } yield ()
+  }
 
   ////// IO ACTIONS
 
   val Encoding = "UTF-8"
 
   def go(in: File, out: File): IO[Unit] = 
-    IO(in.lastModified > out.lastModified).ifM(
-      putStrLn("[tut] compiling:  " + in.getPath) >> file(in, out),
-      putStrLn("[tut] up to date: " + in.getPath))
+    // IO((!out.exists) || in.lastModified > out.lastModified).ifM(
+      putStrLn("[tut] compiling:  " + in.getPath) >> file(in, out) //,
+      // putStrLn("[tut] up to date: " + in.getPath))
 
   def file(in: File, out: File): IO[Unit] = 
     IO(new FileOutputStream(out)).using           { (o: FileOutputStream) => // N.B. infers in 7.1
@@ -87,8 +90,8 @@ object TutMain extends SafeApp {
       _ <- checkBoundary(text, "```scala", true)
     } yield () 
 
-  def out(s: String): Tut[Unit] =
-    state >>= (s => IO(s.pw.println(s)).liftIO[Tut])
+  def out(text: String): Tut[Unit] =
+    state >>= (s => IO(s.pw.println(text)).liftIO[Tut])
 
   def success: Tut[Unit] =
     mod(s => s.copy(needsNL = true, partial = ""))
