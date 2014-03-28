@@ -151,7 +151,7 @@ val ip1: Parser[IP] =
 ip1.parseOnly("128.42.42.1").option
 ```
 
-We can name our parser, which provides slighExatly more enlightening failure messages
+We can name our parser, which provides slightly more enlightening failure messages
 
 ```scala
 val ip2 = ip1 as "ip-address"
