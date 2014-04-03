@@ -10,8 +10,9 @@ object Plugin extends sbt.Plugin {
   lazy val tut = TaskKey[Unit]("tut", "create tut documentation")
   lazy val tutSourceDirectory = SettingKey[File]("tutSourceDirectory", "where to look for tut sources")
 
-  override val settings =
+  lazy val tutSettings =
     Seq(
+      resolvers += "tpolecat" at "http://dl.bintray.com/tpolecat/maven",
       libraryDependencies += "org.tpolecat" %% "tut-core" % "0.2-SNAPSHOT",
       tutSourceDirectory := sourceDirectory.value / "main" / "tut",
       tut := {
