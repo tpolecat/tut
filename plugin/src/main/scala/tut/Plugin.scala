@@ -13,7 +13,7 @@ object Plugin extends sbt.Plugin {
   lazy val tutSettings =
     Seq(
       resolvers += "tpolecat" at "http://dl.bintray.com/tpolecat/maven",
-      libraryDependencies += "org.tpolecat" %% "tut-core" % "0.2-SNAPSHOT",
+      libraryDependencies += "org.tpolecat" %% "tut-core" % "0.2",
       tutSourceDirectory := sourceDirectory.value / "main" / "tut",
       tut := {
         val r   = (runner in (Compile, doc)).value
