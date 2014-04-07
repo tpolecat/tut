@@ -51,7 +51,7 @@ This will add the following to your SBT world:
 - Blank lines in the sheds are ignored. Multi-line definitions work, but `:paste` style definitions (for mutual recursion for example) don't work [yet].
 - Each tutorial is an independent REPL session, and the code examples run from top to bottom.
 
-### Plans for 0.2
+### Plans for 0.3
 
 The intent for the next version is to provide some additional shed types with a prefix to allow uninterpreted `scala` sheds:
 
