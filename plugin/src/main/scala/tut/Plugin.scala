@@ -15,6 +15,7 @@ object Plugin extends sbt.Plugin {
       resolvers += "tpolecat" at "http://dl.bintray.com/tpolecat/maven",
       libraryDependencies += "org.tpolecat" %% "tut-core" % "0.3-SNAPSHOT",
       tutSourceDirectory := sourceDirectory.value / "main" / "tut",
+      watchSources <++= tutSourceDirectory map { path => (path ** "*.md").get },
       tut := {
         val r   = (runner in (Compile, doc)).value
         val in  = tutSourceDirectory.value
