@@ -2,8 +2,6 @@ organization in ThisBuild := "org.tpolecat"
 
 version in ThisBuild := "0.3-SNAPSHOT"
 
-scalaVersion in ThisBuild := "2.10.3"
-
 publishArtifact := false
 
 lazy val core = project.in(file("core"))

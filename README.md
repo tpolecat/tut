@@ -2,7 +2,7 @@
 
 <img alt="confusion" align=right src="tut.jpg"/>
 
-**tut** is a very simple documentation tool for Scala programs (2.10 only, for now) that reads Markdown files and interprets code in `scala` sheds. So you add tut as an [SBT](http://scala-sbt.org) plugin and then you can write tutorials that are typechecked and run as part of your build. The idea is to have tutorial code that is never out of sync with the code it's documenting.
+**tut** is a very simple documentation tool for Scala programs (2.10 and 2.11 with scalaz 7.0) that reads Markdown files and interprets code in `scala` sheds. So you add tut as an [SBT](http://scala-sbt.org) plugin and then you can write tutorials that are typechecked and run as part of your build. The idea is to have tutorial code that is never out of sync with the code it's documenting.
 
 There are some examples [here](out/), and their uninterpreted source is [here](example/src/main/tut).
 
@@ -34,7 +34,7 @@ Add the following to `project/plugins.sbt` in your project to add SBT shell comm
         url("http://dl.bintray.com/content/tpolecat/sbt-plugin-releases"))(
             Resolver.ivyStylePatterns)
 
-    addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.2")
+    addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.2.1")
 
 And add the following to `build.sbt` for the tut runtime, which must run alongside your code:
 
