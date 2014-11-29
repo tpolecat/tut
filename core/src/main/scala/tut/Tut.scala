@@ -27,7 +27,7 @@ object TutMain extends SafeApp {
     def +(s: String) = copy(partial = partial + "\n" + s, needsNL = false)
   }
 
-  type Tut[+A] = StateT[IO, TState, A]
+  type Tut[A] = StateT[IO, TState, A]
   def state: Tut[TState] = get.lift[IO]
   def mod(f: TState => TState): Tut[Unit] = modify(f).lift[IO]
 
