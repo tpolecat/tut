@@ -7,10 +7,7 @@ This is an intro tutorial for the [atto](https://github.com/tpolecat/atto) parse
 Let's import some stuff.
 
 ```scala
-import scalaz._
-import Scalaz._
-import atto._
-import Atto._
+import scalaz._, Scalaz._, atto._, Atto._, atto.parser.spire._
 ```
 
 Rock on, let's parse an integer!
@@ -154,8 +151,8 @@ ip1.parseOnly("128.42.42.1").option
 We can name our parser, which provides slightly more enlightening failure messages
 
 ```scala
-val ip2 = ip1 as "ip-address"
-val ip3 = ip1 asOpaque "ip-address" // difference is illustrated below
+val ip2 = ip1 named "ip-address"
+val ip3 = ip1 namedOpaque "ip-address" // difference is illustrated below
 
 ip2 parseOnly "foo.bar"
 ip3 parseOnly "foo.bar"
