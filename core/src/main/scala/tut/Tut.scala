@@ -15,6 +15,7 @@ import scala.tools.nsc.interpreter.Results
 import java.io.Closeable
 import java.io.File
 import java.io.FileOutputStream
+import java.io.FilterOutputStream
 import java.io.OutputStreamWriter
 import java.io.OutputStream
 import java.io.PrintStream
@@ -25,13 +26,45 @@ object TutMain extends SafeApp {
 
   ////// TYPES FOR OUR WEE INTERPRETER
 
-  case class TState(isCode: Boolean, needsNL: Boolean, imain: IMain, pw: PrintWriter, partial: String = "", err: Boolean = false) {
-    def +(s: String) = copy(partial = partial + "\n" + s, needsNL = false)
+  sealed trait Modifier
+  case object NoFail extends Modifier
+  case object Silent extends Modifier
+
+  object Modifier {
+    def fromString(s: String): Option[Modifier] =
+      Some(s) collect {
+        case "nofail" => NoFail
+        case "silent" => Silent
+      }      
+
+    def unsafeFromString(s: String): Modifier =
+      fromString(s).getOrElse(throw new RuntimeException("No such modifier: " + s))
   }
+
+  case class TState(
+    isCode: Boolean, 
+    mods: Set[Modifier], 
+    needsNL: Boolean, 
+    imain: IMain, 
+    pw: PrintWriter, 
+    spigot: Spigot,
+    partial: String = "", 
+    err: Boolean = false)
 
   type Tut[A] = StateT[IO, TState, A]
   def state: Tut[TState] = get.lift[IO]
   def mod(f: TState => TState): Tut[Unit] = modify(f).lift[IO]
+
+  ////// YIKES
+
+  class Spigot(os: OutputStream) extends FilterOutputStream(os) {
+    private[this] var active = true
+    private[this] def ifActive(f: => Unit): Unit = if (active) f
+    def setActive(b: Boolean): IO[Unit] = IO(active = b)
+    override def write(n: Int): Unit = ifActive(super.write(n))
+    override def write(bs: Array[Byte]): Unit = ifActive(super.write(bs))
+    override def write(bs: Array[Byte], off: Int, len: Int): Unit = ifActive(super.write(bs, off, len))
+  }
 
   ////// ENTRY POINT
 
@@ -55,7 +88,8 @@ object TutMain extends SafeApp {
     putStrLn("[tut] compiling:  " + in.getPath) >> file(in, out)
 
   def file(in: File, out: File): IO[TState] =
-    IO(new FileOutputStream(out)).using           { o =>
+    IO(new FileOutputStream(out)).using           { f =>
+    IO(new Spigot(f)).using                       { o =>
     IO(new PrintStream(o, true, Encoding)).using  { s =>
     IO(new OutputStreamWriter(s, Encoding)).using { w =>
     IO(new PrintWriter(w)).using                  { p =>
@@ -63,9 +97,9 @@ object TutMain extends SafeApp {
         oo <- IO(Console.out)
         _  <- IO(Console.setOut(s))
         i  <- newInterpreter(p)
-        ts <- tut(in).exec(TState(false, false, i, p)).ensuring(IO(Console.setOut(oo)))
+        ts <- tut(in).exec(TState(false, Set(), false, i, p, o)).ensuring(IO(Console.setOut(oo)))
       } yield ts
-    }}}}
+    }}}}}
 
   def newInterpreter(pw: PrintWriter): IO[IMain] =
     IO(new IMain(new Settings <| (_.embeddedDefaults[TutMain.type]), pw))
@@ -81,16 +115,25 @@ object TutMain extends SafeApp {
       _ <- t.zipWithIndex.traverseU { case (t, n) => line(t, n + 1) }
     } yield ()
 
-  def checkBoundary(text: String, s: String, b: Boolean): Tut[Unit] =
-    (text.trim === s).whenM(mod(s => s.copy(isCode = b, needsNL = false)))
+  def checkBoundary(text: String, find: String, code: Boolean, mods: Set[Modifier]): Tut[Unit] =
+    (text.trim.startsWith(find)).whenM(mod(s => s.copy(isCode = code, needsNL = false, mods = mods)))
+
+  def fixShed(text: String): String = 
+    if (text.startsWith("```tut")) "```scala" else text
+
+  def modifiers(text: String): Set[Modifier] =
+    if (text.startsWith("```tut:")) 
+      text.split(":").toList.tail.map(Modifier.unsafeFromString).toSet
+    else
+      Set.empty
 
   def line(text: String, n: Int): Tut[Unit] =
     for {
-      _ <- checkBoundary(text, "```", false)
+      _ <- checkBoundary(text, "```", false, Set())
       s <- state
-      _ <- s.isCode.fold(interp(text, n), out(text))
-      _ <- checkBoundary(text, "```scala", true)
-    } yield () 
+      _ <- s.isCode.fold(interp(text, n), out(fixShed(text)))
+      _ <- checkBoundary(text, "```tut",   true, modifiers(text))
+    } yield ()
 
   def out(text: String): Tut[Unit] =
     state >>= (s => IO { s.pw.println(text); s.pw.flush() }.liftIO[Tut])
@@ -99,23 +142,31 @@ object TutMain extends SafeApp {
     mod(s => s.copy(needsNL = true, partial = ""))
 
   def incomplete(s: String): Tut[Unit] =
-    mod(_ + s)
+    mod(a => a.copy(partial = a.partial + "\n" + s, needsNL = false))
 
   def error(n: Int): Tut[Unit] =
-    mod(s => s.copy(err = true)) >>
+    mod(s => if (s.mods(NoFail)) s else s.copy(err = true)) >>
     IO(Console.err.println(f"[tut] \terror reported at source line $n%d")).liftIO[Tut]
+
+  def prompt(s: TState): String =
+         if (s.mods(Silent))  ""
+    else if (s.partial.isEmpty) "scala> "
+    else                        "     | "
 
   def interp(text: String, lineNum: Int): Tut[Unit] =
     text.trim.isEmpty.unlessM[Tut,Unit] {
       for {
         s <- state
         _ <- s.needsNL.whenM(out(""))
-        _ <- out(s.partial.isEmpty.fold("scala> ", "     | ") + text)
+        _ <- out(prompt(s) + text)
+        _ <- s.spigot.setActive(!s.mods(Silent)).liftIO[Tut]
         r <- IO(s.imain.interpret(s.partial + "\n" + text)).liftIO[Tut] >>= {
           case Results.Success    => success
           case Results.Incomplete => incomplete(text)
           case Results.Error      => error(lineNum)
         }
+        _ <- s.spigot.setActive(true).liftIO[Tut]
+        _ <- IO(s.pw.flush).liftIO[Tut]
       } yield ()
     }
 
