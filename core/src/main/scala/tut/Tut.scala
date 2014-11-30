@@ -5,6 +5,7 @@ import Scalaz._
 import scalaz.effect._
 import scalaz.effect.stateTEffect._
 import scalaz.effect.IO._
+import scalaz.std.effect.closeable._
 
 import scala.io.Source
 import scala.tools.nsc.Settings
@@ -31,13 +32,6 @@ object TutMain extends SafeApp {
   type Tut[A] = StateT[IO, TState, A]
   def state: Tut[TState] = get.lift[IO]
   def mod(f: TState => TState): Tut[Unit] = modify(f).lift[IO]
-
-  ////// ON THE 7.1 TIP, WILL GO AWAY
-
-  implicit def resourceFromCloseable[A <: Closeable]: Resource[A] =
-    new Resource[A] {
-      def close(a: A) = IO(a.close)
-    }
 
   ////// ENTRY POINT
 
