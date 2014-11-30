@@ -60,6 +60,7 @@ This will add the following to your SBT world:
 
 - `tutSourceDirectory` is where tut looks for input files. It is a file setting defaulting to `src/main/tut`.
 - `tut` is a task that interprets **all files** in `tutSourceDirectory` and writes output to `target/<scala-version>/tut`. If the code fails to compile or otherwise barfs, you will get an error that directs you to the line where the failure happened. You can look at the partial output to see the full error message.
+- Failures that are not in a `tut:nofail` block will cause the build to fail.
 
 ### Particulars
 
