@@ -30,7 +30,7 @@ The code runs from top to bottom (imports and definitions from earlier code bloc
 You can follow `tut` with any number of colon-prefixed modifiers to alter the way a block is interpreted.
 
 - Normally an error in interpretation causes the buid to fail, but if you want to include an example that fails to compile you can add the `nofail` modifier.
-- If you don't want REPL prompts or responses you can use the `silent` modifier. Code is still interpreted and errors will cause the build to fail, but no REPL output will appear in the output.
+- If you don't want REPL prompts or responses you can use the `silent` modifier. Code is still interpreted and errors will cause the build to fail, but no REPL output will appear.
 
 For example
 
@@ -63,24 +63,14 @@ This will add the following to your SBT world:
 
 ### Particulars
 
-- Code in `scala` sheds will be interpreted. Anything in your dependencies will be available. Interpreted code runs with the same classpath as `(Compile, doc)` with the addition of tut and its dependencies (scalaz 7.0 for now).
+- Code in `tut` sheds will be interpreted. Anything in your dependencies will be available. Interpreted code runs with the same classpath as `(Compile, doc)` with the addition of tut and its dependencies (scalaz 7.1 for now).
 - Blank lines in the sheds are ignored. Multi-line definitions work, but `:paste` style definitions (for mutual recursion for example) don't work [yet].
 - Each tutorial is an independent REPL session, and the code examples run from top to bottom.
-
-### Plans for 0.3
-
-The intent for the next version is to provide some additional shed types with a prefix to allow uninterpreted `scala` sheds:
-
-- `tut` replaces `scala` for default handling
-- `tut:quiet` if output isn't desired (for class definitions, for example)
-- `tut:paste` to mimic `:paste` in the REPL
-- `tut:bogus` for code that is expected to not compile (this is a common thing to demonstrate).
-
-Also hope to add cross-version support and improve error reporting.
 
 ### Complaints and other Feedback
 
 Feedback of any kind is always appreciated. 
 
 Issues and PR's are welcome, or just find me on Twitter or `#scala` on FreeNode.
+
 
