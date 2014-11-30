@@ -14,7 +14,7 @@ println("hello")
 
 an error
 ```scala
-yo mama
+//yo mama
 ```
 
 the very end
