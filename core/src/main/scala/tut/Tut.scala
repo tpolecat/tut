@@ -16,6 +16,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
 import java.io.OutputStream
+import java.io.PrintStream
 import java.io.PrintWriter
 import java.io.Writer
 
@@ -54,16 +55,20 @@ object TutMain extends SafeApp {
   val Encoding = "UTF-8"
 
   def go(in: File, out: File): IO[Unit] = 
-    // IO((!out.exists) || in.lastModified > out.lastModified).ifM(
-      putStrLn("[tut] compiling:  " + in.getPath) >> file(in, out) //,
-      // putStrLn("[tut] up to date: " + in.getPath))
+    putStrLn("[tut] compiling:  " + in.getPath) >> file(in, out)
 
   def file(in: File, out: File): IO[Unit] = 
-    IO(new FileOutputStream(out)).using           { (o: FileOutputStream) => // N.B. infers in 7.1
-    IO(new OutputStreamWriter(o, Encoding)).using { (w: OutputStreamWriter) => 
-    IO(new PrintWriter(w)).using                  { (p: PrintWriter) => 
-      newInterpreter(p) >>= (i => tut(in).eval(TState(false, false, i, p)))
-    }}}
+    IO(new FileOutputStream(out)).using           { o =>
+    IO(new PrintStream(o, true, Encoding)).using  { s =>
+    IO(new OutputStreamWriter(s, Encoding)).using { w =>
+    IO(new PrintWriter(w)).using                  { p =>
+      for {
+        oo <- IO(Console.out)
+        _  <- IO(Console.setOut(s))
+        i  <- newInterpreter(p)
+        _  <- tut(in).eval(TState(false, false, i, p)).ensuring(IO(Console.setOut(oo)))
+      } yield ()
+    }}}}
 
   def newInterpreter(pw: PrintWriter): IO[IMain] =
     IO(new IMain(new Settings <| (_.embeddedDefaults[TutMain.type]), pw))
@@ -91,7 +96,7 @@ object TutMain extends SafeApp {
     } yield () 
 
   def out(text: String): Tut[Unit] =
-    state >>= (s => IO(s.pw.println(text)).liftIO[Tut])
+    state >>= (s => IO { s.pw.println(text); s.pw.flush() }.liftIO[Tut])
 
   def success: Tut[Unit] =
     mod(s => s.copy(needsNL = true, partial = ""))
