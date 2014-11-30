@@ -24,7 +24,7 @@ object TutMain extends SafeApp {
 
   ////// TYPES FOR OUR WEE INTERPRETER
 
-  case class TState(isCode: Boolean, needsNL: Boolean, imain: IMain, pw: PrintWriter, partial: String = "") {
+  case class TState(isCode: Boolean, needsNL: Boolean, imain: IMain, pw: PrintWriter, partial: String = "", err: Boolean = false) {
     def +(s: String) = copy(partial = partial + "\n" + s, needsNL = false)
   }
 
@@ -44,20 +44,23 @@ object TutMain extends SafeApp {
   override def runl(args: List[String]): IO[Unit] = {
     val (in, out) = (args(0), args(1)).umap(new File(_))
     for {
-      _ <- IO(out.mkdirs)
-      d <- IO(Option(in.listFiles).fold(List[File]())(_.toList))
-      _ <- d.traverseU(in => go(in, new File(out, in.getName)))
-    } yield ()
+      _  <- IO(out.mkdirs)
+      d  <- IO(Option(in.listFiles).fold(List[File]())(_.toList))
+      ss <- d.traverseU(in => go(in, new File(out, in.getName)))
+    } yield {
+      if (ss.exists(_.err)) throw new Exception("Tut execution failed.")
+      else ()
+    }
   }
 
   ////// IO ACTIONS
 
   val Encoding = "UTF-8"
 
-  def go(in: File, out: File): IO[Unit] = 
+  def go(in: File, out: File): IO[TState] =
     putStrLn("[tut] compiling:  " + in.getPath) >> file(in, out)
 
-  def file(in: File, out: File): IO[Unit] = 
+  def file(in: File, out: File): IO[TState] =
     IO(new FileOutputStream(out)).using           { o =>
     IO(new PrintStream(o, true, Encoding)).using  { s =>
     IO(new OutputStreamWriter(s, Encoding)).using { w =>
@@ -66,8 +69,8 @@ object TutMain extends SafeApp {
         oo <- IO(Console.out)
         _  <- IO(Console.setOut(s))
         i  <- newInterpreter(p)
-        _  <- tut(in).eval(TState(false, false, i, p)).ensuring(IO(Console.setOut(oo)))
-      } yield ()
+        ts <- tut(in).exec(TState(false, false, i, p)).ensuring(IO(Console.setOut(oo)))
+      } yield ts
     }}}}
 
   def newInterpreter(pw: PrintWriter): IO[IMain] =
@@ -105,6 +108,7 @@ object TutMain extends SafeApp {
     mod(_ + s)
 
   def error(n: Int): Tut[Unit] =
+    mod(s => s.copy(err = true)) >>
     IO(Console.err.println(f"[tut] \terror reported at source line $n%d")).liftIO[Tut]
 
   def interp(text: String, lineNum: Int): Tut[Unit] =

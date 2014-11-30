@@ -12,5 +12,10 @@ after 1 + 1, before println
 println("hello")
 ```
 
+an error
+```scala
+//yo mama
+```
+
 the very end
 
