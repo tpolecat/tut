@@ -1,16 +1,16 @@
 # tut 
 
-<img alt="confusion" align=right src="tut.jpg"/>
+<img alt="How'd you get so funky?" align=right src="tut.jpg"/>
 
-**tut** is a very simple documentation tool for Scala programs that reads Markdown files and interprets code in `scala` sheds. So you add tut as an [SBT](http://scala-sbt.org) plugin and then you can write tutorials that are typechecked and run as part of your build. The idea is to have tutorial code that is never out of sync with the code it's documenting.
+**tut** is a very simple documentation tool for Scala programs that reads Markdown files and interprets code in `tut` sheds. So you add tut as an [sbt](http://scala-sbt.org) plugin and then you can write tutorials that are typechecked and run as part of your build. The idea is to have tutorial code that is never out of sync with the code it's documenting.
 
-- The current version is **0.3.0**, which runs on Scala 2.10 and 2.11, with **scalaz 7.1**
+The current version is **0.3.0**, which runs on **Scala 2.10** and **2.11** with **scalaz 7.1**.
 
 There are some examples [here](out/), and their uninterpreted source is [here](example/src/main/tut).
 
 ### How-To
 
-tut looks for code in `tut` sheds and replaces it with what you would see if you pasted the code into a REPL. As an example, the input file
+**tut** looks for code in `tut` sheds and (by default) replaces it with what you would see if you had pasted the code into a REPL. As an example, the input file
 
     Here is how you add numbers:
     ```tut
@@ -38,6 +38,8 @@ For example
     ```tut:nofail
     blech?
     ```
+
+Note that if you want a code block that is not interpreted at all, just use a normal `scala` shed; **tut** doesn't touch these.
 
 ### Setting Up
 
