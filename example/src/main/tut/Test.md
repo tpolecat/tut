@@ -43,6 +43,12 @@ but the bindings should exist now.
 (a, b)
 ```
 
+this should have no escapes
+
+```tut
+println("blah " + Console.RED + "hi" + Console.RESET + " eek")
+```
+
 this shouldn't be interpreted at all
 
 ```scala
