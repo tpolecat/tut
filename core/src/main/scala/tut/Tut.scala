@@ -89,7 +89,8 @@ object TutMain extends SafeApp {
 
   def file(in: File, out: File): IO[TState] =
     IO(new FileOutputStream(out)).using           { f =>
-    IO(new Spigot(f)).using                       { o =>
+    IO(new AnsiFilterStream(f)).using             { a =>
+    IO(new Spigot(a)).using                       { o =>
     IO(new PrintStream(o, true, Encoding)).using  { s =>
     IO(new OutputStreamWriter(s, Encoding)).using { w =>
     IO(new PrintWriter(w)).using                  { p =>
@@ -99,7 +100,7 @@ object TutMain extends SafeApp {
         i  <- newInterpreter(p)
         ts <- tut(in).exec(TState(false, Set(), false, i, p, o)).ensuring(IO(Console.setOut(oo)))
       } yield ts
-    }}}}}
+    }}}}}}
 
   def newInterpreter(pw: PrintWriter): IO[IMain] =
     IO(new IMain(new Settings <| (_.embeddedDefaults[TutMain.type]), pw))
