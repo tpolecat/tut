@@ -31,6 +31,7 @@ You can follow `tut` with any number of colon-prefixed modifiers to alter the wa
 
 - Normally an error in interpretation causes the buid to fail, but if you want to include an example that fails to compile you can add the `nofail` modifier.
 - If you don't want REPL prompts or responses you can use the `silent` modifier. Code is still interpreted and errors will cause the build to fail, but no REPL output will appear.
+- If you don't want Scala syntax highlighting, use the `plain` modifier.
 
 For example
 
