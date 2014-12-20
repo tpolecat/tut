@@ -56,5 +56,11 @@ foo
 bar
 ```
 
+this should be in a plain shed
+
+```tut:plain
+1+1
+```
+
 the very end
 

@@ -29,12 +29,14 @@ object TutMain extends SafeApp {
   sealed trait Modifier
   case object NoFail extends Modifier
   case object Silent extends Modifier
+  case object Plain  extends Modifier
 
   object Modifier {
     def fromString(s: String): Option[Modifier] =
       Some(s) collect {
         case "nofail" => NoFail
         case "silent" => Silent
+        case "plain"  => Plain
       }      
 
     def unsafeFromString(s: String): Modifier =
@@ -119,8 +121,10 @@ object TutMain extends SafeApp {
   def checkBoundary(text: String, find: String, code: Boolean, mods: Set[Modifier]): Tut[Unit] =
     (text.trim.startsWith(find)).whenM(mod(s => s.copy(isCode = code, needsNL = false, mods = mods)))
 
-  def fixShed(text: String): String = 
-    if (text.startsWith("```tut")) "```scala" else text
+  def fixShed(text: String, mods: Set[Modifier]): String = 
+    if (text.startsWith("```tut")) {
+      if (mods(Plain)) "```" else "```scala" 
+    } else text
 
   def modifiers(text: String): Set[Modifier] =
     if (text.startsWith("```tut:")) 
@@ -132,8 +136,9 @@ object TutMain extends SafeApp {
     for {
       _ <- checkBoundary(text, "```", false, Set())
       s <- state
-      _ <- s.isCode.fold(interp(text, n), out(fixShed(text)))
-      _ <- checkBoundary(text, "```tut",   true, modifiers(text))
+      mods = modifiers(text)
+      _ <- s.isCode.fold(interp(text, n), out(fixShed(text, mods)))
+      _ <- checkBoundary(text, "```tut", true, mods)
     } yield ()
 
   def out(text: String): Tut[Unit] =
