@@ -74,13 +74,17 @@ object TutMain extends SafeApp {
     val (in, out) = (args(0), args(1)).umap(new File(_))
     for {
       _  <- IO(out.mkdirs)
-      d  <- IO(Option(in.listFiles).fold(List[File]())(_.toList))
-      ss <- d.traverseU(in => go(in, new File(out, in.getName)))
+      fa <- IO(Option(in.listFiles).map(_.toList).orZero)
+      fb <- stale(fa, out)
+      ss <- fb.traverseU(in => go(in, new File(out, in.getName)))
     } yield {
       if (ss.exists(_.err)) throw new Exception("Tut execution failed.")
       else ()
     }
   }
+
+  def stale(fs: List[File], outDir: File): IO[List[File]] =
+    IO(fs.filter(f => (new File(outDir, f.getName)).lastModified < f.lastModified))
 
   ////// IO ACTIONS
 

@@ -6,8 +6,6 @@
 
 The current version is **0.3.0**, which runs on **Scala 2.10** and **2.11** with **scalaz 7.1**.
 
-There are some examples [here](out/), and their uninterpreted source is [here](example/src/main/tut).
-
 ### How-To
 
 **tut** looks for code in `tut` sheds and (by default) replaces it with what you would see if you had pasted the code into a REPL. As an example, the input file
@@ -65,9 +63,10 @@ This will add the following to your SBT world:
 
 ### Particulars
 
-- Code in `tut` sheds will be interpreted. Anything in your dependencies will be available. Interpreted code runs with the same classpath as `(Compile, doc)` with the addition of tut and its dependencies (scalaz 7.1 for now).
-- Blank lines in the sheds are ignored. Multi-line definitions work, but `:paste` style definitions (for mutual recursion for example) don't work [yet].
 - Each tutorial is an independent REPL session, and the code examples run from top to bottom.
+- Code in `tut` sheds will be interpreted. Anything in your dependencies will be available. Interpreted code runs with the same classpath as `(Compile, doc)` with the addition of tut and its dependencies (scalaz 7.1 for now).
+- Blank lines in sheds are ignored. Multi-line definitions work, but `:paste` style definitions (for mutual recursion for example) don't work [yet].
+- ANSI escapes in REPL output are filtered out.
 
 ### Complaints and other Feedback
 
