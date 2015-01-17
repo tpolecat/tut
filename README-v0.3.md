@@ -2,9 +2,11 @@
 
 <img alt="How'd you get so funky?" align=right src="tut.jpg"/>
 
-**tut** is a very simple documentation tool for Scala programs that reads Markdown files and interprets code in `tut` sheds. So you add tut as an [sbt](http://scala-sbt.org) plugin and then you can write tutorials that are typechecked and run as part of your build. The idea is to have tutorial code that is never out of sync with the code it's documenting.
+**tut** is a very simple documentation tool for Scala programs that reads Markdown files and interprets code in `tut` sheds. So you add **tut** as an [sbt](http://scala-sbt.org) plugin and then you can write tutorials that are typechecked and run as part of your build. The idea is to have tutorial code that is never out of sync with the code it's documenting.
 
 The current version is **0.3.0**, which runs on **Scala 2.10** and **2.11** with **scalaz 7.1**.
+
+**NOTE** this version is a **breaking change** with previous versions! **tut** now looks for `tut` sheds rather than `scala` sheds, so existing documentation will need to be modified when you upgrade. So be warned!
 
 ### How-To
 
