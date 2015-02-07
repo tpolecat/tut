@@ -1,12 +1,5 @@
 package tut
 
-import scalaz._
-import Scalaz._
-import scalaz.effect._
-import scalaz.effect.stateTEffect._
-import scalaz.effect.IO._
-import scalaz.std.effect.closeable._
-
 import scala.io.Source
 import scala.tools.nsc.Settings
 import scala.tools.nsc.interpreter.IMain
@@ -22,7 +15,7 @@ import java.io.PrintStream
 import java.io.PrintWriter
 import java.io.Writer
 
-object TutMain extends SafeApp {
+object TutMain extends Zed {
 
   ////// TYPES FOR OUR WEE INTERPRETER
 
@@ -70,13 +63,16 @@ object TutMain extends SafeApp {
 
   ////// ENTRY POINT
 
-  override def runl(args: List[String]): IO[Unit] = {
+  def main(args: Array[String]): Unit =
+    runl(args.toList).unsafePerformIO
+
+  def runl(args: List[String]): IO[Unit] = {
     val (in, out) = (args(0), args(1)).umap(new File(_))
     for {
       _  <- IO(out.mkdirs)
-      fa <- IO(Option(in.listFiles).map(_.toList).orZero)
+      fa <- IO(Option(in.listFiles).fold(List.empty[File])(_.toList))
       fb <- stale(fa, out)
-      ss <- fb.traverseU(in => go(in, new File(out, in.getName)))
+      ss <- fb.traverse(in => go(in, new File(out, in.getName)))
     } yield {
       if (ss.exists(_.err)) throw new Exception("Tut execution failed.")
       else ()
@@ -119,7 +115,7 @@ object TutMain extends SafeApp {
   def tut(in: File): Tut[Unit] =
     for {
       t <- lines(in).liftIO[Tut]
-      _ <- t.zipWithIndex.traverseU { case (t, n) => line(t, n + 1) }
+      _ <- t.zipWithIndex.traverse { case (t, n) => line(t, n + 1) }
     } yield ()
 
   def checkBoundary(text: String, find: String, code: Boolean, mods: Set[Modifier]): Tut[Unit] =
@@ -156,7 +152,7 @@ object TutMain extends SafeApp {
 
   def error(n: Int): Tut[Unit] =
     mod(s => if (s.mods(NoFail)) s else s.copy(err = true)) >>
-    IO(Console.err.println(f"[tut] \terror reported at source line $n%d")).liftIO[Tut]
+    IO(Console.err.println(f"[tut] \terror reported at ** source line $n%d")).liftIO[Tut]
 
   def prompt(s: TState): String =
          if (s.mods(Silent))  ""
