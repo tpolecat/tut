@@ -152,7 +152,7 @@ object TutMain extends Zed {
 
   def error(n: Int): Tut[Unit] =
     mod(s => if (s.mods(NoFail)) s else s.copy(err = true)) >>
-    IO(Console.err.println(f"[tut] \terror reported at ** source line $n%d")).liftIO[Tut]
+    IO(Console.err.println(f"[tut] \terror reported at source line $n%d")).liftIO[Tut]
 
   def prompt(s: TState): String =
          if (s.mods(Silent))  ""
