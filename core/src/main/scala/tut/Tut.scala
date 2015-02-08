@@ -12,6 +12,7 @@ import scala.tools.nsc.Settings
 import scala.tools.nsc.interpreter.IMain
 import scala.tools.nsc.interpreter.Results
 
+import java.io.ByteArrayOutputStream
 import java.io.Closeable
 import java.io.File
 import java.io.FileOutputStream
@@ -50,8 +51,9 @@ object TutMain extends SafeApp {
     imain: IMain, 
     pw: PrintWriter, 
     spigot: Spigot,
-    partial: String = "", 
-    err: Boolean = false)
+    partial: String, 
+    err: Boolean,
+    in: File)
 
   type Tut[A] = StateT[IO, TState, A]
   def state: Tut[TState] = get.lift[IO]
@@ -60,12 +62,14 @@ object TutMain extends SafeApp {
   ////// YIKES
 
   class Spigot(os: OutputStream) extends FilterOutputStream(os) {
+    private var baos = new ByteArrayOutputStream()
+    def bytes = baos.toByteArray
     private[this] var active = true
     private[this] def ifActive(f: => Unit): Unit = if (active) f
-    def setActive(b: Boolean): IO[Unit] = IO(active = b)
-    override def write(n: Int): Unit = ifActive(super.write(n))
-    override def write(bs: Array[Byte]): Unit = ifActive(super.write(bs))
-    override def write(bs: Array[Byte], off: Int, len: Int): Unit = ifActive(super.write(bs, off, len))
+    def setActive(b: Boolean): IO[Unit] = IO { baos.reset(); active = b }
+    override def write(n: Int): Unit = { baos.write(n); ifActive(super.write(n)) }
+    override def write(bs: Array[Byte]): Unit = { ifActive(super.write(bs)) }
+    override def write(bs: Array[Byte], off: Int, len: Int): Unit = { ifActive(super.write(bs, off, len)) }
   }
 
   ////// ENTRY POINT
@@ -84,14 +88,15 @@ object TutMain extends SafeApp {
   }
 
   def stale(fs: List[File], outDir: File): IO[List[File]] =
-    IO(fs.filter(f => (new File(outDir, f.getName)).lastModified < f.lastModified))
+    IO(fs)
+    // IO(fs.filter(f => (new File(outDir, f.getName)).lastModified < f.lastModified))
 
   ////// IO ACTIONS
 
   val Encoding = "UTF-8"
 
   def go(in: File, out: File): IO[TState] =
-    putStrLn("[tut] compiling:  " + in.getPath) >> file(in, out)
+    putStrLn("[tut] compiling: " + in.getPath) >> file(in, out)
 
   def file(in: File, out: File): IO[TState] =
     IO(new FileOutputStream(out)).using           { f =>
@@ -104,7 +109,7 @@ object TutMain extends SafeApp {
         oo <- IO(Console.out)
         _  <- IO(Console.setOut(s))
         i  <- newInterpreter(p)
-        ts <- tut(in).exec(TState(false, Set(), false, i, p, o)).ensuring(IO(Console.setOut(oo)))
+        ts <- tut(in).exec(TState(false, Set(), false, i, p, o, "", false, in)).ensuring(IO(Console.setOut(oo)))
       } yield ts
     }}}}}}
 
@@ -155,8 +160,12 @@ object TutMain extends SafeApp {
     mod(a => a.copy(partial = a.partial + "\n" + s, needsNL = false))
 
   def error(n: Int): Tut[Unit] =
-    mod(s => if (s.mods(NoFail)) s else s.copy(err = true)) >>
-    IO(Console.err.println(f"[tut] \terror reported at source line $n%d")).liftIO[Tut]
+    for {
+      s <- state
+      _ <- mod(_.copy(err = true))
+      _ <- IO(Console.err.println(f"[tut] *** Error reported at ${s.in.getName}%s:$n%d")).liftIO[Tut]
+      _ <- IO(Console.err.write(s.spigot.bytes)).liftIO[Tut]
+    } yield ()
 
   def prompt(s: TState): String =
          if (s.mods(Silent))  ""
@@ -173,7 +182,7 @@ object TutMain extends SafeApp {
         r <- IO(s.imain.interpret(s.partial + "\n" + text)).liftIO[Tut] >>= {
           case Results.Success    => success
           case Results.Incomplete => incomplete(text)
-          case Results.Error      => error(lineNum)
+          case Results.Error      => if (s.mods(NoFail)) success else error(lineNum)
         }
         _ <- s.spigot.setActive(true).liftIO[Tut]
         _ <- IO(s.pw.flush).liftIO[Tut]

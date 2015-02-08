@@ -30,6 +30,12 @@ an error with no prompt at all
 blech
 ```
 
+a fatal error
+
+```tut
+xyzzy
+```
+
 this should have no prompt
 
 ```tut:silent
@@ -41,6 +47,11 @@ but the bindings should exist now.
 
 ```tut
 (a, b)
+```
+
+another error
+```tut
+null.toString
 ```
 
 this should have no escapes
