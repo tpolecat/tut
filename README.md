@@ -4,9 +4,9 @@
 
 **tut** is a very simple documentation tool for Scala programs that reads Markdown files and interprets code in `tut` sheds. So you add **tut** as an [sbt](http://scala-sbt.org) plugin and then you can write tutorials that are typechecked and run as part of your build. The idea is to have tutorial code that is never out of sync with the code it's documenting.
 
-The current version is **0.3.0**, which runs on **Scala 2.10** and **2.11** with **scalaz 7.1**.
+The current version is **0.3.1**, which runs on **Scala 2.10** and **2.11**. As of this version there is no longer a dependency on scalaz (or anything else).
 
-**NOTE** this version is a **breaking change** with previous versions! **tut** now looks for `tut` sheds rather than `scala` sheds, so existing documentation will need to be modified when you upgrade. So be warned!
+**NOTE** version **0.3.0** was a **breaking change** with previous versions! **tut** now looks for `tut` sheds rather than `scala` sheds, so existing documentation will need to be modified when you upgrade. So be warned!
 
 ### How-To
 
@@ -60,8 +60,8 @@ And add the following to `build.sbt` for the tut runtime, which must run alongsi
 This will add the following to your SBT world:
 
 - `tutSourceDirectory` is where tut looks for input files. It is a file setting defaulting to `src/main/tut`.
-- `tut` is a task that interprets **all files** in `tutSourceDirectory` and writes output to `target/<scala-version>/tut`. If the code fails to compile or otherwise barfs, you will get an error that directs you to the line where the failure happened. You can look at the partial output to see the full error message.
-- Failures that are not in a `tut:nofail` block will cause the build to fail.
+- `tut` is a task that interprets **all files** in `tutSourceDirectory` and writes output to `target/<scala-version>/tut`. If the code fails to compile or otherwise barfs, you will get a message that directs you to the file and line where the failure happened, along with the REPL error.
+- Failures that are in a `tut:nofail` block are ignored; failures elsewhere will cause the build to fail.
 
 ### Particulars
 
