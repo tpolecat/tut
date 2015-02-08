@@ -7,5 +7,5 @@ jdk:
   - openjdk6
 
 script: 
-  - sbt ++$TRAVIS_SCALA_VERSION core/compile example/tut
+  - sbt ++$TRAVIS_SCALA_VERSION core/compile
   - sbt plugin/compile
