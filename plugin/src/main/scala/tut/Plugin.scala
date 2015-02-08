@@ -16,7 +16,7 @@ object Plugin extends sbt.Plugin {
   lazy val tutSettings =
     Seq(
       resolvers += "tpolecat" at "http://dl.bintray.com/tpolecat/maven",
-      libraryDependencies += "org.tpolecat" %% "tut-core" % "0.4.0-SNAPSHOT",
+      libraryDependencies += "org.tpolecat" %% "tut-core" % "0.3.1",
       tutSourceDirectory := sourceDirectory.value / "main" / "tut",
       watchSources <++= tutSourceDirectory map { path => (path ** "*.md").get },
       tut := {
