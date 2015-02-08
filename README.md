@@ -46,16 +46,20 @@ Note that if you want a code block that is not interpreted at all, just use a no
 
 Add the following to `project/plugins.sbt` in your project to add SBT shell commands:
 
-    resolvers += Resolver.url(
-      "tpolecat-sbt-plugin-releases",
-        url("http://dl.bintray.com/content/tpolecat/sbt-plugin-releases"))(
-            Resolver.ivyStylePatterns)
+```scala
+resolvers += Resolver.url(
+  "tpolecat-sbt-plugin-releases",
+    url("http://dl.bintray.com/content/tpolecat/sbt-plugin-releases"))(
+        Resolver.ivyStylePatterns)
 
-    addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.3.0")
+addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.3.0")
+```
 
 And add the following to `build.sbt` for the tut runtime, which must run alongside your code:
 
-    tutSettings
+```scala
+tutSettings
+```
 
 This will add the following to your SBT world:
 
