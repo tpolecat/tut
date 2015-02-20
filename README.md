@@ -52,7 +52,7 @@ resolvers += Resolver.url(
     url("http://dl.bintray.com/content/tpolecat/sbt-plugin-releases"))(
         Resolver.ivyStylePatterns)
 
-addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.3.0")
+addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.3.1")
 ```
 
 And add the following to `build.sbt` for the tut runtime, which must run alongside your code:
