@@ -8,4 +8,4 @@ jdk:
 
 script: 
   - sbt ++$TRAVIS_SCALA_VERSION core/compile
-  - sbt plugin/compile
+  - sbt core/compile plugin/compile tests/scripted
