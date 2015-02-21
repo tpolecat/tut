@@ -76,7 +76,7 @@ object TutMain extends Zed {
       _  <- IO(out.mkdirs)
       fa <- IO(Option(in.listFiles).fold(List.empty[File])(_.toList))
       fb <- stale(fa, out)
-      ss <- fb.traverse(in => go(in, new File(out, in.getName)))
+      ss <- fb.traverse(in => go(in, new File(out, in.getName), args.drop(2)))
     } yield {
       if (ss.exists(_.err)) throw new Exception("Tut execution failed.")
       else ()
@@ -91,10 +91,10 @@ object TutMain extends Zed {
 
   val Encoding = "UTF-8"
 
-  def go(in: File, out: File): IO[TState] =
-    putStrLn("[tut] compiling: " + in.getPath) >> file(in, out)
+  def go(in: File, out: File, opts: List[String]): IO[TState] =
+    putStrLn("[tut] compiling: " + in.getPath) >> file(in, out, opts)
 
-  def file(in: File, out: File): IO[TState] =
+  def file(in: File, out: File, opts: List[String]): IO[TState] =
     IO(new FileOutputStream(out)).using           { f =>
     IO(new AnsiFilterStream(f)).using             { a =>
     IO(new Spigot(a)).using                       { o =>
@@ -104,13 +104,13 @@ object TutMain extends Zed {
       for {
         oo <- IO(Console.out)
         _  <- IO(Console.setOut(s))
-        i  <- newInterpreter(p)
+        i  <- newInterpreter(p, opts)
         ts <- tut(in).exec(TState(false, Set(), false, i, p, o, "", false, in)).ensuring(IO(Console.setOut(oo)))
       } yield ts
     }}}}}}
 
-  def newInterpreter(pw: PrintWriter): IO[IMain] =
-    IO(new IMain(new Settings <| (_.embeddedDefaults[TutMain.type]), pw))
+  def newInterpreter(pw: PrintWriter, opts: List[String]): IO[IMain] =
+    IO(new IMain(new Settings <| (_.embeddedDefaults[TutMain.type]) <| (_.processArguments(opts, true)), pw))
 
   def lines(f: File): IO[List[String]] =
     IO(Source.fromFile(f, Encoding).getLines.toList)

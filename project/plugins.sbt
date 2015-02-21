@@ -5,4 +5,6 @@ resolvers += Resolver.url(
 
 addSbtPlugin("me.lessis" % "bintray-sbt" % "0.1.1")
 
-libraryDependencies += ("org.scala-sbt" % "scripted-plugin" % sbtVersion.value)
+resolvers ++= Seq(Resolver.typesafeRepo("releases"), Resolver.typesafeIvyRepo("releases"))
+
+libraryDependencies += "org.scala-sbt" % "scripted-plugin" % sbtVersion.value

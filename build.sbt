@@ -14,3 +14,9 @@ bintrayPublishSettings
 
 licenses in ThisBuild += ("MIT", url("http://opensource.org/licenses/MIT"))
 
+lazy val tutPublishLocal = TaskKey[Unit]("tutPublishLocal", "publish core, plugin locally")
+
+tutPublishLocal := {
+  (publishLocal in core).value
+  (publishLocal in plugin).value
+}

@@ -10,7 +10,10 @@ scriptedLaunchOpts ++= Seq(
   "-XX:+TieredCompilation",
   "-XX:+CMSClassUnloadingEnabled",
   "-XX:+UseConcMarkSweepGC",
-  "-Dproject.version=" + version.value
+  "-Dproject.version=" + version.value,
+  "-Dscala.version=" + scalaVersion.value
 )
 
+publishLocal := () // do tutPublishLocal at the top
 
+scalaVersion := "2.11.4"
