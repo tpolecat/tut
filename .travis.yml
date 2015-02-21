@@ -6,4 +6,4 @@ jdk:
 script: 
   - sbt plugin/compile plugin/publishLocal
   - sbt ++2.10.4 core/compile core/publishLocal
-  - sbt ++2.11.4 core/compile core/publishLocal scripted
+  - sbt ++2.11.4 core/compile core/publishLocal
