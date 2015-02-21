@@ -76,10 +76,8 @@ tutSettings
 
 This will add the following to your SBT world:
 
-- `tut` is a task that interprets **all files** in `tutSourceDirectory` and writes output to `target/<scala-version>/tut`. If the code fails to compile or otherwise barfs, you will get a message that directs you to the file and line where the failure happened, along with the REPL error, and the build will fail ... **except** for failures that are in a `tut:nofail` block, which are still reported in output but are ignored for the purposes of build success.
-- `tutSourceDirectory` is where tut looks for input files. It is a file setting defaulting to `src/main/tut`.
-- `tutScalacOptions` is a list of scalac options to pass to REPL sessions; by default this value is taken from `scalacOptions in (Compile, doc)`.
-- `tutPluginJars` is a list of plugin jarfiles to add to REPL sessions; by default this list is derived from plugins found in `libraryDependencies in (Compile, doc)`. 
+- `tut` is a task that interprets **all files** in `tutSourceDirectory` (`src/main/tut` by default) and writes output to `target/<scala-version>/tut`. If the code fails to compile or otherwise barfs, you will get a message that directs you to the file and line where the failure happened, along with the REPL error, and the build will fail ... **except** for failures that are in a `tut:nofail` block, which are still reported in output but are ignored for the purposes of build success.
+- `tutScalacOptions` is a list of scalac options to pass to REPL sessions; by default this value is taken from `scalacOptions in (Compile, doc)`. `tutPluginJars` is a list of plugin jarfiles to add to REPL sessions; by default this list is derived from plugins found in `libraryDependencies in (Compile, doc)`. It is unlikely that you will need to change either of these; typically you want **tut** to use the same settings you use in your library code.
 
 ### Integration with sbt-site
 
