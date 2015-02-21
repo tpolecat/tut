@@ -1,11 +1,9 @@
 language: scala
-scala:
-  - 2.11.4
-  - 2.10.4
 jdk:
   - oraclejdk7
   - openjdk6
 
 script: 
-  - sbt ++$TRAVIS_SCALA_VERSION core/compile
-  - sbt core/compile plugin/compile
+  - sbt plugin/compile plugin/publishLocal
+  - sbt ++2.10.4 core/compile core/publishLocal
+  - sbt ++2.11.4 core/compile core/publishLocal scripted
