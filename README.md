@@ -1,5 +1,7 @@
 # tut 
 
+[![Join the chat at https://gitter.im/tpolecat/tut](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tpolecat/tut?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 <img alt="How'd you get so funky?" align=right src="tut.jpg"/>
 
 **tut** is a very simple documentation tool for Scala programs that reads Markdown files and interprets code in `tut` sheds. So you add **tut** as an [sbt](http://scala-sbt.org) plugin and then you can write tutorials that are typechecked and run as part of your build. The idea is to have tutorial code that is never out of sync with the code it's documenting.
