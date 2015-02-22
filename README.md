@@ -1,5 +1,6 @@
 # tut 
 
+<img src="https://api.travis-ci.org/tpolecat/tut.svg?branch=master"/><br>
 [![Join the chat at https://gitter.im/tpolecat/tut](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tpolecat/tut?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 <img alt="How'd you get so funky?" align=right src="tut.jpg"/>
