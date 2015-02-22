@@ -11,7 +11,7 @@ The current version is **0.3.2**, which runs on **Scala 2.10** and **2.11**.
 
 ##### Recent Notable Changes
 
-- Version **0.3.2** adds support for compiler plugins and `scalacOptions` defined in `(Compile, doc)`; these are propagated to  **tut** REPL sessions. This has been tested with  [kind-projector](https://github.com/non/kind-projector) and works fine.
+- Version **0.3.2** adds support for compiler plugins and `scalacOptions` defined in `(Compile, doc)`; these are propagated to  **tut** REPL sessions. This has been tested with  [kind-projector](https://github.com/non/kind-projector) and works fine. Also new is the `invisible` modifier for interpreting a block but producing no output at all.
 - Version **0.3.1** improves error reporting, removes confusing caching behavior, and removes the dependency on scalaz.
 - version **0.3.0** was a **breaking change** with previous versions! **tut** now looks for `tut` sheds rather than `scala` sheds, so existing documentation will need to be modified when you upgrade.
 
@@ -44,7 +44,7 @@ The code runs from top to bottom (imports and definitions from earlier code bloc
 You can follow `tut` with any number of colon-prefixed modifiers to alter the way a block is interpreted.
 
 - Normally an error in interpretation causes the buid to fail, but if you want to include an example that fails to compile you can add the `nofail` modifier.
-- If you don't want REPL prompts or responses you can use the `silent` modifier. Code is still interpreted and errors will cause the build to fail, but no REPL output will appear.
+- If you don't want REPL prompts or responses you can use the `silent` modifier. Code is still interpreted and errors will cause the build to fail, but no REPL output will appear. If you want no output at all (i.e., even your code is hidden) use `invisible`.
 - If you don't want Scala syntax highlighting, use the `plain` modifier.
 
 For example
