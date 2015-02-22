@@ -21,17 +21,19 @@ object TutMain extends Zed {
   ////// TYPES FOR OUR WEE INTERPRETER
 
   sealed trait Modifier
-  case object NoFail extends Modifier
-  case object Silent extends Modifier
-  case object Plain  extends Modifier
+  case object NoFail    extends Modifier
+  case object Silent    extends Modifier
+  case object Plain     extends Modifier
+  case object Invisible extends Modifier
 
   object Modifier {
     def fromString(s: String): Option[Modifier] =
       Some(s) collect {
-        case "nofail" => NoFail
-        case "silent" => Silent
-        case "plain"  => Plain
-      }      
+        case "nofail"    => NoFail
+        case "silent"    => Silent
+        case "plain"     => Plain
+        case "invisible" => Invisible
+      }
 
     def unsafeFromString(s: String): Modifier =
       fromString(s).getOrElse(throw new RuntimeException("No such modifier: " + s))
@@ -127,9 +129,13 @@ object TutMain extends Zed {
     (text.trim.startsWith(find)).whenM(mod(s => s.copy(isCode = code, needsNL = false, mods = mods)))
 
   def fixShed(text: String, mods: Set[Modifier]): String = 
-    if (text.startsWith("```tut")) {
+    if (mods(Invisible)) {
+      ""
+    } else if (text.startsWith("```tut")) {
       if (mods(Plain)) "```" else "```scala" 
-    } else text
+    } else {
+      text
+    }
 
   def modifiers(text: String): Set[Modifier] =
     if (text.startsWith("```tut:")) 
@@ -139,15 +145,20 @@ object TutMain extends Zed {
 
   def line(text: String, n: Int): Tut[Unit] =
     for {
+      s <- state
+      inv = s.mods.filter(_ == Invisible)
       _ <- checkBoundary(text, "```", false, Set())
       s <- state
       mods = modifiers(text)
-      _ <- s.isCode.fold(interp(text, n), out(fixShed(text, mods)))
+      _ <- s.isCode.fold(interp(text, n), out(fixShed(text, mods ++ inv)))
       _ <- checkBoundary(text, "```tut", true, mods)
     } yield ()
 
   def out(text: String): Tut[Unit] =
-    state >>= (s => IO { s.pw.println(text); s.pw.flush() }.liftIO[Tut])
+    for {
+      s <- state
+      _ <- s.mods(Invisible).unlessM(IO { s.pw.println(text); s.pw.flush() }.liftIO[Tut])
+    } yield ()
 
   def success: Tut[Unit] =
     mod(s => s.copy(needsNL = true, partial = ""))
@@ -173,8 +184,8 @@ object TutMain extends Zed {
       for {
         s <- state
         _ <- s.needsNL.whenM(out(""))
-        _ <- out(prompt(s) + text)
-        _ <- s.spigot.setActive(!s.mods(Silent)).liftIO[Tut]
+        _ <- (s.mods(Invisible)).unlessM(out(prompt(s) + text))
+        _ <- s.spigot.setActive(!(s.mods(Silent) || (s.mods(Invisible)))).liftIO[Tut]
         r <- IO(s.imain.interpret(s.partial + "\n" + text)).liftIO[Tut] >>= {
           case Results.Success    => success
           case Results.Incomplete => incomplete(text)

@@ -39,3 +39,11 @@ Should get an error
 ```tut:nofail
 new Functor[Either[String, ?]]
 ```
+
+Should be hidden
+
+```tut:invisible
+println("hi")
+```
+
+The end
