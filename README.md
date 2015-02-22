@@ -6,7 +6,7 @@
 
 **tut** is a very simple documentation tool for Scala programs that reads Markdown files and interprets code in `tut` sheds. So you add **tut** as an [sbt](http://scala-sbt.org) plugin and then you can write tutorials that are typechecked and run as part of your build. The idea is to have tutorial code that is never out of sync with the code it's documenting.
 
-The current version is **0.3.2**, which runs on **Scala 2.10** and **2.11**. As of this version there is no longer a dependency on scalaz (or anything else).
+The current version is **0.3.2**, which runs on **Scala 2.10** and **2.11**.
 
 ##### Recent Notable Changes
 
@@ -100,7 +100,7 @@ When the `buildSite` task is run in sbt, the typechecked tutorials from `src/mai
 ### Particulars
 
 - Each tutorial is an independent REPL session, and the code examples run from top to bottom.
-- Code in `tut` sheds will be interpreted. Anything in your dependencies will be available. Interpreted code runs with the same classpath as `(Compile, doc)` with the addition of tut and its dependencies (scalaz 7.1 for now).
+- Code in `tut` sheds will be interpreted. Anything in your dependencies will be available. Interpreted code runs with the same classpath as `(Compile, doc)` with the addition of the **tut** runtime.
 - Blank lines in sheds are ignored. Multi-line definitions work, but `:paste` style definitions (for mutual recursion for example) don't work [yet].
 - ANSI escapes in REPL output are filtered out.
 
