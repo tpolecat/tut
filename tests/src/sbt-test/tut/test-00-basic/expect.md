@@ -52,3 +52,10 @@ scala> new Functor[Either[String, ?]]
               new Functor[Either[String, ?]]
                           ^
 ```
+
+Should be hidden
+
+
+
+
+The end
