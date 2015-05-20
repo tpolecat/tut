@@ -109,6 +109,6 @@ When the `buildSite` task is run in sbt, the typechecked tutorials from `src/mai
 
 Feedback of any kind is always appreciated. 
 
-Issues and PR's are welcome, or just find me on Twitter or `#scala` on FreeNode or on [gitter](https://gitter.im/tpolecat/tut]).
+Issues and PR's are welcome, or just find me on Twitter or `#scala` on FreeNode or on [gitter](https://gitter.im/tpolecat/tut).
 
 
