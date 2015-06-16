@@ -20,3 +20,5 @@ tutPublishLocal := {
   (publishLocal in core).value
   (publishLocal in plugin).value
 }
+
+sbtPlugin := true // eh?
