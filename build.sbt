@@ -21,4 +21,4 @@ tutPublishLocal := {
   (publishLocal in plugin).value
 }
 
-sbtPlugin := true // eh?
+resolvers in ThisBuild += Resolver.typesafeIvyRepo("releases")
