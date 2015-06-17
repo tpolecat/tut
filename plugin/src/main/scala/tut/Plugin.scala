@@ -4,6 +4,9 @@ import sbt._
 import sbt.Keys._
 import sbt.Defaults.runnerInit
 import sbt.Attributed.data
+import sbt.complete.Parser
+import sbt.complete.DefaultParsers._
+import sbt.Project.Initialize
 
 object Plugin extends sbt.Plugin {
   
@@ -11,6 +14,16 @@ object Plugin extends sbt.Plugin {
   lazy val tutSourceDirectory = SettingKey[File]("tutSourceDirectory", "where to look for tut sources")
   lazy val tutScalacOptions   = TaskKey[Seq[String]]("tutScalacOptions", "scalac options")
   lazy val tutPluginJars      = TaskKey[Seq[File]]("tutPluginJars", "Plugin jars to be used by tut REPL.")
+  lazy val tutOnly            = inputKey[Unit]("Run tut on a single file.")
+
+  val parser: Initialize[Parser[File]] =
+    Def.setting {
+      val dir     = tutSourceDirectory.value
+      val files   = safeListFiles(dir)
+      val parsers = files.map(f => literal(f.getName).map(_ => f))
+      val folded  = parsers.foldRight[Parser[File]](failure("<no input files>"))(_ | _)
+      Space ~> token(folded)
+    }
 
   def safeListFiles(dir: File): List[File] =
     Option(dir.listFiles).fold(List.empty[File])(_.toList)
@@ -48,6 +61,19 @@ object Plugin extends sbt.Plugin {
         // fake it here. Returning all files potentially touched.
         val read = safeListFiles(in).map(_.getName).toSet
         safeListFiles(out).filter(f => read(f.getName)).map(f => f -> f.getName)
+      },
+      tutOnly := {
+        val r     = (runner in Test).value
+        val in    = parser.parsed
+        val out   = crossTarget.value / "tut"
+        val cp    = (fullClasspath in Test).value
+        val opts  = tutScalacOptions.value
+        val pOpts = tutPluginJars.value.map(f => "–Xplugin:" + f.getAbsolutePath)
+        toError(r.run("tut.TutMain", 
+                      data(cp), 
+                      Seq(in.getAbsolutePath, out.getAbsolutePath) ++ opts ++ pOpts, 
+                      streams.value.log))
+        ()
       }
     )
 
