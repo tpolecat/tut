@@ -76,7 +76,10 @@ object TutMain extends Zed {
     val (in, out) = (args(0), args(1)).umap(new File(_))
     for {
       _  <- IO(out.mkdirs)
-      fa <- IO(Option(in.listFiles).fold(List.empty[File])(_.toList))
+      fa <- IO { 
+        if (in.isFile) List(in)
+        else Option(in.listFiles).fold(List.empty[File])(_.toList) 
+      }
       fb <- stale(fa, out)
       ss <- fb.traverse(in => go(in, new File(out, in.getName), args.drop(2)))
     } yield {
