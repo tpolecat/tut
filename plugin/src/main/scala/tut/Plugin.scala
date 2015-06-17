@@ -18,13 +18,13 @@ object Plugin extends sbt.Plugin {
   lazy val tutSettings =
     Seq(
       resolvers += "tpolecat" at "http://dl.bintray.com/tpolecat/maven",
-      libraryDependencies += "org.tpolecat" %% "tut-core" % "0.4.0-SNAPSHOT",
+      libraryDependencies += "org.tpolecat" %% "tut-core" % "0.4.0-SNAPSHOT" % "test",
       tutSourceDirectory := sourceDirectory.value / "main" / "tut",
       watchSources <++= tutSourceDirectory map { path => (path ** "*.md").get },
-      tutScalacOptions := (scalacOptions in (Compile, doc)).value,
+      tutScalacOptions := (scalacOptions in Test).value,
       tutPluginJars := {
         // no idea if this is the right way to do this
-        val deps = (libraryDependencies in (Compile, doc)).value.filter(_.configurations.fold(false)(_.startsWith("plugin->")))
+        val deps = (libraryDependencies in Test).value.filter(_.configurations.fold(false)(_.startsWith("plugin->")))
         update.value.configuration("plugin").map(_.modules).getOrElse(Nil).filter { m =>
           deps.exists { d => 
             d.organization == m.module.organization &&
@@ -34,10 +34,10 @@ object Plugin extends sbt.Plugin {
         }.flatMap(_.artifacts.map(_._2))
       },
       tut := {
-        val r     = (runner in (Compile, doc)).value
+        val r     = (runner in Test).value
         val in    = tutSourceDirectory.value
         val out   = crossTarget.value / "tut"
-        val cp    = (fullClasspath in (Compile, doc)).value
+        val cp    = (fullClasspath in Test).value
         val opts  = tutScalacOptions.value
         val pOpts = tutPluginJars.value.map(f => "–Xplugin:" + f.getAbsolutePath)
         toError(r.run("tut.TutMain", 
