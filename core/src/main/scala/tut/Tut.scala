@@ -22,6 +22,7 @@ object TutMain extends Zed {
 
   sealed trait Modifier
   case object NoFail    extends Modifier
+  case object Fail      extends Modifier
   case object Silent    extends Modifier
   case object Plain     extends Modifier
   case object Invisible extends Modifier
@@ -30,6 +31,7 @@ object TutMain extends Zed {
     def fromString(s: String): Option[Modifier] =
       Some(s) collect {
         case "nofail"    => NoFail
+        case "fail"      => Fail
         case "silent"    => Silent
         case "plain"     => Plain
         case "invisible" => Invisible
@@ -169,11 +171,11 @@ object TutMain extends Zed {
   def incomplete(s: String): Tut[Unit] =
     mod(a => a.copy(partial = a.partial + "\n" + s, needsNL = false))
 
-  def error(n: Int): Tut[Unit] =
+  def error(n: Int, msg: Option[String] = None): Tut[Unit] =
     for {
       s <- state
       _ <- mod(_.copy(err = true))
-      _ <- IO(Console.err.println(f"[tut] *** Error reported at ${s.in.getName}%s:$n%d")).liftIO[Tut]
+      _ <- IO(Console.err.println(f"[tut] *** Error reported at ${s.in.getName}%s:$n%d${msg.fold("")(": " + _)}%s")).liftIO[Tut]
       _ <- IO(Console.err.write(s.spigot.bytes)).liftIO[Tut]
     } yield ()
 
@@ -190,9 +192,9 @@ object TutMain extends Zed {
         _ <- (s.mods(Invisible)).unlessM(out(prompt(s) + text))
         _ <- s.spigot.setActive(!(s.mods(Silent) || (s.mods(Invisible)))).liftIO[Tut]
         r <- IO(s.imain.interpret(s.partial + "\n" + text)).liftIO[Tut] >>= {
-          case Results.Success    => success
           case Results.Incomplete => incomplete(text)
-          case Results.Error      => if (s.mods(NoFail)) success else error(lineNum)
+          case Results.Success    => if (s.mods(Fail)) error(lineNum, Some("failure was asserted but no failure occurred")) else success
+          case Results.Error      => if (s.mods(NoFail) || s.mods(Fail)) success else error(lineNum)
         }
         _ <- s.spigot.setActive(true).liftIO[Tut]
         _ <- IO(s.pw.flush).liftIO[Tut]
