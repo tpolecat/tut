@@ -76,23 +76,19 @@ object TutMain extends Zed {
 
   def runl(args: List[String]): IO[Unit] = {
     val (in, out) = (args(0), args(1)).umap(new File(_))
+    val opts = args.drop(2)
     for {
       _  <- IO(out.mkdirs)
       fa <- IO { 
         if (in.isFile) List(in)
         else Option(in.listFiles).fold(List.empty[File])(_.toList) 
       }
-      fb <- stale(fa, out)
-      ss <- fb.traverse(in => go(in, new File(out, in.getName), args.drop(2)))
+      ss <- fa.traverse(f => go(f, new File(out, f.getName), opts))
     } yield {
       if (ss.exists(_.err)) throw new Exception("Tut execution failed.")
       else ()
     }
   }
-
-  def stale(fs: List[File], outDir: File): IO[List[File]] =
-    IO(fs)
-    // IO(fs.filter(f => (new File(outDir, f.getName)).lastModified < f.lastModified))
 
   ////// IO ACTIONS
 
