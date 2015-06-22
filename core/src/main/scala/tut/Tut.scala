@@ -78,12 +78,8 @@ object TutMain extends Zed {
     val (in, out) = (args(0), args(1)).umap(new File(_))
     val opts = args.drop(2)
     for {
-      _  <- IO(out.mkdirs)
-      fa <- IO { 
-        if (in.isFile) List(in)
-        else Option(in.listFiles).fold(List.empty[File])(_.toList) 
-      }
-      ss <- fa.traverse(f => go(f, new File(out, f.getName), opts))
+      fa <- if (in.isFile) IO(List(in)) else ls(in)
+      ss <- fa.traverse(f => walk(f, out, opts)).map(_.flatten)
     } yield {
       if (ss.exists(_.err)) throw new Exception("Tut execution failed.")
       else ()
@@ -93,6 +89,15 @@ object TutMain extends Zed {
   ////// IO ACTIONS
 
   val Encoding = "UTF-8"
+
+  def ls(dir: File): IO[List[File]] =
+    IO(Option(dir.listFiles).fold(List.empty[File])(_.toList))
+
+  def walk(in: File, dir: File, opts: List[String]): IO[List[TState]] =
+    IO(dir.mkdirs) >> {
+      if (in.isFile) go(in, new File(dir, in.getName), opts).map(List(_))
+      else ls(in) >>= (_.traverse(f => walk(f, new File(dir, in.getName), opts)).map(_.flatten))
+    }
 
   def go(in: File, out: File, opts: List[String]): IO[TState] =
     putStrLn("[tut] compiling: " + in.getPath) >> file(in, out, opts)
