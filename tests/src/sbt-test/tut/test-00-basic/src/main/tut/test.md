@@ -46,4 +46,34 @@ Should be hidden
 println("hi")
 ```
 
+Expr-interior newlines preserved in normal mode.
+
+```tut
+val a = 1
+val b = 2
+val c = 3
+
+def foo(n: Int): String = {
+  
+  // interior space
+  "bar"
+
+}
+```
+
+All newlines preserved in silent mode.
+
+```tut:silent
+val a = 1
+val b = 2
+val c = 3
+
+def foo(n: Int): String = {
+  
+  // interior space
+  "bar"
+
+}
+```
+
 The end
