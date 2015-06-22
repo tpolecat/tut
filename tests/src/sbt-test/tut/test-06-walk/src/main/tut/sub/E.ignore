@@ -1,0 +1,12 @@
+
+This file should be copied but not interpreted because its name doesn't match the
+default filter.
+
+```tut
+1 + 1
+```
+
+```tut
+this will blow up if it's interpreted
+```
+
