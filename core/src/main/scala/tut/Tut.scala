@@ -4,10 +4,12 @@ import scala.io.Source
 import scala.tools.nsc.Settings
 import scala.tools.nsc.interpreter.IMain
 import scala.tools.nsc.interpreter.Results
+import scala.util.matching.Regex
 
 import java.io.ByteArrayOutputStream
 import java.io.Closeable
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.FilterOutputStream
 import java.io.OutputStreamWriter
@@ -76,27 +78,47 @@ object TutMain extends Zed {
 
   def runl(args: List[String]): IO[Unit] = {
     val (in, out) = (args(0), args(1)).umap(new File(_))
+    val filter = args(2).r
+    val opts   = args.drop(3)
     for {
-      _  <- IO(out.mkdirs)
-      fa <- IO { 
-        if (in.isFile) List(in)
-        else Option(in.listFiles).fold(List.empty[File])(_.toList) 
-      }
-      fb <- stale(fa, out)
-      ss <- fb.traverse(in => go(in, new File(out, in.getName), args.drop(2)))
+      fa <- if (in.isFile) IO(List(in)) else ls(in)
+      ss <- fa.traverse(f => walk(f, out, filter, opts)).map(_.flatten)
     } yield {
       if (ss.exists(_.err)) throw new Exception("Tut execution failed.")
       else ()
     }
   }
 
-  def stale(fs: List[File], outDir: File): IO[List[File]] =
-    IO(fs)
-    // IO(fs.filter(f => (new File(outDir, f.getName)).lastModified < f.lastModified))
-
   ////// IO ACTIONS
 
   val Encoding = "UTF-8"
+
+  def ls(dir: File): IO[List[File]] =
+    IO(Option(dir.listFiles).fold(List.empty[File])(_.toList))
+
+  def walk(in: File, dir: File, filter: Regex, opts: List[String]): IO[List[TState]] =
+    IO(dir.mkdirs) >> {
+      if (in.isFile) {
+        val out = new File(dir, in.getName)
+        if (filter.pattern.matcher(in.getName).matches)
+          go(in, out, opts).map(List(_))
+        else
+          copyFile(in, out).as(Nil)
+      } else {
+        ls(in) >>= (_.traverse(f => walk(f, new File(dir, in.getName), filter, opts)).map(_.flatten))
+      }
+    }
+
+  def copyFile(src: File, dst: File): IO[Unit] =
+    IO(new FileInputStream(src)).using  { in =>
+    IO(new FileOutputStream(dst)).using { out =>
+      IO {
+        val buf = new Array[Byte](1024 * 16)
+        var count = 0
+        while ({ count = in.read(buf); count >= 0 }) 
+          out.write(buf, 0, count)
+      }
+    }}
 
   def go(in: File, out: File, opts: List[String]): IO[TState] =
     putStrLn("[tut] compiling: " + in.getPath) >> file(in, out, opts)
