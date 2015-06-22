@@ -15,6 +15,7 @@ object Plugin extends sbt.Plugin {
   lazy val tutScalacOptions   = TaskKey[Seq[String]]("tutScalacOptions", "scalac options")
   lazy val tutPluginJars      = TaskKey[Seq[File]]("tutPluginJars", "Plugin jars to be used by tut REPL.")
   lazy val tutOnly            = inputKey[Unit]("Run tut on a single file.")
+  lazy val tutTargetDirectory = SettingKey[File]("tutTargetDirectory", "Where tut output goes")
 
   val parser: Initialize[Parser[File]] =
     Def.setting {
@@ -33,6 +34,7 @@ object Plugin extends sbt.Plugin {
       resolvers += "tpolecat" at "http://dl.bintray.com/tpolecat/maven",
       libraryDependencies += "org.tpolecat" %% "tut-core" % "0.4.0-SNAPSHOT" % "test",
       tutSourceDirectory := sourceDirectory.value / "main" / "tut",
+      tutTargetDirectory := crossTarget.value / "tut",
       watchSources <++= tutSourceDirectory map { path => (path ** "*.md").get },
       tutScalacOptions := (scalacOptions in Test).value,
       tutPluginJars := {
@@ -49,7 +51,7 @@ object Plugin extends sbt.Plugin {
       tut := {
         val r     = (runner in Test).value
         val in    = tutSourceDirectory.value
-        val out   = crossTarget.value / "tut"
+        val out   = tutTargetDirectory.value
         val cp    = (fullClasspath in Test).value
         val opts  = tutScalacOptions.value
         val pOpts = tutPluginJars.value.map(f => "–Xplugin:" + f.getAbsolutePath)
@@ -65,7 +67,7 @@ object Plugin extends sbt.Plugin {
       tutOnly := {
         val r     = (runner in Test).value
         val in    = parser.parsed
-        val out   = crossTarget.value / "tut"
+        val out   = tutTargetDirectory.value
         val cp    = (fullClasspath in Test).value
         val opts  = tutScalacOptions.value
         val pOpts = tutPluginJars.value.map(f => "–Xplugin:" + f.getAbsolutePath)
