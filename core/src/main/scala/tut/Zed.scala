@@ -14,6 +14,7 @@ trait Zed {
     def >>=[B](f: A => M[B]): M[B] = M.flatMap(ma)(f)
     def >>[B](mb: M[B]): M[B] = M.flatMap(ma)(_ => mb)
     def void: M[Unit] = ma.map(_ => ())
+    def as[A](a: A) = ma.map(_ => a)
   }
 
   implicit class IdOps[A](a: A) {

@@ -1,5 +1,7 @@
 package tut
 
+import scala.util.matching.Regex
+
 import sbt._
 import sbt.Keys._
 import sbt.Defaults.runnerInit
@@ -16,6 +18,7 @@ object Plugin extends sbt.Plugin {
   lazy val tutPluginJars      = TaskKey[Seq[File]]("tutPluginJars", "Plugin jars to be used by tut REPL.")
   lazy val tutOnly            = inputKey[Unit]("Run tut on a single file.")
   lazy val tutTargetDirectory = SettingKey[File]("tutTargetDirectory", "Where tut output goes")
+  lazy val tutNameFilter      = SettingKey[Regex]("tutNameFilter", "tut skips files whose names don't match")
 
   val parser: Initialize[Parser[File]] =
     Def.setting {
@@ -37,6 +40,7 @@ object Plugin extends sbt.Plugin {
       tutTargetDirectory := crossTarget.value / "tut",
       watchSources <++= tutSourceDirectory map { path => (path ** "*.md").get },
       tutScalacOptions := (scalacOptions in Test).value,
+      tutNameFilter := """.*\.(md|txt|htm|html)""".r,
       tutPluginJars := {
         // no idea if this is the right way to do this
         val deps = (libraryDependencies in Test).value.filter(_.configurations.fold(false)(_.startsWith("plugin->")))
@@ -55,9 +59,10 @@ object Plugin extends sbt.Plugin {
         val cp    = (fullClasspath in Test).value
         val opts  = tutScalacOptions.value
         val pOpts = tutPluginJars.value.map(f => "–Xplugin:" + f.getAbsolutePath)
+        val re    = tutNameFilter.value.pattern.toString
         toError(r.run("tut.TutMain", 
                       data(cp), 
-                      Seq(in.getAbsolutePath, out.getAbsolutePath) ++ opts ++ pOpts, 
+                      Seq(in.getAbsolutePath, out.getAbsolutePath, re) ++ opts ++ pOpts, 
                       streams.value.log))
         // We can't return a value from the runner, but we know what TutMain is looking at so we'll
         // fake it here. Returning all files potentially touched.
@@ -71,9 +76,10 @@ object Plugin extends sbt.Plugin {
         val cp    = (fullClasspath in Test).value
         val opts  = tutScalacOptions.value
         val pOpts = tutPluginJars.value.map(f => "–Xplugin:" + f.getAbsolutePath)
+        val re    = tutNameFilter.value.pattern.toString
         toError(r.run("tut.TutMain", 
                       data(cp), 
-                      Seq(in.getAbsolutePath, out.getAbsolutePath) ++ opts ++ pOpts, 
+                      Seq(in.getAbsolutePath, out.getAbsolutePath, re) ++ opts ++ pOpts, 
                       streams.value.log))
         ()
       }
