@@ -188,7 +188,11 @@ object TutMain extends Zed {
     } yield ()
 
   def success: Tut[Unit] =
-    mod(s => s.copy(needsNL = !s.mods(Silent), partial = ""))
+    for {
+      s <- state
+      _ <- new String(s.spigot.bytes, Encoding).endsWith("...").whenM(out("")) // #29
+      _ <- mod(s => s.copy(needsNL = !s.mods(Silent), partial = ""))
+    } yield ()
 
   def incomplete(s: String): Tut[Unit] =
     mod(a => a.copy(partial = a.partial + "\n" + s, needsNL = false))

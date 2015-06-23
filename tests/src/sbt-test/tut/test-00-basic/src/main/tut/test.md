@@ -76,4 +76,10 @@ def foo(n: Int): String = {
 }
 ```
 
+This result is so long that the REPL truncates it to a bunch of `a`s with a `...` at the end.
+
+```tut
+val thing = "a" * 1000
+```
+
 The end
