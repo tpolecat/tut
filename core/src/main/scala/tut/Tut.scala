@@ -188,7 +188,7 @@ object TutMain extends Zed {
     } yield ()
 
   def success: Tut[Unit] =
-    mod(s => s.copy(needsNL = true, partial = ""))
+    mod(s => s.copy(needsNL = !s.mods(Silent), partial = ""))
 
   def incomplete(s: String): Tut[Unit] =
     mod(a => a.copy(partial = a.partial + "\n" + s, needsNL = false))
@@ -202,27 +202,27 @@ object TutMain extends Zed {
     } yield ()
 
   def prompt(s: TState): String =
-         if (s.mods(Silent))  ""
+         if (s.mods(Silent))    ""
     else if (s.partial.isEmpty) "scala> "
     else                        "     | "
 
   def interp(text: String, lineNum: Int): Tut[Unit] =
-    text.trim.isEmpty.unlessM[Tut,Unit] {
-      for {
-        s <- state
-        _ <- s.needsNL.whenM(out(""))
-        _ <- (s.mods(Invisible)).unlessM(out(prompt(s) + text))
-        _ <- s.spigot.setActive(!(s.mods(Silent) || (s.mods(Invisible)))).liftIO[Tut]
-        r <- IO(s.imain.interpret(s.partial + "\n" + text)).liftIO[Tut] >>= {
-          case Results.Incomplete => incomplete(text)
-          case Results.Success    => if (s.mods(Fail)) error(lineNum, Some("failure was asserted but no failure occurred")) else success
-          case Results.Error      => if (s.mods(NoFail) || s.mods(Fail)) success else error(lineNum)
-        }
-        _ <- s.spigot.setActive(true).liftIO[Tut]
-        _ <- IO(s.pw.flush).liftIO[Tut]
-      } yield ()
+    state >>= { s => 
+      (text.trim.nonEmpty || s.partial.nonEmpty || s.mods(Silent)).whenM[Tut,Unit] {
+        for {
+          _ <- s.needsNL.whenM(out(""))
+          _ <- (s.mods(Invisible)).unlessM(out(prompt(s) + text))
+          _ <- s.spigot.setActive(!(s.mods(Silent) || (s.mods(Invisible)))).liftIO[Tut]
+          r <- IO(s.imain.interpret(s.partial + "\n" + text)).liftIO[Tut] >>= {
+            case Results.Incomplete => incomplete(text)
+            case Results.Success    => if (s.mods(Fail)) error(lineNum, Some("failure was asserted but no failure occurred")) else success
+            case Results.Error      => if (s.mods(NoFail) || s.mods(Fail)) success else error(lineNum)
+          }
+          _ <- s.spigot.setActive(true).liftIO[Tut]
+          _ <- IO(s.pw.flush).liftIO[Tut]
+        } yield ()
+      }
     }
-
 }
 
 

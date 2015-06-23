@@ -58,4 +58,40 @@ Should be hidden
 
 
 
+Expr-interior newlines preserved in normal mode.
+
+```scala
+scala> val a = 1
+a: Int = 1
+
+scala> val b = 2
+b: Int = 2
+
+scala> val c = 3
+c: Int = 3
+
+scala> def foo(n: Int): String = {
+     |   
+     |   // interior space
+     |   "bar"
+     | 
+     | }
+foo: (n: Int)String
+```
+
+All newlines preserved in silent mode.
+
+```scala
+val a = 1
+val b = 2
+val c = 3
+
+def foo(n: Int): String = {
+  
+  // interior space
+  "bar"
+
+}
+```
+
 The end
