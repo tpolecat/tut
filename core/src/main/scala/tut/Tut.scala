@@ -67,8 +67,6 @@ object TutMain extends Zed {
     private[this] def ifActive(f: => Unit): Unit = if (active) f
     def setActive(b: Boolean): IO[Unit] = IO { baos.reset(); active = b }
     override def write(n: Int): Unit = { baos.write(n); ifActive(super.write(n)) }
-    override def write(bs: Array[Byte]): Unit = { ifActive(super.write(bs)) }
-    override def write(bs: Array[Byte], off: Int, len: Int): Unit = { ifActive(super.write(bs, off, len)) }
   }
 
   ////// ENTRY POINT
