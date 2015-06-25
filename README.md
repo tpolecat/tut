@@ -95,7 +95,7 @@ The following modifiers are supported. Note that you can use multiples if you li
 |---------|-------------|---------------|
 | `tutSourceDirectory` | Location of **tut** source files. | `sourceDirectory.value / "main" / "tut"` |
 | `tutNameFilter`      | Regex specifying files that should be interpreted. | Names ending in `.md` `.txt` `.htm` `.html` |
-| `tutTargetDirectory` | Destination for **tut** output. | `crossTarget.value` / "tut" |
+| `tutTargetDirectory` | Destination for **tut** output. | `crossTarget.value / "tut"` |
 | `tutScalacOptions`   | Compiler options that will be passed to the **tut** REPL. | Same as `Test` configuration. |
 | `tutPluginJars`      | List of compiler plugin jarfiles to be passed to the **tut** REPL. | Same as `Test` configuration. |
 
