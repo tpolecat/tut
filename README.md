@@ -89,7 +89,7 @@ The following modifiers are supported. Note that you can use multiples if you li
 
 ### Settings
 
-**tut** also adds the following settings, all of which have reasonable defaults. It is unlikely that you will need to change any of them, but here you go.
+**tut** also adds the following sbt settings, all of which have reasonable defaults. It is unlikely that you will need to change any of them, but here you go.
 
 | Setting | Explanation | Default Value |
 |---------|-------------|---------------|
