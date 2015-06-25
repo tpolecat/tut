@@ -1,6 +1,6 @@
 organization in ThisBuild := "org.tpolecat"
 
-version in ThisBuild := "0.4.0"
+version in ThisBuild := "0.4.1-SNAPSHOT"
 
 publishArtifact := false
 
