@@ -12,6 +12,8 @@ import sbt.Project.Initialize
 
 object Plugin extends sbt.Plugin {
   
+  type Dir = File
+
   lazy val tut                = TaskKey[Seq[(File,String)]]("tut", "create tut documentation")
   lazy val tutSourceDirectory = SettingKey[File]("tutSourceDirectory", "where to look for tut sources")
   lazy val tutScalacOptions   = TaskKey[Seq[String]]("tutScalacOptions", "scalac options")
@@ -23,14 +25,17 @@ object Plugin extends sbt.Plugin {
   val parser: Initialize[Parser[File]] =
     Def.setting {
       val dir     = tutSourceDirectory.value
-      val files   = safeListFiles(dir)
-      val parsers = files.map(f => literal(f.getName).map(_ => f))
+      val files   = safeListFiles(dir).flatMap(flatten)
+      val parsers = files.map(f => literal(dir.toURI.relativize(f.toURI).getPath).map(_ => f))
       val folded  = parsers.foldRight[Parser[File]](failure("<no input files>"))(_ | _)
       Space ~> token(folded)
     }
 
   def safeListFiles(dir: File): List[File] =
     Option(dir.listFiles).fold(List.empty[File])(_.toList)
+
+  def flatten(f: File): List[File] =
+    f :: (if (f.isDirectory) f.listFiles.toList.flatMap(flatten) else Nil)
 
   lazy val tutSettings =
     Seq(
@@ -71,8 +76,12 @@ object Plugin extends sbt.Plugin {
       },
       tutOnly := {
         val r     = (runner in Test).value
-        val in    = parser.parsed
-        val out   = tutTargetDirectory.value
+        val inR   = tutSourceDirectory.value // input root
+        val in    = parser.parsed            // a point below inR
+        val inDir = if (in.isDirectory) in 
+                    else in.getParentFile    // input dir
+        val outR  = tutTargetDirectory.value // output root
+        val out   = new File(outR, inR.toURI.relativize(inDir.toURI).getPath) // output dir
         val cp    = (fullClasspath in Test).value
         val opts  = tutScalacOptions.value
         val pOpts = tutPluginJars.value.map(f => "–Xplugin:" + f.getAbsolutePath)
