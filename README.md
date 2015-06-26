@@ -5,7 +5,7 @@
 
 <img alt="How'd you get so funky?" align=right src="tut.jpg"/>
 
-**tut** is a very simple documentation tool for Scala programs that reads Markdown files and interprets Scala code in `tut` sheds, allowing you to write documentation that is typechecked and run as part of your build.
+**tut** is a very simple documentation tool for Scala that reads Markdown files and interprets Scala code in `tut` sheds, allowing you to write documentation that is typechecked and run as part of your build.
 
 The current version is **0.4.0** (changelog [here](CHANGELOG.md)) which runs on **Scala 2.10** and **2.11**.
 
@@ -51,7 +51,7 @@ tutSettings
 
 | Command  | Explanation |
 |----------|-------------|
-| `tut`    | Moves the contents of `tutSourceDirectory` into `tutTargetDirectory`, interpolating `tut` sheds in any file whose name matches `tutNameFilter` (other files are copied but not interpreted). |
+| `tut`    | Moves the contents of `tutSourceDirectory` into `tutTargetDirectory`, interpreting code in `tut` sheds in any file whose name matches `tutNameFilter` (other files are copied but not interpreted). |
 | `tutOnly` *<file>* | Does the same thing as `tut` but only for the specified path under `tutSourceDirectory`. Note that tab completion works for this command |
 
 Interpretation obeys the following particulars:
