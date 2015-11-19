@@ -101,7 +101,7 @@ The following modifiers are supported. Note that you can use multiples if you li
 
 ### Integration with sbt-site
 
-Tut is designed to work seamlessly with sbt-site so that your checked tutorials can be incorporated into your website.
+Tut is designed to work seamlessly with [sbt-site](https://github.com/sbt/sbt-site) so that your checked tutorials can be incorporated into your website.
 
 Add the following to `project/plugins.sbt` in your project to add SBT shell commands:
 
