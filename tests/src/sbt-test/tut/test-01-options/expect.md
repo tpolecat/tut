@@ -16,3 +16,10 @@ scala> new Functor[Either[String, ?]]
               new Functor[Either[String, ?]]
                           ^
 ```
+
+Should get commented output, no prompt, no margin
+
+```scala
+val x = 1 + 2
+// x: Int = 3
+```

@@ -26,6 +26,7 @@ object TutMain extends Zed {
   case object NoFail    extends Modifier
   case object Fail      extends Modifier
   case object Silent    extends Modifier
+  case object Book      extends Modifier
   case object Plain     extends Modifier
   case object Invisible extends Modifier
 
@@ -35,6 +36,7 @@ object TutMain extends Zed {
         case "nofail"    => NoFail
         case "fail"      => Fail
         case "silent"    => Silent
+        case "book"      => Book
         case "plain"     => Plain
         case "invisible" => Invisible
       }
@@ -66,7 +68,10 @@ object TutMain extends Zed {
     private[this] var active = true
     private[this] def ifActive(f: => Unit): Unit = if (active) f
     def setActive(b: Boolean): IO[Unit] = IO { baos.reset(); active = b }
-    override def write(n: Int): Unit = { baos.write(n); ifActive(super.write(n)) }
+    def startCommenting(): IO[Unit] = IO { """\\ """.map(_.toInt).foreach(write) }
+    override def write(n: Int): Unit = {
+      baos.write(n); ifActive(super.write(n))
+     }
   }
 
   ////// ENTRY POINT
@@ -113,7 +118,7 @@ object TutMain extends Zed {
       IO {
         val buf = new Array[Byte](1024 * 16)
         var count = 0
-        while ({ count = in.read(buf); count >= 0 }) 
+        while ({ count = in.read(buf); count >= 0 })
           out.write(buf, 0, count)
       }
     }}
@@ -153,20 +158,21 @@ object TutMain extends Zed {
   def checkBoundary(text: String, find: String, code: Boolean, mods: Set[Modifier]): Tut[Unit] =
     (text.trim.startsWith(find)).whenM(mod(s => s.copy(isCode = code, needsNL = false, mods = mods)))
 
-  def fixShed(text: String, mods: Set[Modifier]): String = 
+  def fixShed(text: String, mods: Set[Modifier]): String =
     if (mods(Invisible)) {
       ""
     } else if (text.startsWith("```tut")) {
-      if (mods(Plain)) "```" else "```scala" 
+      if (mods(Plain)) "```" else "```scala"
     } else {
       text
     }
 
   def modifiers(text: String): Set[Modifier] =
-    if (text.startsWith("```tut:")) 
+    if (text.startsWith("```tut:"))
       text.split(":").toList.tail.map(Modifier.unsafeFromString).toSet
     else
       Set.empty
+      //Set(Book)//.empty
 
   def line(text: String, n: Int): Tut[Unit] =
     for {
@@ -204,17 +210,18 @@ object TutMain extends Zed {
     } yield ()
 
   def prompt(s: TState): String =
-         if (s.mods(Silent))    ""
+         if (s.mods(Silent) || s.mods(Book)) ""
     else if (s.partial.isEmpty) "scala> "
     else                        "     | "
 
   def interp(text: String, lineNum: Int): Tut[Unit] =
-    state >>= { s => 
+    state >>= { s =>
       (text.trim.nonEmpty || s.partial.nonEmpty || s.mods(Silent)).whenM[Tut,Unit] {
         for {
           _ <- s.needsNL.whenM(out(""))
           _ <- (s.mods(Invisible)).unlessM(out(prompt(s) + text))
           _ <- s.spigot.setActive(!(s.mods(Silent) || (s.mods(Invisible)))).liftIO[Tut]
+          _ <- s.spigot.startCommenting().liftIO[Tut] // TODO: if book
           r <- IO(s.imain.interpret(s.partial + "\n" + text)).liftIO[Tut] >>= {
             case Results.Incomplete => incomplete(text)
             case Results.Success    => if (s.mods(Fail)) error(lineNum, Some("failure was asserted but no failure occurred")) else success
