@@ -46,13 +46,13 @@ object TutMain extends Zed {
   }
 
   case class TState(
-    isCode: Boolean, 
-    mods: Set[Modifier], 
-    needsNL: Boolean, 
-    imain: IMain, 
-    pw: PrintWriter, 
+    isCode: Boolean,
+    mods: Set[Modifier],
+    needsNL: Boolean,
+    imain: IMain,
+    pw: PrintWriter,
     spigot: Spigot,
-    partial: String, 
+    partial: String,
     err: Boolean,
     in: File)
 
