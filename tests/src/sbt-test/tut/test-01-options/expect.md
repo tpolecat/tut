@@ -23,3 +23,15 @@ Should get commented output, no prompt, no margin
 val x = 1 + 2
 // x: Int = 3
 ```
+
+Should get commented error:
+
+```scala
+new Functor[Either[String, ?]]
+// <console>:10: error: not found: type ?
+//               new Functor[Either[String, ?]]
+//                                          ^
+// <console>:10: error: Either[String,<error>] takes no type parameters, expected: one
+//               new Functor[Either[String, ?]]
+//                           ^
+```

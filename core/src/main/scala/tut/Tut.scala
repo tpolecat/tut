@@ -69,11 +69,13 @@ object TutMain extends Zed {
     private[this] def ifActive(f: => Unit): Unit = if (active) f
     def setActive(b: Boolean): IO[Unit] = IO { baos.reset(); active = b }
     private[this] var commenting = false
+    def setCommenting(b: Boolean): IO[Unit] = IO { if (b) comment(); commenting = b; }
     private[this] def comment(): Unit = "// ".map(_.toInt).foreach(write)
-    def setCommenting(b: Boolean): IO[Unit] = IO { comment(); commenting = b; }
+    private[this] var wasNL: Boolean = false
     override def write(n: Int): Unit = {
+      if (wasNL && commenting) { wasNL = false; comment() }
       baos.write(n); ifActive(super.write(n))
-      //if (commenting && n == '\n'.toInt) comment()
+      wasNL = (n == '\n'.toInt)
      }
   }
 
