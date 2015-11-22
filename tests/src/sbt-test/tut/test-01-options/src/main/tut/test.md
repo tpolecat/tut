@@ -13,5 +13,5 @@ new Functor[Either[String, ?]]
 Should get commented output, no prompt, no margin
 
 ```tut:book
-val x = 1 + 1
+val x = 1 + 2
 ```

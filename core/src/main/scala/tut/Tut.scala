@@ -68,9 +68,12 @@ object TutMain extends Zed {
     private[this] var active = true
     private[this] def ifActive(f: => Unit): Unit = if (active) f
     def setActive(b: Boolean): IO[Unit] = IO { baos.reset(); active = b }
-    def startCommenting(): IO[Unit] = IO { """\\ """.map(_.toInt).foreach(write) }
+    private[this] var commenting = false
+    private[this] def comment(): Unit = "// ".map(_.toInt).foreach(write)
+    def setCommenting(b: Boolean): IO[Unit] = IO { comment(); commenting = b; }
     override def write(n: Int): Unit = {
       baos.write(n); ifActive(super.write(n))
+      //if (commenting && n == '\n'.toInt) comment()
      }
   }
 
@@ -172,7 +175,6 @@ object TutMain extends Zed {
       text.split(":").toList.tail.map(Modifier.unsafeFromString).toSet
     else
       Set.empty
-      //Set(Book)//.empty
 
   def line(text: String, n: Int): Tut[Unit] =
     for {
@@ -221,7 +223,7 @@ object TutMain extends Zed {
           _ <- s.needsNL.whenM(out(""))
           _ <- (s.mods(Invisible)).unlessM(out(prompt(s) + text))
           _ <- s.spigot.setActive(!(s.mods(Silent) || (s.mods(Invisible)))).liftIO[Tut]
-          _ <- s.spigot.startCommenting().liftIO[Tut] // TODO: if book
+          _ <- s.mods(Book).whenM(s.spigot.setCommenting(true).liftIO[Tut])
           r <- IO(s.imain.interpret(s.partial + "\n" + text)).liftIO[Tut] >>= {
             case Results.Incomplete => incomplete(text)
             case Results.Success    => if (s.mods(Fail)) error(lineNum, Some("failure was asserted but no failure occurred")) else success
