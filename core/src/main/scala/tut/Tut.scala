@@ -231,6 +231,7 @@ object TutMain extends Zed {
             case Results.Success    => if (s.mods(Fail)) error(lineNum, Some("failure was asserted but no failure occurred")) else success
             case Results.Error      => if (s.mods(NoFail) || s.mods(Fail)) success else error(lineNum)
           }
+          _ <- s.mods(Book).whenM(s.spigot.setCommenting(false).liftIO[Tut])
           _ <- s.spigot.setActive(true).liftIO[Tut]
           _ <- IO(s.pw.flush).liftIO[Tut]
         } yield ()
