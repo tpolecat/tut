@@ -35,3 +35,25 @@ new Functor[Either[String, ?]]
 //               new Functor[Either[String, ?]]
 //                           ^
 ```
+
+Can comment multi-line input:
+
+```scala
+case class Fibble(
+  factor:  Int,
+  snazzle: Boolean
+)
+// defined class Fibble
+```
+
+Can comment multi-expression input:
+
+```scala
+import scala.collection.immutable.List
+// import scala.collection.immutable.List
+
+val y = 2
+// y: Int = 2
+```
+
+The End
