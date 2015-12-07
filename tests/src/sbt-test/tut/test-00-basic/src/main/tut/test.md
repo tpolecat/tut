@@ -82,4 +82,8 @@ This result is so long that the REPL truncates it to a bunch of `a`s with a `...
 val thing = "a" * 1000
 ```
 
+```tut:fail:reset
+thing
+```
+
 The end

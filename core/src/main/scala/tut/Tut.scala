@@ -29,6 +29,7 @@ object TutMain extends Zed {
   case object Book      extends Modifier
   case object Plain     extends Modifier
   case object Invisible extends Modifier
+  case object Reset     extends Modifier
 
   object Modifier {
     def fromString(s: String): Option[Modifier] =
@@ -39,6 +40,7 @@ object TutMain extends Zed {
         case "book"      => Book
         case "plain"     => Plain
         case "invisible" => Invisible
+        case "reset"     => Reset
       }
 
     def unsafeFromString(s: String): Modifier =
@@ -54,7 +56,8 @@ object TutMain extends Zed {
     spigot: Spigot,
     partial: String,
     err: Boolean,
-    in: File)
+    in: File,
+    opts: List[String])
 
   type Tut[A] = StateT[IO, TState, A]
   def state: Tut[TState] = get.lift[IO]
@@ -149,7 +152,7 @@ object TutMain extends Zed {
         oo <- IO(Console.out)
         _  <- IO(Console.setOut(s))
         i  <- newInterpreter(p, opts)
-        ts <- tut(in).exec(TState(false, Set(), false, i, p, o, "", false, in)).ensuring(IO(Console.setOut(oo)))
+        ts <- tut(in).exec(TState(false, Set(), false, i, p, o, "", false, in, opts)).ensuring(IO(Console.setOut(oo)))
       } yield ts
     }}}}}}
 
@@ -192,6 +195,15 @@ object TutMain extends Zed {
       _ <- checkBoundary(text, "```", false, Set())
       s <- state
       mods = modifiers(text)
+      _ <- IO {
+        if (mods(Reset)) {
+          s.imain.reset()
+          s.imain.settings.processArguments(s.opts, true)
+          s
+        } else {
+          s
+        }
+      }.liftIO[Tut]
       _ <- s.isCode.fold(interp(text, n), out(fixShed(text, mods ++ inv)))
       _ <- checkBoundary(text, "```tut", true, mods)
     } yield ()
