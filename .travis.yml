@@ -1,7 +1,6 @@
 language: scala
 jdk:
   - oraclejdk7
-  - openjdk6
 
 script: 
   - sbt plugin/compile plugin/publishLocal
