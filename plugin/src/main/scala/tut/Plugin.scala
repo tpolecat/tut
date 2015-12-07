@@ -8,7 +8,6 @@ import sbt.Defaults.runnerInit
 import sbt.Attributed.data
 import sbt.complete.Parser
 import sbt.complete.DefaultParsers._
-import sbt.Project.Initialize
 
 object Plugin extends sbt.Plugin {
   
@@ -21,15 +20,6 @@ object Plugin extends sbt.Plugin {
   lazy val tutOnly            = inputKey[Unit]("Run tut on a single file.")
   lazy val tutTargetDirectory = SettingKey[File]("tutTargetDirectory", "Where tut output goes")
   lazy val tutNameFilter      = SettingKey[Regex]("tutNameFilter", "tut skips files whose names don't match")
-
-  val parser: Initialize[Parser[File]] =
-    Def.setting {
-      val dir     = tutSourceDirectory.value
-      val files   = safeListFiles(dir).flatMap(flatten)
-      val parsers = files.map(f => literal(dir.toURI.relativize(f.toURI).getPath).map(_ => f))
-      val folded  = parsers.foldRight[Parser[File]](failure("<no input files>"))(_ | _)
-      Space ~> token(folded)
-    }
 
   def safeListFiles(dir: File): List[File] =
     Option(dir.listFiles).fold(List.empty[File])(_.toList)
@@ -74,23 +64,34 @@ object Plugin extends sbt.Plugin {
         val read = safeListFiles(in).map(_.getName).toSet
         safeListFiles(out).filter(f => read(f.getName)).map(f => f -> f.getName)
       },
-      tutOnly := {
-        val r     = (runner in Test).value
-        val inR   = tutSourceDirectory.value // input root
-        val in    = parser.parsed            // a point below inR
-        val inDir = if (in.isDirectory) in 
-                    else in.getParentFile    // input dir
-        val outR  = tutTargetDirectory.value // output root
-        val out   = new File(outR, inR.toURI.relativize(inDir.toURI).getPath) // output dir
-        val cp    = (fullClasspath in Test).value
-        val opts  = tutScalacOptions.value
-        val pOpts = tutPluginJars.value.map(f => "–Xplugin:" + f.getAbsolutePath)
-        val re    = tutNameFilter.value.pattern.toString
-        toError(r.run("tut.TutMain", 
-                      data(cp), 
-                      Seq(in.getAbsolutePath, out.getAbsolutePath, re) ++ opts ++ pOpts, 
-                      streams.value.log))
-        ()
+      tutOnly <<= InputTask.createDyn{
+        Def.setting{ s: State =>
+          val extracted = Project.extract(s)
+          val dir = extracted.get(tutSourceDirectory)
+          val files = safeListFiles(dir).flatMap(flatten)
+          val parsers = files.map(f => literal(dir.toURI.relativize(f.toURI).getPath).map(_ => f))
+          val folded = parsers.foldRight[Parser[File]](failure("<no input files>"))(_ | _)
+          Space ~> token(folded)
+        }
+      } {
+        Def.task{ in =>
+          Def.task{
+            val r     = (runner in Test).value
+            val inR   = tutSourceDirectory.value // input root
+            val inDir = if (in.isDirectory) in
+                        else in.getParentFile    // input dir
+            val outR  = tutTargetDirectory.value // output root
+            val out   = new File(outR, inR.toURI.relativize(inDir.toURI).getPath) // output dir
+            val cp    = (fullClasspath in Test).value
+            val opts  = tutScalacOptions.value
+            val pOpts = tutPluginJars.value.map(f => "–Xplugin:" + f.getAbsolutePath)
+            val re    = tutNameFilter.value.pattern.toString
+            toError(r.run("tut.TutMain",
+                          data(cp),
+                          Seq(in.getAbsolutePath, out.getAbsolutePath, re) ++ opts ++ pOpts,
+                          streams.value.log))
+          }
+        }
       }
     )
 
