@@ -65,15 +65,22 @@ object TutMain extends Zed {
   class Spigot(os: OutputStream) extends FilterOutputStream(os) {
     private var baos = new ByteArrayOutputStream()
     def bytes = baos.toByteArray
+
     private[this] var active = true
     private[this] def ifActive(f: => Unit): Unit = if (active) f
     def setActive(b: Boolean): IO[Unit] = IO { baos.reset(); active = b }
-    private[this] var commenting = false
-    def setCommenting(b: Boolean): IO[Unit] = IO { if (b) comment(); commenting = b; }
+
+    private[this] var replInput: Option[String] = None
+    def commentAfter(text: String): IO[Unit] = IO { replInput = Some(text) }
+    def stopCommenting(): IO[Unit] = IO { replInput = None }
+    private[this] var output = new StringBuilder()
     private[this] def comment(): Unit = "// ".map(_.toInt).foreach(write)
     private[this] var wasNL: Boolean = false
+
     override def write(n: Int): Unit = {
+      val commenting: Boolean = replInput.exists(output.indexOf(_) != 1)
       if (wasNL && commenting) { wasNL = false; comment() }
+      output.append(n.toChar)
       baos.write(n); ifActive(super.write(n))
       wasNL = (n == '\n'.toInt)
      }
@@ -225,13 +232,13 @@ object TutMain extends Zed {
           _ <- s.needsNL.whenM(out(""))
           _ <- (s.mods(Invisible)).unlessM(out(prompt(s) + text))
           _ <- s.spigot.setActive(!(s.mods(Silent) || (s.mods(Invisible)))).liftIO[Tut]
-          _ <- s.mods(Book).whenM(s.spigot.setCommenting(true).liftIO[Tut])
+          _ <- s.mods(Book).whenM(s.spigot.commentAfter(s.partial + "\n" + text).liftIO[Tut])
           r <- IO(s.imain.interpret(s.partial + "\n" + text)).liftIO[Tut] >>= {
             case Results.Incomplete => incomplete(text)
             case Results.Success    => if (s.mods(Fail)) error(lineNum, Some("failure was asserted but no failure occurred")) else success
             case Results.Error      => if (s.mods(NoFail) || s.mods(Fail)) success else error(lineNum)
           }
-          _ <- s.mods(Book).whenM(s.spigot.setCommenting(false).liftIO[Tut])
+          _ <- s.mods(Book).whenM(s.spigot.stopCommenting().liftIO[Tut])
           _ <- s.spigot.setActive(true).liftIO[Tut]
           _ <- IO(s.pw.flush).liftIO[Tut]
         } yield ()
