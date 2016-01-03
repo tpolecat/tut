@@ -2,6 +2,11 @@
 
 This file summarizes **notable** changes for each release, but does not describe internal changes unless they are particularly exciting. For complete details please see the corresponding [milestones](https://github.com/tpolecat/tut/milestones?state=closed) and their associated issues.
 
+### <a name="0.4.1"></a>New and Noteworthy for Version 0.4.1
+
+- **tut** is now linked to the sbt org, so an explicit resolver is no longer needed.
+- New `:reset` and `:book` modifiers! See the README for details. Thanks @xuwei-k and @d6y!
+
 ### <a name="0.4.0"></a>New and Noteworthy for Version 0.4.0
 
 - The `tutSourceDirectory` can now contain subdirectories, and can also contain non-text resources like images, which will be copied verbatim. The `tutNameFilter` setting specifies a regex for filenames to interpret (`.md` `.txt` `.htm` `.html` by default).
