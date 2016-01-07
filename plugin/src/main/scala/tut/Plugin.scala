@@ -67,10 +67,10 @@ object Plugin extends sbt.Plugin {
       tutOnly <<= InputTask.createDyn{
         Def.setting{ s: State =>
           val extracted = Project.extract(s)
-          val dir = extracted.get(tutSourceDirectory)
-          val files = safeListFiles(dir).flatMap(flatten)
-          val parsers = files.map(f => literal(dir.toURI.relativize(f.toURI).getPath).map(_ => f))
-          val folded = parsers.foldRight[Parser[File]](failure("<no input files>"))(_ | _)
+          val dir     = extracted.getOpt(tutSourceDirectory)
+          val files   = dir.fold(List.empty[File])(safeListFiles(_).flatMap(flatten))
+          val parsers = dir.fold(List.empty[Parser[File]])(dir => files.map(f => literal(dir.toURI.relativize(f.toURI).getPath).map(_ => f)))
+          val folded  = parsers.foldRight[Parser[File]](failure("<no input files>"))(_ | _)
           Space ~> token(folded)
         }
       } {
