@@ -7,7 +7,7 @@
 
 **tut** is a very simple documentation tool for Scala that reads Markdown files and interprets Scala code in `tut` sheds, allowing you to write documentation that is typechecked and run as part of your build.
 
-The current version is **0.4.1** (changelog [here](CHANGELOG.md)) which runs on **Scala 2.10** and **2.11**.
+The current version is **0.4.1** (changelog [here](CHANGELOG.md)) which runs on **Scala 2.10**, **2.11** and **2.12.0-M3**.
 
 Projects using **tut** include [doobie](https://github.com/tpolecat/doobie) and [cats](https://github.com/non/cats). If you're using it and would like be added to the list, please submit a PR!
 
@@ -24,7 +24,7 @@ addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.4.1")
 **2**.  And add the following to `build.sbt`:
 
 ```scala
-tutSettings
+enablePlugins(TutPlugin)
 ```
 
 **3**.  Write a tutorial in `src/main/tut/Foo.md`:
