@@ -18,9 +18,9 @@ Ok
 
 ```scala
 scala> woozle
-<console>:9: error: not found: value woozle
-              woozle
-              ^
+<console>:13: error: not found: value woozle
+       woozle
+       ^
 ```
 
 No good .. doesn't fail.

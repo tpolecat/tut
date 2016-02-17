@@ -9,12 +9,12 @@ Should get an error
 
 ```scala
 scala> new Functor[Either[String, ?]]
-<console>:10: error: not found: type ?
-              new Functor[Either[String, ?]]
-                                         ^
-<console>:10: error: Either[String,<error>] takes no type parameters, expected: one
-              new Functor[Either[String, ?]]
-                          ^
+<console>:14: error: not found: type ?
+       new Functor[Either[String, ?]]
+                                  ^
+<console>:14: error: Either[String,<error>] takes no type parameters, expected: one
+       new Functor[Either[String, ?]]
+                   ^
 ```
 
 Should get commented output, no prompt, no margin
@@ -28,12 +28,12 @@ Should get commented error:
 
 ```scala
 new Functor[Either[String, ?]]
-// <console>:10: error: not found: type ?
-//               new Functor[Either[String, ?]]
-//                                          ^
-// <console>:10: error: Either[String,<error>] takes no type parameters, expected: one
-//               new Functor[Either[String, ?]]
-//                           ^
+// <console>:14: error: not found: type ?
+//        new Functor[Either[String, ?]]
+//                                   ^
+// <console>:14: error: Either[String,<error>] takes no type parameters, expected: one
+//        new Functor[Either[String, ?]]
+//                    ^
 ```
 
 Can comment multi-line input:

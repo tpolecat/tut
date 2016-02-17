@@ -15,9 +15,9 @@ Baz
 
 ```scala
 scala> wut
-<console>:9: error: not found: value wut
-              wut
-              ^
+<console>:13: error: not found: value wut
+       wut
+       ^
 ```
 
 Qux
@@ -45,12 +45,12 @@ Should get an error
 
 ```scala
 scala> new Functor[Either[String, ?]]
-<console>:10: error: not found: type ?
-              new Functor[Either[String, ?]]
-                                         ^
-<console>:10: error: Either[String,<error>] takes no type parameters, expected: one
-              new Functor[Either[String, ?]]
-                          ^
+<console>:14: error: not found: type ?
+       new Functor[Either[String, ?]]
+                                  ^
+<console>:14: error: Either[String,<error>] takes no type parameters, expected: one
+       new Functor[Either[String, ?]]
+                   ^
 ```
 
 Should be hidden
@@ -103,9 +103,9 @@ thing: String = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
 ```scala
 scala> thing
-<console>:9: error: not found: value thing
-              thing
-              ^
+<console>:13: error: not found: value thing
+       thing
+       ^
 ```
 
 The end
