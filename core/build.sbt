@@ -17,4 +17,3 @@ libraryDependencies := {
   }
 }
 
-bintrayPublishSettings

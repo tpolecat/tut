@@ -10,8 +10,6 @@ lazy val plugin = project.in(file("plugin"))
 
 lazy val tests = project.in(file("tests"))
 
-bintrayPublishSettings
-
 licenses in ThisBuild += ("MIT", url("http://opensource.org/licenses/MIT"))
 
 lazy val tutPublishLocal = TaskKey[Unit]("tutPublishLocal", "publish core, plugin locally")
