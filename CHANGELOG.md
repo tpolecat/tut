@@ -2,6 +2,11 @@
 
 This file summarizes **notable** changes for each release, but does not describe internal changes unless they are particularly exciting. For complete details please see the corresponding [milestones](https://github.com/tpolecat/tut/milestones?state=closed) and their associated issues.
 
+### <a name="0.4.2"></a>New and Noteworthy for Version 0.4.2
+
+- Fixed a bug that broke tab completion for multi-project builds.
+- Initial support for Scala 2.12 and other build improvements courtesy of @guersam.
+
 ### <a name="0.4.1"></a>New and Noteworthy for Version 0.4.1
 
 - **tut** is now linked to the sbt org, so an explicit resolver is no longer needed.
