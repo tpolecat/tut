@@ -20,12 +20,22 @@ object Plugin extends sbt.Plugin {
   lazy val tutOnly            = inputKey[Unit]("Run tut on a single file.")
   lazy val tutTargetDirectory = SettingKey[File]("tutTargetDirectory", "Where tut output goes")
   lazy val tutNameFilter      = SettingKey[Regex]("tutNameFilter", "tut skips files whose names don't match")
+  lazy val tutFiles           = SettingKey[State => Parser[File]]("tutFiles", "parser identifying files visible to tut")
 
   def safeListFiles(dir: File): List[File] =
     Option(dir.listFiles).fold(List.empty[File])(_.toList)
 
   def flatten(f: File): List[File] =
     f :: (if (f.isDirectory) f.listFiles.toList.flatMap(flatten) else Nil)
+
+  def tutFilesParser(state: State): Parser[File] = {
+    val extracted = Project.extract(state)
+    val dir     = extracted.getOpt(tutSourceDirectory)
+    val files   = dir.fold(List.empty[File])(safeListFiles(_).flatMap(flatten))
+    val parsers = dir.fold(List.empty[Parser[File]])(dir => files.map(f => literal(dir.toURI.relativize(f.toURI).getPath).map(_ => f)))
+    val folded  = parsers.foldRight[Parser[File]](failure("<no input files>"))(_ | _)
+    token(folded)
+  }
 
   lazy val tutSettings =
     Seq(
@@ -36,6 +46,7 @@ object Plugin extends sbt.Plugin {
       watchSources <++= tutSourceDirectory map { path => (path ** "*.md").get },
       tutScalacOptions := (scalacOptions in Test).value,
       tutNameFilter := """.*\.(md|txt|htm|html)""".r,
+      tutFiles := tutFilesParser,
       tutPluginJars := {
         // no idea if this is the right way to do this
         val deps = (libraryDependencies in Test).value.filter(_.configurations.fold(false)(_.startsWith("plugin->")))
@@ -64,16 +75,7 @@ object Plugin extends sbt.Plugin {
         val read = safeListFiles(in).map(_.getName).toSet
         safeListFiles(out).filter(f => read(f.getName)).map(f => f -> f.getName)
       },
-      tutOnly <<= InputTask.createDyn{
-        Def.setting{ s: State =>
-          val extracted = Project.extract(s)
-          val dir     = extracted.getOpt(tutSourceDirectory)
-          val files   = dir.fold(List.empty[File])(safeListFiles(_).flatMap(flatten))
-          val parsers = dir.fold(List.empty[Parser[File]])(dir => files.map(f => literal(dir.toURI.relativize(f.toURI).getPath).map(_ => f)))
-          val folded  = parsers.foldRight[Parser[File]](failure("<no input files>"))(_ | _)
-          Space ~> token(folded)
-        }
-      } {
+      tutOnly <<= InputTask.createDyn(Def.setting((state: State) => Space ~> tutFilesParser(state))) {
         Def.task{ in =>
           Def.task{
             val r     = (runner in Test).value
