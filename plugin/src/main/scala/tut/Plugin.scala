@@ -45,7 +45,7 @@ object Plugin extends sbt.Plugin {
       tutTargetDirectory := crossTarget.value / "tut",
       watchSources <++= tutSourceDirectory map { path => (path ** "*.md").get },
       tutScalacOptions := (scalacOptions in Test).value,
-      tutNameFilter := """.*\.(md|txt|htm|html)""".r,
+      tutNameFilter := """.*\.(md|markdown|txt|htm|html)""".r,
       tutFiles := tutFilesParser,
       tutPluginJars := {
         // no idea if this is the right way to do this
