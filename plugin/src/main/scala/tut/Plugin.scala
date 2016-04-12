@@ -10,7 +10,7 @@ import sbt.complete.Parser
 import sbt.complete.DefaultParsers._
 
 object Plugin extends sbt.Plugin {
-  
+
   type Dir = File
 
   lazy val tut                = TaskKey[Seq[(File,String)]]("tut", "create tut documentation")
@@ -22,8 +22,11 @@ object Plugin extends sbt.Plugin {
   lazy val tutNameFilter      = SettingKey[Regex]("tutNameFilter", "tut skips files whose names don't match")
   lazy val tutFiles           = SettingKey[State => Parser[File]]("tutFiles", "parser identifying files visible to tut")
 
-  def safeListFiles(dir: File): List[File] =
-    Option(dir.listFiles).fold(List.empty[File])(_.toList)
+  def safeListFiles(dir: File, recurse: Boolean): List[File] =
+    Option(dir.listFiles).fold(List.empty[File]){ files =>
+      val l = files.toList
+      if (recurse) l.flatMap(flatten) else l
+    }
 
   def flatten(f: File): List[File] =
     f :: (if (f.isDirectory) f.listFiles.toList.flatMap(flatten) else Nil)
@@ -31,7 +34,7 @@ object Plugin extends sbt.Plugin {
   def tutFilesParser(state: State): Parser[File] = {
     val extracted = Project.extract(state)
     val dir     = extracted.getOpt(tutSourceDirectory)
-    val files   = dir.fold(List.empty[File])(safeListFiles(_).flatMap(flatten))
+    val files   = dir.fold(List.empty[File])(d => safeListFiles(d, recurse = true))
     val parsers = dir.fold(List.empty[Parser[File]])(dir => files.map(f => literal(dir.toURI.relativize(f.toURI).getPath).map(_ => f)))
     val folded  = parsers.foldRight[Parser[File]](failure("<no input files>"))(_ | _)
     token(folded)
@@ -51,7 +54,7 @@ object Plugin extends sbt.Plugin {
         // no idea if this is the right way to do this
         val deps = (libraryDependencies in Test).value.filter(_.configurations.fold(false)(_.startsWith("plugin->")))
         update.value.configuration("plugin").map(_.modules).getOrElse(Nil).filter { m =>
-          deps.exists { d => 
+          deps.exists { d =>
             d.organization == m.module.organization &&
             d.name         == m.module.name &&
             d.revision     == m.module.revision
@@ -66,14 +69,19 @@ object Plugin extends sbt.Plugin {
         val opts  = tutScalacOptions.value
         val pOpts = tutPluginJars.value.map(f => "–Xplugin:" + f.getAbsolutePath)
         val re    = tutNameFilter.value.pattern.toString
-        toError(r.run("tut.TutMain", 
-                      data(cp), 
-                      Seq(in.getAbsolutePath, out.getAbsolutePath, re) ++ opts ++ pOpts, 
+        toError(r.run("tut.TutMain",
+                      data(cp),
+                      Seq(in.getAbsolutePath, out.getAbsolutePath, re) ++ opts ++ pOpts,
                       streams.value.log))
         // We can't return a value from the runner, but we know what TutMain is looking at so we'll
         // fake it here. Returning all files potentially touched.
-        val read = safeListFiles(in).map(_.getName).toSet
-        safeListFiles(out).filter(f => read(f.getName)).map(f => f -> f.getName)
+        val outPath = out.toPath
+        val inPath = in.toPath
+        val read = safeListFiles(in, recurse = true).map(f => inPath.relativize(f.toPath)).toSet
+        safeListFiles(out, recurse = true).flatMap{ f =>
+          val rel = outPath.relativize(f.toPath)
+          if (read(rel)) (f -> rel.toString) :: Nil else Nil
+        }
       },
       tutOnly <<= InputTask.createDyn(Def.setting((state: State) => Space ~> tutFilesParser(state))) {
         Def.task{ in =>
