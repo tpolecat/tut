@@ -47,7 +47,11 @@ object Plugin extends sbt.Plugin {
       tutSourceDirectory := sourceDirectory.value / "main" / "tut",
       tutTargetDirectory := crossTarget.value / "tut",
       watchSources <++= tutSourceDirectory map { path => (path ** "*.md").get },
-      tutScalacOptions := (scalacOptions in Test).value,
+      tutScalacOptions := {
+        val testOptions = scalacOptions.in(Test).value
+        val unwantedOptions = Set("-Ywarn-unused-import")
+        testOptions.filterNot(unwantedOptions)
+      },
       tutNameFilter := """.*\.(md|markdown|txt|htm|html)""".r,
       tutFiles := tutFilesParser,
       tutPluginJars := {
