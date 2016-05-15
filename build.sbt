@@ -20,3 +20,4 @@ tutPublishLocal := {
 }
 
 resolvers in ThisBuild += Resolver.typesafeIvyRepo("releases")
+

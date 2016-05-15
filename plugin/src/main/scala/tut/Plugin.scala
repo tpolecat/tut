@@ -48,7 +48,7 @@ object Plugin extends sbt.Plugin {
       tutTargetDirectory := crossTarget.value / "tut",
       watchSources <++= tutSourceDirectory map { path => (path ** "*.md").get },
       tutScalacOptions := {
-        val testOptions = scalacOptions.in(test).value
+        val testOptions = scalacOptions.in(Test).value
         val unwantedOptions = Set("-Ywarn-unused-import")
         testOptions.filterNot(unwantedOptions)
       },
