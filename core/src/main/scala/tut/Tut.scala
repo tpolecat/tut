@@ -228,7 +228,7 @@ object TutMain extends Zed {
     for {
       s <- state
       _ <- mod(_.copy(err = true))
-      _ <- IO(Console.err.println(f"[tut] *** Error reported at ${s.in.getName}%s:$n%d${msg.fold("")(": " + _)}%s")).liftIO[Tut]
+      _ <- IO(Console.err.println(f"[tut] *** Error reported at ${s.in.getCanonicalPath}%s:$n%d${msg.fold("")(": " + _)}%s")).liftIO[Tut]
       _ <- IO(Console.err.write(s.spigot.bytes)).liftIO[Tut]
     } yield ()
 
