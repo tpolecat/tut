@@ -2,6 +2,16 @@
 
 This file summarizes **notable** changes for each release, but does not describe internal changes unless they are particularly exciting. For complete details please see the corresponding [milestones](https://github.com/tpolecat/tut/milestones?state=closed) and their associated issues.
 
+### <a name="0.4.3"></a>New and Noteworthy for Version 0.4.3
+
+- Updated for 2.12.0-M4 and M5, both of which are in use at the moment.
+- Error are now reported using canonical file paths, making it consistent with scalac and sbt (thanks Olivier Blanvillain).
+- Compiler option `-Ywarn-unused-import` is now removed from options passed to `IMain` by **tut** since it makes the REPL freak out (thanks Jentsch).
+- The `.markdown` extension is now included in the default name filter (thanks Chris Coffey).
+- The `tut` task now returns the complete list of examined files; subdirectories were being ignored (thanks Cody Allen).
+- The `tutOnly` filename completion parser is now available as a public setting, for evil purposes (thanks Adelbert Chang).
+- The `scala-xml` version has been updated to `1.0.5` for compatibility with Scala 2.12 (thanks Tsukasa Kitachi).
+
 ### <a name="0.4.2"></a>New and Noteworthy for Version 0.4.2
 
 - Fixed a bug that broke tab completion for multi-project builds.
