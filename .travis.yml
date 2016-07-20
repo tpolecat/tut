@@ -7,7 +7,8 @@ script:
   - sbt plugin/compile plugin/publishLocal
   - sbt ++2.10.6    core/compile core/publishLocal
   - sbt ++2.11.7    core/compile core/publishLocal
-  - sbt ++2.12.0-M3 core/compile core/publishLocal scripted
+  - sbt ++2.12.0-M4 core/compile core/publishLocal scripted
+  - sbt ++2.12.0-M5 core/compile core/publishLocal
 
 notifications:
   webhooks:

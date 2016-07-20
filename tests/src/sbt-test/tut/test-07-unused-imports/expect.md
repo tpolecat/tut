@@ -7,7 +7,7 @@ scala> trait Functor[F[_]]
 by making the implicit value scala.language.higherKinds visible.
 This can be achieved by adding the import clause 'import scala.language.higherKinds'
 or by setting the compiler option -language:higherKinds.
-See the Scala docs for value scala.language.higherKinds for a discussion
+See the Scaladoc for value scala.language.higherKinds for a discussion
 why the feature should be explicitly enabled.
        trait Functor[F[_]]
                      ^
