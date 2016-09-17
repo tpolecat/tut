@@ -46,6 +46,12 @@ Should be hidden
 println("hi")
 ```
 
+Should be evaluated
+
+```tut:evaluated
+println("Hi, I'm an evaluated expression")
+```
+
 Expr-interior newlines preserved in normal mode.
 
 ```tut

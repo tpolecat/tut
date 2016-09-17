@@ -58,6 +58,12 @@ Should be hidden
 
 
 
+Should be evaluated
+
+```
+Hi, I'm an evaluated expression
+```
+
 Expr-interior newlines preserved in normal mode.
 
 ```scala
