@@ -29,6 +29,7 @@ object TutMain extends Zed {
   case object Book      extends Modifier
   case object Plain     extends Modifier
   case object Invisible extends Modifier
+  case object Evaluated extends Modifier
   case object Reset     extends Modifier
 
   object Modifier {
@@ -40,6 +41,7 @@ object TutMain extends Zed {
         case "book"      => Book
         case "plain"     => Plain
         case "invisible" => Invisible
+        case "evaluated" => Evaluated
         case "reset"     => Reset
       }
 
@@ -177,7 +179,7 @@ object TutMain extends Zed {
     if (mods(Invisible)) {
       ""
     } else if (text.startsWith("```tut")) {
-      if (mods(Plain)) "```" else "```scala"
+      if (mods(Plain) || mods(Evaluated)) "```" else "```scala"
     } else {
       text
     }
@@ -211,7 +213,7 @@ object TutMain extends Zed {
   def out(text: String): Tut[Unit] =
     for {
       s <- state
-      _ <- s.mods(Invisible).unlessM(IO { s.pw.println(text); s.pw.flush() }.liftIO[Tut])
+      _ <- (s.mods(Invisible) || s.mods(Evaluated)).unlessM(IO { s.pw.println(text); s.pw.flush() }.liftIO[Tut])
     } yield ()
 
   def success: Tut[Unit] =
@@ -233,7 +235,7 @@ object TutMain extends Zed {
     } yield ()
 
   def prompt(s: TState): String =
-         if (s.mods(Silent) || s.mods(Book)) ""
+    if (s.mods(Silent) || s.mods(Book) || s.mods(Evaluated)) ""
     else if (s.partial.isEmpty) "scala> "
     else                        "     | "
 
