@@ -22,6 +22,22 @@ Should get commented error:
 new Functor[Either[String, ?]]
 ```
 
+Evaluated result is hidden when combining :evaluated and :silent modifiers
+
+```tut:evaluated:silent
+val sum = 2 + 2
+```
+
+Code block is evaluated and commented when combining :evaluated and :book modifiers
+
+```tut:evaluated:book
+val initialValue = 2 + 2
+val list = List(1, 2, 3)
+val sum = list.fold(0)(_ + _)
+println(sum)
+sum
+```
+
 Can comment multi-line input:
 
 ```tut:book

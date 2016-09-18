@@ -36,6 +36,21 @@ new Functor[Either[String, ?]]
 //                    ^
 ```
 
+Evaluated result is hidden when combining :evaluated and :silent modifiers
+
+```
+```
+
+Code block is evaluated and commented when combining :evaluated and :book modifiers
+
+```
+// initialValue: Int = 4
+// list: List[Int] = List(1, 2, 3)
+// sum: Int = 6
+// 6
+// res3: Int = 6
+```
+
 Can comment multi-line input:
 
 ```scala

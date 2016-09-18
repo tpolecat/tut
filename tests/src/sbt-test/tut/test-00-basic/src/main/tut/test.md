@@ -52,6 +52,12 @@ Should be evaluated
 println("Hi, I'm an evaluated expression")
 ```
 
+Should be evaluated and the result is shown
+
+```tut:evaluated
+val sum = 2 + 2
+```
+
 Expr-interior newlines preserved in normal mode.
 
 ```tut
@@ -65,6 +71,22 @@ def foo(n: Int): String = {
   "bar"
 
 }
+```
+
+Multiple expressions in an :evaluated block are interpreted according to the code block, where the new lines are preserved
+
+```tut:evaluated
+val a = 2 + 2
+val b = 3 + 3
+
+def bar(c: Int): Int = {
+
+  // interior space
+  a + b + c
+}
+val result = bar(4)
+println(result)
+result
 ```
 
 All newlines preserved in silent mode.
