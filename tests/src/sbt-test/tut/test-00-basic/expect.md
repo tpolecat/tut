@@ -58,6 +58,18 @@ Should be hidden
 
 
 
+Should be evaluated
+
+```
+Hi, I'm an evaluated expression
+```
+
+Should be evaluated and the result is shown
+
+```
+sum: Int = 4
+```
+
 Expr-interior newlines preserved in normal mode.
 
 ```scala
@@ -77,6 +89,17 @@ scala> def foo(n: Int): String = {
      | 
      | }
 foo: (n: Int)String
+```
+
+Multiple expressions in an :evaluated block are interpreted according to the code block, where the new lines are preserved
+
+```
+a: Int = 4
+b: Int = 6
+bar: (c: Int)Int
+result: Int = 14
+14
+res9: Int = 14
 ```
 
 All newlines preserved in silent mode.
