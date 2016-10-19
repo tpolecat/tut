@@ -10,6 +10,7 @@ script:
   - sbt ++2.12.0-M4  core/compile core/publishLocal scripted
   - sbt ++2.12.0-M5  core/compile core/publishLocal
   - sbt ++2.12.0-RC1 core/compile core/publishLocal
+  - sbt ++2.12.0-RC2 core/compile core/publishLocal
 
 notifications:
   webhooks:
