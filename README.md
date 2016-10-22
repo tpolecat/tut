@@ -13,7 +13,7 @@ Projects using **tut** include [doobie](https://github.com/tpolecat/doobie) and 
 
 **tut** is a [Typelevel](http://typelevel.org/) project. This means we embrace pure, typeful, functional programming, and provide a safe and friendly environment for teaching, learning, and contributing as described in the Typelevel [Code of Conduct](http://typelevel.org/conduct.html).
 
-### Quick Start
+### Quick Start (sbt)
 
 **1**. Add the following to `project/plugins.sbt`:
 
@@ -41,6 +41,22 @@ tutSettings
     scala> 1 + 1
     res0: Int = 2    
     ```
+
+### Quick Start (standalone)
+
+In case you want to run **tut** without sbt, you can use **coursier** instead.
+
+**1**. Install the **coursier** [command-line launcher](https://github.com/alexarchambault/coursier#command-line-1).
+
+**2**. Run **tut**:
+
+```
+coursier launch -r "https://dl.bintray.com/tpolecat/maven/" org.tpolecat:tut-core_2.11:0.4.5 -- \
+  in out '.*\.md$' -classpath $(coursier fetch -p com.chuusai:shapeless_2.11:2.3.1)
+```
+
+This will process all `*.md` files in `in`, write them to `out`, while providing `com.chuusai:shapeless_2.11:2.3.1` in the classpath.
+Note that the Scala library always needs to be in the classpath.
 
 ### Commands
 
