@@ -20,8 +20,9 @@ matrix:
       jdk: oraclejdk8
 
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION core/compile
-  - "if [[ $TEST_SCRIPTED = 1 ]]; then sbt plugin/compile plugin/publishLocal && sbt ++$TRAVIS_SCALA_VERSION core/publishLocal scripted; fi"
+  - sbt ++$TRAVIS_SCALA_VERSION core/compile core/publishLocal
+  - sbt plugin/compile plugin/publishLocal
+  - "if [[ $TEST_SCRIPTED = 1 ]]; then sbt scripted; fi"
 
 #notifications:
 #  webhooks:
