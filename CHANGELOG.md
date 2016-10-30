@@ -2,6 +2,11 @@
 
 This file summarizes **notable** changes for each release, but does not describe internal changes unless they are particularly exciting. For complete details please see the corresponding [milestones](https://github.com/tpolecat/tut/milestones?state=closed) and their associated issues.
 
+### <a name="0.4.6"></a>New and Noteworthy for Version 0.4.6
+
+- Added support for 2.12.0 final (thanks Lars Hupel).
+- Improved management of Scala versions with scripted tests (thanks again Lars Hupel).
+
 ### <a name="0.4.5"></a>New and Noteworthy for Version 0.4.5
 
 - Added support for 2.12.0-RC2 (thanks Lars Hupel).
