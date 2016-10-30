@@ -6,7 +6,7 @@ libraryDependencies ++= Seq(
 
 scalaVersion := "2.11.8"
 
-crossScalaVersions := Seq("2.10.6", scalaVersion.value, "2.12.0-M4", "2.12.0-M5", "2.12.0-RC1", "2.12.0-RC2")
+crossScalaVersions := Seq("2.10.6", scalaVersion.value, "2.12.0")
 
 libraryDependencies := {
   CrossVersion.partialVersion(scalaVersion.value) match {

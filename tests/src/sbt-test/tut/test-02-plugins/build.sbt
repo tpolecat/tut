@@ -11,6 +11,6 @@ check := {
     error("Output doesn't match expected: \n" + actual.mkString("\n"))
 }
 
-resolvers += "bintray/non" at "http://dl.bintray.com/non/maven"
+resolvers += Resolver.sonatypeRepo("releases")
 
-addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.8.0")
+addCompilerPlugin("org.spire-math" % "kind-projector" % "0.9.3" cross CrossVersion.binary)
