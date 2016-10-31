@@ -19,10 +19,10 @@ script:
   - sbt plugin/compile plugin/publishLocal
   - "if [[ $TEST_SCRIPTED = 1 ]]; then sbt scripted; fi"
 
-#notifications:
-#  webhooks:
-#    urls:
-#      - https://webhooks.gitter.im/e/230c239c3e16a2bf85f2
-#    on_success: change  # options: [always|never|change] default: always
-#    on_failure: always  # options: [always|never|change] default: always
-#    on_start: false     # default: false
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/230c239c3e16a2bf85f2
+    on_success: change  # options: [always|never|change] default: always
+    on_failure: always  # options: [always|never|change] default: always
+    on_start: false     # default: false
