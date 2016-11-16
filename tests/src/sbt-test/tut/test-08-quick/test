@@ -1,0 +1,41 @@
+# Initial run of tutQuick should compile both files
+
+> tutQuick
+$ must-mirror target/scala-2.11/tut/file1.md expect1.md
+$ must-mirror target/scala-2.11/tut/file2.md expect2.md
+
+
+
+# Change a source file, ensure one target changes
+
+$ sleep 1000
+$ copy-file src/main/revisions/file1b.md src/main/tut/file1.md
+
+> tutQuick
+$ must-mirror target/scala-2.11/tut/file1.md expect1b.md
+$ must-mirror target/scala-2.11/tut/file2.md expect2.md
+$ newer target/scala-2.11/tut/file1.md target/scala-2.11/tut/file2.md
+
+
+
+# Change a second source file, ensure the target file changes
+
+$ sleep 1000
+$ copy-file src/main/revisions/file2b.md src/main/tut/file2.md
+
+> tutQuick
+$ must-mirror target/scala-2.11/tut/file1.md expect1b.md
+$ must-mirror target/scala-2.11/tut/file2.md expect2b.md
+$ newer target/scala-2.11/tut/file2.md target/scala-2.11/tut/file1.md
+
+
+
+# Touching a file should have no effect
+
+$ sleep 1000
+$ touch src/main/tut/file1.md
+
+> tutQuick
+$ must-mirror target/scala-2.11/tut/file1.md expect1b.md
+$ must-mirror target/scala-2.11/tut/file2.md expect2b.md
+$ newer target/scala-2.11/tut/file2.md target/scala-2.11/tut/file1.md
