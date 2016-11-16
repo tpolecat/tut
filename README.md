@@ -7,7 +7,7 @@
 
 **tut** is a very simple documentation tool for Scala that reads Markdown files and interprets Scala code in `tut` sheds, allowing you to write documentation that is typechecked and run as part of your build.
 
-The current version is **0.4.6** (changelog [here](CHANGELOG.md)) which runs on **Scala 2.10**, **2.11**, and **2.12**.
+The current version is **0.4.7** (changelog [here](CHANGELOG.md)) which runs on **Scala 2.10**, **2.11**, and **2.12**.
 
 Projects using **tut** include [doobie](https://github.com/tpolecat/doobie) and [cats](https://github.com/typelevel/cats). If you're using it and would like be added to the list, please submit a PR!
 
@@ -18,7 +18,7 @@ Projects using **tut** include [doobie](https://github.com/tpolecat/doobie) and 
 **1**. Add the following to `project/plugins.sbt`:
 
 ```scala
-addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.4.6")
+addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.4.7")
 ```
 
 **2**.  And add the following to `build.sbt`:
@@ -51,7 +51,7 @@ In case you want to run **tut** without sbt, you can use **coursier** instead.
 **2**. Run **tut**:
 
 ```
-coursier launch -r "https://dl.bintray.com/tpolecat/maven/" org.tpolecat:tut-core_2.11:0.4.6 -- \
+coursier launch -r "https://dl.bintray.com/tpolecat/maven/" org.tpolecat:tut-core_2.11:0.4.7 -- \
   in out '.*\.md$' -classpath $(coursier fetch -p com.chuusai:shapeless_2.11:2.3.1)
 ```
 
@@ -65,7 +65,8 @@ Note that the Scala library always needs to be in the classpath.
 | Command  | Explanation |
 |----------|-------------|
 | `tut`    | Moves the contents of `tutSourceDirectory` into `tutTargetDirectory`, interpreting code in `tut` sheds in any file whose name matches `tutNameFilter` (other files are copied but not interpreted). |
-| `tutOnly` *<file>* | Does the same thing as `tut` but only for the specified path under `tutSourceDirectory`. Note that tab completion works for this command |
+| `tutQuick` | Like `tut` but compiles only files that have changed since last compilation. Note that this does *not* detect changes in Scala sources; it only looks at tut sources. |
+| <code>tutOnly&nbsp;&lt;path&gt;</code> | Does the same thing as `tut` but only for the specified path under `tutSourceDirectory`. Note that tab completion works for this command |
 
 Interpretation obeys the following particulars:
 
