@@ -2,6 +2,10 @@
 
 This file summarizes **notable** changes for each release, but does not describe internal changes unless they are particularly exciting. For complete details please see the corresponding [milestones](https://github.com/tpolecat/tut/milestones?state=closed) and their associated issues.
 
+### <a name="0.4.7"></a>New and Noteworthy for Version 0.4.7
+
+- Added long-awaited `tutQuick` command, courtesy of Dave Gurnell.
+
 ### <a name="0.4.6"></a>New and Noteworthy for Version 0.4.6
 
 - Added support for 2.12.0 final (thanks Lars Hupel).
