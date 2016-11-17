@@ -116,11 +116,14 @@ The following modifiers are supported. Note that you can use multiples if you li
 | `tutScalacOptions`   | Compiler options that will be passed to the **tut** REPL. | Same as `Test` configuration. |
 | `tutPluginJars`      | List of compiler plugin jarfiles to be passed to the **tut** REPL. | Same as `Test` configuration. |
 
+
+### Integration with sbt-microsites
+
+The [sbt-microsites plugin](https://47deg.github.io/sbt-microsites/) uses **tut** and **sbt-site** and some other odds and ends to turn your documentation into a really nice little website. It is entirely excellent and I recommend it highly.
+
 ### Integration with sbt-site
 
-Tut is designed to work seamlessly with [sbt-site](https://github.com/sbt/sbt-site) so that your checked tutorials can be incorporated into your website.
-
-Add the following to `project/plugins.sbt` in your project to add SBT shell commands:
+If you wish to use **tut**  with [sbt-site](https://github.com/sbt/sbt-site) add the following to `project/plugins.sbt` in your project to add SBT shell commands:
 
 ```scala
 addSbtPlugin("com.typesafe.sbt" % "sbt-site" % "0.8.1")
