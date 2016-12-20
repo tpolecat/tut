@@ -7,7 +7,7 @@
 
 **tut** is a very simple documentation tool for Scala that reads Markdown files and interprets Scala code in `tut` sheds, allowing you to write documentation that is typechecked and run as part of your build.
 
-The current version is **0.4.7** (changelog [here](CHANGELOG.md)) which runs on **Scala 2.10**, **2.11**, and **2.12**.
+The current version is **0.4.8** (changelog [here](CHANGELOG.md)) which runs on **Scala 2.10**, **2.11**, and **2.12**.
 
 Projects using **tut** include [doobie](https://github.com/tpolecat/doobie) and [cats](https://github.com/typelevel/cats). If you're using it and would like be added to the list, please submit a PR!
 
@@ -18,7 +18,7 @@ Projects using **tut** include [doobie](https://github.com/tpolecat/doobie) and 
 **1**. Add the following to `project/plugins.sbt`:
 
 ```scala
-addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.4.7")
+addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.4.8")
 ```
 
 **2**.  And add the following to `build.sbt`:
@@ -51,7 +51,7 @@ In case you want to run **tut** without sbt, you can use **coursier** instead.
 **2**. Run **tut**:
 
 ```
-coursier launch -r "https://dl.bintray.com/tpolecat/maven/" org.tpolecat:tut-core_2.11:0.4.7 -- \
+coursier launch -r "https://dl.bintray.com/tpolecat/maven/" org.tpolecat:tut-core_2.11:0.4.8 -- \
   in out '.*\.md$' -classpath $(coursier fetch -p com.chuusai:shapeless_2.11:2.3.1)
 ```
 
@@ -102,7 +102,7 @@ The following modifiers are supported. Note that you can use multiples if you li
 | `:invisible` | Suppresses all output. This is not recommended since the point of **tut** is to provide code that the user can type in and expect to work. But in rare cases you might want one of these at the bottom of your file to clean up filesystem mess that your code left behind. |
 | `:book`      | Output will be suitable for copy and paste into the REPL. That is, there are no REPL prompts or margins, and output from the REPL is commented. |
 | `:evaluated` | Suppresses REPL prompts and input statement, output only will be the evaluated statement. |
-| `:decorate(param)` | Decorates the output scala code block with `param`, enclosed in this way: `{: param }`. You might want to add several `decorate` modifiers if you need it. |
+| `:decorate(param)` | Decorates the output scala code block with `param`, enclosed in this way: `{: param }`, for use with Kramdown. You can add several `decorate` modifiers if you wish. |
 | `:reset`    | Resets the REPL state prior to evaluating the code block. Use this option with care, as it has no visible indication and can be confusing to readers who are following along in their own REPLs. |
 
 ### Settings
