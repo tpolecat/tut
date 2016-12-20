@@ -30,9 +30,13 @@ object TutMain extends Zed {
   case object Plain     extends Modifier
   case object Invisible extends Modifier
   case object Evaluated extends Modifier
+  case class Decorate(decoration: String) extends Modifier
   case object Reset     extends Modifier
 
   object Modifier {
+
+    val Pattern: Regex = "decorate\\((.*)\\)".r
+
     def fromString(s: String): Option[Modifier] =
       Some(s) collect {
         case "nofail"    => NoFail
@@ -42,6 +46,7 @@ object TutMain extends Zed {
         case "plain"     => Plain
         case "invisible" => Invisible
         case "evaluated" => Evaluated
+        case Pattern(decoration)  => Decorate(decoration)
         case "reset"     => Reset
       }
 
@@ -175,14 +180,25 @@ object TutMain extends Zed {
   def checkBoundary(text: String, find: String, code: Boolean, mods: Set[Modifier]): Tut[Unit] =
     (text.trim.startsWith(find)).whenM(mod(s => s.copy(isCode = code, needsNL = false, mods = mods)))
 
-  def fixShed(text: String, mods: Set[Modifier]): String =
+  def fixShed(text: String, mods: Set[Modifier]): String = {
+    val decorationMods = mods.filter(_.isInstanceOf[Decorate])
     if (mods(Invisible)) {
       ""
     } else if (text.startsWith("```tut")) {
       if (mods(Plain) || mods(Evaluated)) "```" else "```scala"
     } else {
-      text
+      if (text.startsWith("```") && decorationMods.nonEmpty) {
+        val decorations = decorationMods map { case m: Decorate =>
+          m.decoration
+        case _ => ""
+        } mkString " "
+        s"""$text
+           |{: $decorations }""".stripMargin
+      }
+      else
+        text
     }
+  }
 
   def modifiers(text: String): Set[Modifier] =
     if (text.startsWith("```tut:"))
@@ -193,7 +209,7 @@ object TutMain extends Zed {
   def line(text: String, n: Int): Tut[Unit] =
     for {
       s <- state
-      inv = s.mods.filter(_ == Invisible)
+      inv = s.mods.filter(m => m == Invisible || m.isInstanceOf[Decorate])
       _ <- checkBoundary(text, "```", false, Set())
       s <- state
       mods = modifiers(text)
