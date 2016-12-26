@@ -67,7 +67,7 @@ trait Zed {
     def close(a: A): Unit
   }
   object Resource {
-    implicit def CloseableResouce[A <: java.io.Closeable] = new Resource[A] {
+    implicit def CloseableResource[A <: java.io.Closeable] = new Resource[A] {
       def close(a: A) = a.close
     }
   }
