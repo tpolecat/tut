@@ -95,7 +95,7 @@ The following modifiers are supported. Note that you can use multiples if you li
 
 | Modifier    | Explanation |
 |-------------|-------------|
-| `:fail`      | Code in the shed *must* throw an exception or fail to compile. Successful interpretation will cause a buid failure. |
+| `:fail`      | Code in the shed *must* throw an exception or fail to compile. Successful interpretation will cause a build failure. |
 | `:nofail`    | Code in the shed *might* throw an exception or fail to compile. Such failure will *not* cause a build failure. Note that this modifier is **deprecated** in favor of `:fail`. |
 | `:silent`    | Suppresses REPL prompts and output; under this modifier the input and output text are identical. |
 | `:plain`     | Output will not have `scala` syntax highlighting. |
