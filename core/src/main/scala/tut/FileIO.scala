@@ -51,13 +51,11 @@ object FileIO {
     IO(new PrintStream(filterSpigot, true, Encoding)).using { printStream =>
     IO(new OutputStreamWriter(printStream, Encoding)).using { streamWriter =>
     IO(new PrintWriter(streamWriter)).using                 { printWriter =>
-      for {
-        stdout <- IO(Console.out)
-        _      <- IO(Console.setOut(printStream))
+      (for {
         interp <- newInterpreter(printWriter, opts)
         state  =  TutState(false, Set(), false, interp, printWriter, filterSpigot, "", false, in, opts)
-        endSt  <- Tut.file(in).exec(state).ensuring(IO(Console.setOut(stdout)))
-      } yield endSt
+        endSt  <- Tut.file(in).exec(state)
+      } yield endSt).withOut(printStream)
     }}}}}}
 
   private def newInterpreter(pw: PrintWriter, opts: List[String]): IO[IMain] =
