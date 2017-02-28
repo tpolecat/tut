@@ -1,5 +1,7 @@
 package tut
 
+import java.io.OutputStream
+
 object Zed {
   trait Monad[M[_]] {
     def point[A](a: A): M[A]
@@ -13,7 +15,7 @@ object Zed {
     def >>=[B](f: A => M[B]): M[B] = M.flatMap(ma)(f)
     def >>[B](mb: M[B]): M[B] = M.flatMap(ma)(_ => mb)
     def void: M[Unit] = ma.map(_ => ())
-    def as[A](a: A) = ma.map(_ => a)
+    def as[B](b: B): M[B] = ma.map(_ => b)
   }
 
   implicit class IdOps[A](a: A) {
@@ -93,8 +95,10 @@ object Zed {
     def using[B](f: A => IO[B])(implicit A: Resource[A]): IO[B] =
       ma.flatMap(a => f(a).flatMap(b => IO(A.close(a)).map(_ => b)))
     def ensuring[B](mb: IO[B]): IO[A] =
-      State(rw => try { ma.run(rw) } finally { mb.run(rw) } )
+      State(rw => try { ma.run(rw) } finally { void(mb.run(rw)) } )
     def unsafePerformIO(): A = ma.run(RealWorld)._1
+    def withOut(o: OutputStream): IO[A] =
+      State[RealWorld.type,A](s => Console.withOut(o)(ma.run(s)))
   }
 
   implicit class ListOps[A](as: List[A]) {
@@ -113,4 +117,7 @@ object Zed {
     def map[A,B](ma: List[A])(f: A => B) = ma.map(f)
     def flatMap[A,B](ma: List[A])(f: A => List[B]) = ma.flatMap(f)
   }
+
+  def void[A](a: A): Unit = ()
+
 }
