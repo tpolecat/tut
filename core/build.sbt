@@ -1,7 +1,7 @@
 name := "tut-core"
 
 libraryDependencies ++= Seq(
-  "org.scala-lang" %  "scala-compiler" % scalaVersion.value
+  scalaOrganization.value %  "scala-compiler" % scalaVersion.value
 )
 
 scalaVersion := "2.11.8"
