@@ -4,7 +4,6 @@ import scala.util.matching.Regex
 
 import sbt._
 import sbt.Keys._
-import sbt.Defaults.runnerInit
 import sbt.Attributed.data
 import sbt.complete.Parser
 import sbt.complete.DefaultParsers._
@@ -73,13 +72,15 @@ object Plugin extends sbt.Plugin {
       libraryDependencies += "org.tpolecat" %% "tut-core" % BuildInfo.version % "test",
       tutSourceDirectory := sourceDirectory.value / "main" / "tut",
       tutTargetDirectory := crossTarget.value / "tut",
-      watchSources <++= tutSourceDirectory map { path => (path ** "*.md").get },
       tutScalacOptions := {
         val testOptions = scalacOptions.in(Test).value
         val unwantedOptions = Set("-Ywarn-unused-import")
         testOptions.filterNot(unwantedOptions)
       },
       tutNameFilter := """.*\.(md|markdown|txt|htm|html)""".r,
+      watchSources in Defaults.ConfigGlobal ++= (tutSourceDirectory.value ** new NameFilter {
+        override def accept(name: String): Boolean = tutNameFilter.value.pattern.matcher(name).matches()
+      }).get,
       tutFiles := tutFilesParser,
       tutPluginJars := {
         // no idea if this is the right way to do this
