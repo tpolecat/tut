@@ -71,4 +71,11 @@ val y = 2
 // y: Int = 2
 ```
 
+Should not fail the build:
+
+```scala
+case class A(c: Class[_])
+// defined class A
+```
+
 The End

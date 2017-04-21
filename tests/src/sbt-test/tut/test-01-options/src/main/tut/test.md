@@ -55,4 +55,10 @@ import scala.collection.immutable.List
 val y = 2
 ```
 
+Should not fail the build:
+
+```tut:book
+case class A(c: Class[_])
+```
+
 The End

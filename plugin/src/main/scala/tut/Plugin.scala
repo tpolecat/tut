@@ -12,9 +12,9 @@ object Plugin extends sbt.Plugin {
 
   type Dir = File
 
+  lazy val Tut                = config("tut") extend Compile
   lazy val tut                = TaskKey[Seq[(File,String)]]("tut", "create tut documentation")
   lazy val tutSourceDirectory = SettingKey[File]("tutSourceDirectory", "where to look for tut sources")
-  lazy val tutScalacOptions   = TaskKey[Seq[String]]("tutScalacOptions", "scalac options")
   lazy val tutPluginJars      = TaskKey[Seq[File]]("tutPluginJars", "Plugin jars to be used by tut REPL.")
   lazy val tutOnly            = inputKey[Unit]("Run tut on a single file.")
   lazy val tutTargetDirectory = SettingKey[File]("tutTargetDirectory", "Where tut output goes")
@@ -66,25 +66,22 @@ object Plugin extends sbt.Plugin {
   def tutAll(streams: TaskStreams, r: ScalaRun, in: List[File], out: List[File], cp: Classpath, opts: Seq[String], pOpts: Seq[String], re: String): List[(File, String)] =
     (in zip out).flatMap { case (in, out) => tutOne(streams, r, in, out, cp, opts, pOpts, re ) }
 
-  lazy val tutSettings =
+  lazy val tutSettings = inConfig(Tut)(Defaults.configSettings) ++
     Seq(
       resolvers += "tpolecat" at "http://dl.bintray.com/tpolecat/maven",
-      libraryDependencies += "org.tpolecat" %% "tut-core" % BuildInfo.version % "test",
-      tutSourceDirectory := sourceDirectory.value / "main" / "tut",
+      libraryDependencies += "org.tpolecat" %% "tut-core" % BuildInfo.version % Tut,
+      ivyConfigurations += Tut,
+      tutSourceDirectory := (sourceDirectory in Compile).value / "tut",
       tutTargetDirectory := crossTarget.value / "tut",
-      tutScalacOptions := {
-        val testOptions = scalacOptions.in(Test).value
-        val unwantedOptions = Set("-Ywarn-unused-import")
-        testOptions.filterNot(unwantedOptions)
-      },
       tutNameFilter := """.*\.(md|markdown|txt|htm|html)""".r,
       watchSources in Defaults.ConfigGlobal ++= (tutSourceDirectory.value ** new NameFilter {
         override def accept(name: String): Boolean = tutNameFilter.value.pattern.matcher(name).matches()
       }).get,
       tutFiles := tutFilesParser,
+      scalacOptions in Tut := (scalacOptions in (Compile, console)).value.filterNot(unsafeOptions),
       tutPluginJars := {
         // no idea if this is the right way to do this
-        val deps = (libraryDependencies in Test).value.filter(_.configurations.fold(false)(_.startsWith("plugin->")))
+        val deps = (libraryDependencies in Tut).value.filter(_.configurations.fold(false)(_.startsWith("plugin->")))
         update.value.configuration("plugin").map(_.modules).getOrElse(Nil).filter { m =>
           deps.exists { d =>
             d.organization == m.module.organization &&
@@ -94,11 +91,11 @@ object Plugin extends sbt.Plugin {
         }.flatMap(_.artifacts.map(_._2))
       },
       tut := {
-        val r     = (runner in Test).value
+        val r     = (runner in Tut).value
         val in    = tutSourceDirectory.value
         val out   = tutTargetDirectory.value
-        val cp    = (fullClasspath in Test).value
-        val opts  = tutScalacOptions.value
+        val cp    = (fullClasspath in Tut).value
+        val opts  = (scalacOptions in Tut).value
         val pOpts = tutPluginJars.value.map(f => "–Xplugin:" + f.getAbsolutePath)
         val re    = tutNameFilter.value.pattern.toString
         tutOne(streams.value, r, in, out, cp, opts, pOpts, re)
@@ -106,14 +103,14 @@ object Plugin extends sbt.Plugin {
       tutOnly <<= InputTask.createDyn(Def.setting((state: State) => Space ~> tutFilesParser(state))) {
         Def.task{ in =>
           Def.task{
-            val r     = (runner in Test).value
+            val r     = (runner in Tut).value
             val inR   = tutSourceDirectory.value // input root
             val inDir = if (in.isDirectory) in
                         else in.getParentFile    // input dir
             val outR  = tutTargetDirectory.value // output root
             val out   = new File(outR, inR.toURI.relativize(inDir.toURI).getPath) // output dir
-            val cp    = (fullClasspath in Test).value
-            val opts  = tutScalacOptions.value
+            val cp    = (fullClasspath in Tut).value
+            val opts  = (scalacOptions in Tut).value
             val pOpts = tutPluginJars.value.map(f => "–Xplugin:" + f.getAbsolutePath)
             val re    = tutNameFilter.value.pattern.toString
             tutOne(streams.value, r, in, out, cp, opts, pOpts, re)
@@ -122,11 +119,11 @@ object Plugin extends sbt.Plugin {
       },
       tutQuickCache := cacheDirectory.value / "tut",
       tutQuick := {
-        val r     = (runner in Test).value
+        val r     = (runner in Tut).value
         val inR   = tutSourceDirectory.value
         val outR  = tutTargetDirectory.value
-        val cp    = (fullClasspath in Test).value
-        val opts  = tutScalacOptions.value
+        val cp    = (fullClasspath in Tut).value
+        val opts  = (scalacOptions in Tut).value
         val pOpts = tutPluginJars.value.map(f => "–Xplugin:" + f.getAbsolutePath)
         val re    = tutNameFilter.value.pattern.toString
         val cache = tutQuickCache.value
@@ -148,4 +145,3 @@ object Plugin extends sbt.Plugin {
     )
 
 }
-
