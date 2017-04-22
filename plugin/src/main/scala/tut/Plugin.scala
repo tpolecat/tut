@@ -78,7 +78,7 @@ object Plugin extends sbt.Plugin {
         override def accept(name: String): Boolean = tutNameFilter.value.pattern.matcher(name).matches()
       }).get,
       tutFiles := tutFilesParser,
-      scalacOptions in Tut := (scalacOptions in (Compile, console)).value.filterNot(unsafeOptions),
+      scalacOptions in Tut := (scalacOptions in (Compile, console)).value,
       tutPluginJars := {
         // no idea if this is the right way to do this
         val deps = (libraryDependencies in Tut).value.filter(_.configurations.fold(false)(_.startsWith("plugin->")))
