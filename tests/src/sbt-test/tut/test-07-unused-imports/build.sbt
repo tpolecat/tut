@@ -11,3 +11,4 @@ check := {
     error("Output doesn't match expected: \n" + actual.mkString("\n"))
 }
 scalacOptions ++= Seq("-Xfatal-warnings", "-Ywarn-unused-import", "-feature")
+(scalacOptions in (Compile, console)) := scalacOptions.value.filterNot(Set("-Ywarn-unused-import"))

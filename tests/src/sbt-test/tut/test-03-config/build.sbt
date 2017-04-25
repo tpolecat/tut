@@ -10,8 +10,8 @@ check := {
   val ccp = (managedClasspath in Compile).value
   if (ccp.exists(_.data.getName.contains("tut-core")))
     error("Compile classpath contains tut-core.")
-  // verify that the test classpath *does* contain tut
-  val tcp = (managedClasspath in Test).value
+  // verify that the tut classpath *does* contain tut
+  val tcp = (managedClasspath in Tut).value
   if (!tcp.exists(_.data.getName.contains("tut-core")))
-    error("Test classpath doesn't contain tut-core.")
+    error("Tut classpath doesn't contain tut-core.")
 }
