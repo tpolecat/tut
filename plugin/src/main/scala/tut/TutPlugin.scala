@@ -18,15 +18,15 @@ object TutPlugin extends AutoPlugin {
 
   object autoImport {
     lazy val Tut                = config("tut") extend Compile
-    lazy val tut                = TaskKey[Seq[(File,String)]]("tut", "create tut documentation")
-    lazy val tutSourceDirectory = SettingKey[File]("tutSourceDirectory", "where to look for tut sources")
-    lazy val tutPluginJars      = TaskKey[Seq[File]]("tutPluginJars", "Plugin jars to be used by tut REPL.")
+    lazy val tut                = taskKey[Seq[(File,String)]]("create tut documentation")
+    lazy val tutSourceDirectory = settingKey[File]("where to look for tut sources")
+    lazy val tutPluginJars      = taskKey[Seq[File]]("Plugin jars to be used by tut REPL.")
     lazy val tutOnly            = inputKey[Unit]("Run tut on a single file.")
-    lazy val tutTargetDirectory = SettingKey[File]("tutTargetDirectory", "Where tut output goes")
-    lazy val tutNameFilter      = SettingKey[Regex]("tutNameFilter", "tut skips files whose names don't match")
-    lazy val tutFiles           = SettingKey[State => Parser[File]]("tutFiles", "parser identifying files visible to tut")
-    lazy val tutQuick           = TaskKey[Set[File]]("tutQuick", "Run tut incrementally on recently changed files")
-    lazy val tutQuickCache      = SettingKey[File]("tutQuickCache", "Cache directory for tutQuick metadata")
+    lazy val tutTargetDirectory = settingKey[File]("Where tut output goes")
+    lazy val tutNameFilter      = settingKey[Regex]("tut skips files whose names don't match")
+    lazy val tutFiles           = settingKey[State => Parser[File]]("parser identifying files visible to tut")
+    lazy val tutQuick           = taskKey[Set[File]]("Run tut incrementally on recently changed files")
+    lazy val tutQuickCache      = settingKey[File]("Cache directory for tutQuick metadata")
   }
 
   import autoImport._
