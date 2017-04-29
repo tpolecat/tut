@@ -5,7 +5,7 @@ import java.io.{ByteArrayOutputStream, FilterOutputStream, OutputStream}
 import tut.Zed._
 
 class Spigot(os: OutputStream) extends FilterOutputStream(os) {
-  private var baos = new ByteArrayOutputStream()
+  private val baos = new ByteArrayOutputStream()
   def bytes = baos.toByteArray
 
   private[this] var active = true

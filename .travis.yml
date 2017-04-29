@@ -6,7 +6,7 @@ jdk:
 
 scala:
   - 2.10.6
-  - 2.12.0
+  - 2.12.2
 
 matrix:
   include:
