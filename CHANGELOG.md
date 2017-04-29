@@ -2,6 +2,14 @@
 
 This file summarizes **notable** changes for each release, but does not describe internal changes unless they are particularly exciting. For complete details please see the corresponding [milestones](https://github.com/tpolecat/tut/milestones?state=closed) and their associated issues.
 
+### <a name="0.5.0"></a>New and Noteworthy for Version 0.5.0
+
+- Made Tut into an autoplugin.
+- Added a `Tut` SBT configuration.
+- Removed `tutScalacOptions` (replaced by `scalacOptions in Tut`).
+- No longer filters `-Ywarn-unused-imports` out, but inherits the default `scalacOptions` from the REPL ones.
+- `tutNameFilter` is now honoured when monitoring modified files.
+
 ### <a name="0.4.8"></a>New and Noteworthy for Version 0.4.8
 
 - Added `decorate` modifier for use with Kramdown, courtesy of Juan Pedro Moreno.
