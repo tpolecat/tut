@@ -7,7 +7,7 @@
 
 **tut** is a very simple documentation tool for Scala that reads Markdown files and interprets Scala code in `tut` sheds, allowing you to write documentation that is typechecked and run as part of your build.
 
-The current version is **0.4.8** (changelog [here](CHANGELOG.md)) which runs on **Scala 2.10**, **2.11**, and **2.12**.
+The current version is **0.5.0** (changelog [here](CHANGELOG.md), upgrade instructions [here](#0.5.0)) which runs on **Scala 2.10**, **2.11**, and **2.12**.
 
 Projects using **tut** include [doobie](https://github.com/tpolecat/doobie) and [cats](https://github.com/typelevel/cats). If you're using it and would like be added to the list, please submit a PR!
 
@@ -18,13 +18,13 @@ Projects using **tut** include [doobie](https://github.com/tpolecat/doobie) and 
 **1**. Add the following to `project/plugins.sbt`:
 
 ```scala
-addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.4.8")
+addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.5.0")
 ```
 
 **2**.  And add the following to `build.sbt`:
 
 ```scala
-tutSettings
+enablePlugins(TutPlugin)
 ```
 
 **3**.  Write a tutorial in `src/main/tut/Foo.md`:
@@ -39,7 +39,7 @@ tutSettings
     Here is how you add numbers:
     ```scala
     scala> 1 + 1
-    res0: Int = 2    
+    res0: Int = 2
     ```
 
 ### Quick Start (standalone)
@@ -51,7 +51,7 @@ In case you want to run **tut** without sbt, you can use **coursier** instead.
 **2**. Run **tut**:
 
 ```
-coursier launch -r "https://dl.bintray.com/tpolecat/maven/" org.tpolecat:tut-core_2.11:0.4.8 -- \
+coursier launch -r "https://dl.bintray.com/tpolecat/maven/" org.tpolecat:tut-core_2.11:0.5.0 -- \
   in out '.*\.md$' -classpath $(coursier fetch -p com.chuusai:shapeless_2.11:2.3.1)
 ```
 
@@ -111,11 +111,49 @@ The following modifiers are supported. Note that you can use multiples if you li
 
 | Setting | Explanation | Default Value |
 |---------|-------------|---------------|
-| `tutSourceDirectory` | Location of **tut** source files. | `sourceDirectory.value / "main" / "tut"` |
-| `tutNameFilter`      | Regex specifying files that should be interpreted. | Names ending in `.md` `.txt` `.htm` `.html` |
-| `tutTargetDirectory` | Destination for **tut** output. | `crossTarget.value / "tut"` |
-| `tutScalacOptions`   | Compiler options that will be passed to the **tut** REPL. | Same as `Test` configuration. |
-| `tutPluginJars`      | List of compiler plugin jarfiles to be passed to the **tut** REPL. | Same as `Test` configuration. |
+| `tutSourceDirectory`  | Location of **tut** source files. | `(sourceDirectory.value in Compile) / "tut"` |
+| `tutNameFilter`       | Regex specifying files that should be interpreted. | Names ending in `.md` `.txt` `.htm` `.html` |
+| `tutTargetDirectory`  | Destination for **tut** output. | `crossTarget.value / "tut"` |
+| `scalacOptions in Tut` | Compiler options that will be passed to the **tut** REPL. | Same as `Test` configuration. |
+| `tutPluginJars`       | List of compiler plugin jarfiles to be passed to the **tut** REPL. | Same as `Test` configuration. |
+
+It's possible to add tut-specific dependencies through the `% "tut"` modifier.
+For example:
+
+```scala
+libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.13.5" % "tut"
+```
+
+### <a name="0.5.0"></a>Upgrading from 0.4.8
+
+0.5.0 includes a few breaking changes.
+
+##### tutSettings
+
+Tut is now an autoplugin, and its settings are imported automatically when it's enabled:
+
+* remove `tutSettings`
+* add `enablePlugins(TutPlugin)`
+
+##### tutScalacOptions
+
+This setting does not exist anymore, but you can replace it with `(scalacOptions in Tut)` everywhere it was used.
+
+##### Warnings on unused imports
+
+Tut does not filter out `-Ywarn-unused-imports` from its `scalacOptions` anymore. If you need to re-enable that behaviour, simply add:
+
+```scala
+scalacOptions in Tut := scalacOptions.value.filterNot(Set("-Ywarn-unused-import"))
+```
+
+##### Missing dependencies
+
+Tut does not inherit its CLASSPATH from the `Test` configuration anymore. If this breaks your build, you can add missing dependencies manually by using the `% "tut"` modifier. For example:
+
+```scala
+libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.13.5" % "tut"
+```
 
 
 ### Integration with sbt-microsites
