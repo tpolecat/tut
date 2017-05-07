@@ -4,7 +4,9 @@ This file summarizes **notable** changes for each release, but does not describe
 
 ### <a name="0.5.0"></a>New and Noteworthy for Version 0.5.0
 
-- Made Tut into an autoplugin.
+Many thanks to :sparkles: [Nicolas Rinaudo](https://github.com/nrinaudo) :sparkles: for his work on this release.
+
+- **tut** is now an autoplugin.
 - Added a `Tut` SBT configuration.
 - Removed `tutScalacOptions` (replaced by `scalacOptions in Tut`).
 - No longer filters `-Ywarn-unused-imports` out, but inherits the default `scalacOptions` from the REPL ones.

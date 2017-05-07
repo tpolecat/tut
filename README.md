@@ -7,7 +7,7 @@
 
 **tut** is a very simple documentation tool for Scala that reads Markdown files and interprets Scala code in `tut` sheds, allowing you to write documentation that is typechecked and run as part of your build.
 
-The current version is **0.5.0** (changelog [here](CHANGELOG.md)) which runs on **Scala 2.10**, **2.11**, and **2.12**.
+The current version is **0.5.0** (changelog [here](CHANGELOG.md), upgrade instructions [here](#0.5.0)) which runs on **Scala 2.10**, **2.11**, and **2.12**.
 
 Projects using **tut** include [doobie](https://github.com/tpolecat/doobie) and [cats](https://github.com/typelevel/cats). If you're using it and would like be added to the list, please submit a PR!
 
@@ -124,22 +124,22 @@ For example:
 libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.13.5" % "tut"
 ```
 
-### Upgrading from 0.4.8
+### <a name="0.5.0"></a>Upgrading from 0.4.8
 
 0.5.0 includes a few breaking changes.
 
-#### tutSettings
+##### tutSettings
 
 Tut is now an autoplugin, and its settings are imported automatically when it's enabled:
 
 * remove `tutSettings`
 * add `enablePlugins(TutPlugin)`
 
-#### tutScalacOptions
+##### tutScalacOptions
 
 This setting does not exist anymore, but you can replace it with `(scalacOptions in Tut)` everywhere it was used.
 
-#### Warnings on unused imports
+##### Warnings on unused imports
 
 Tut does not filter out `-Ywarn-unused-imports` from its `scalacOptions` anymore. If you need to re-enable that behaviour, simply add:
 
@@ -147,7 +147,7 @@ Tut does not filter out `-Ywarn-unused-imports` from its `scalacOptions` anymore
 scalacOptions in Tut := scalacOptions.value.filterNot(Set("-Ywarn-unused-import"))
 ```
 
-#### Missing dependencies
+##### Missing dependencies
 
 Tut does not inherit its CLASSPATH from the `Test` configuration anymore. If this breaks your build, you can add missing dependencies manually by using the `% "tut"` modifier. For example:
 
