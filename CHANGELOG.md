@@ -4,7 +4,7 @@ This file summarizes **notable** changes for each release, but does not describe
 
 ### <a name="0.5.0"></a>New and Noteworthy for Version 0.5.0
 
-Many thanks to :sparkles: [Nicolas Rinaudo](https://github.com/nrinaudo) :sparkles: for his work on this release.
+Many thanks to :sparkles: [Nicolas Rinaudo](https://github.com/nrinaudo) :sparkles: and :sparkles: [Jisoo Park](https://github.com/guersam) :sparkles: for their work on this release.
 
 - **tut** is now an autoplugin.
 - Added a `Tut` SBT configuration.
