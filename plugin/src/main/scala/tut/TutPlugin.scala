@@ -10,7 +10,7 @@ import sbt.complete.DefaultParsers._
 
 object TutPlugin extends AutoPlugin {
 
-  override def trigger = allRequirements
+  override def trigger = noTrigger
 
   override def requires = sbt.plugins.JvmPlugin
 
