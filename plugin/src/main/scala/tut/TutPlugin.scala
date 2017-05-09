@@ -17,7 +17,7 @@ object TutPlugin extends AutoPlugin {
   type Dir = File
 
   object autoImport {
-    lazy val Tut                = config("tut") extend Compile
+    lazy val Tut                = config("tut") extend Compile hide
     lazy val tut                = taskKey[Seq[(File,String)]]("create tut documentation")
     lazy val tutSourceDirectory = settingKey[File]("where to look for tut sources")
     lazy val tutPluginJars      = taskKey[Seq[File]]("Plugin jars to be used by tut REPL.")
