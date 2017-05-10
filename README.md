@@ -7,7 +7,7 @@
 
 **tut** is a very simple documentation tool for Scala that reads Markdown files and interprets Scala code in `tut` sheds, allowing you to write documentation that is typechecked and run as part of your build.
 
-The current version is **0.5.0** (changelog [here](CHANGELOG.md), upgrade instructions [here](#0.5.0)) which runs on **Scala 2.10**, **2.11**, and **2.12**.
+The current version is **0.5.1** (changelog [here](CHANGELOG.md), upgrade instructions for 0.5.x series [here](#0.5.x)) which runs on **Scala 2.10**, **2.11**, and **2.12**.
 
 Projects using **tut** include [doobie](https://github.com/tpolecat/doobie) and [cats](https://github.com/typelevel/cats). If you're using it and would like be added to the list, please submit a PR!
 
@@ -18,7 +18,7 @@ Projects using **tut** include [doobie](https://github.com/tpolecat/doobie) and 
 **1**. Add the following to `project/plugins.sbt`:
 
 ```scala
-addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.5.0")
+addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.5.1")
 ```
 
 **2**.  And add the following to `build.sbt`:
@@ -51,7 +51,7 @@ In case you want to run **tut** without sbt, you can use **coursier** instead.
 **2**. Run **tut**:
 
 ```
-coursier launch -r "https://dl.bintray.com/tpolecat/maven/" org.tpolecat:tut-core_2.11:0.5.0 -- \
+coursier launch -r "https://dl.bintray.com/tpolecat/maven/" org.tpolecat:tut-core_2.11:0.5.1 -- \
   in out '.*\.md$' -classpath $(coursier fetch -p com.chuusai:shapeless_2.11:2.3.1)
 ```
 
@@ -124,9 +124,9 @@ For example:
 libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.13.5" % "tut"
 ```
 
-### <a name="0.5.0"></a>Upgrading from 0.4.8
+### <a name="0.5.x"></a>Upgrading from 0.4.x
 
-0.5.0 includes a few breaking changes.
+The 0.5.x series includes a few breaking changes from 0.4.x.
 
 ##### tutSettings
 
