@@ -9,7 +9,7 @@
 
 The current version is **0.5.1** (changelog [here](CHANGELOG.md), upgrade instructions for 0.5.x series [here](#0.5.x)) which runs on **Scala 2.10**, **2.11**, and **2.12**.
 
-Projects using **tut** include [doobie](https://github.com/tpolecat/doobie) and [cats](https://github.com/typelevel/cats). If you're using it and would like be added to the list, please submit a PR!
+Projects using **tut** include [doobie](https://github.com/tpolecat/doobie), [frameless](https://github.com/typelevel/frameless) and [cats](https://github.com/typelevel/cats). If you're using it and would like be added to the list, please submit a PR!
 
 **tut** is a [Typelevel](http://typelevel.org/) project. This means we embrace pure, typeful, functional programming, and provide a safe and friendly environment for teaching, learning, and contributing as described in the Typelevel [Code of Conduct](http://typelevel.org/conduct.html).
 
