@@ -2,6 +2,10 @@
 
 This file summarizes **notable** changes for each release, but does not describe internal changes unless they are particularly exciting. For complete details please see the corresponding [milestones](https://github.com/tpolecat/tut/milestones?state=closed) and their associated issues.
 
+### <a name="0.5.2"></a>New and Noteworthy for Version 0.5.2
+
+Somehow :confused: tpolecat :confused: botched the 0.5.1 release, which didn't actually include the only change it was intended to include. This uh, fixes that.
+
 ### <a name="0.5.1"></a>New and Noteworthy for Version 0.5.1
 
 This is a bugfix release that fixes an issue which could cause the tut-core dependency to be included in the POM information for artifacts of projects that use tut. Many thanks to :sparkles: [Nicolas Rinaudo](https://github.com/nrinaudo) :sparkles: and :sparkles: [Dale Wijnand](https://github.com/dwijnand) :sparkles: for prompt and clever sleuthing.
