@@ -1,4 +1,4 @@
-val defaultScalaVersion = "2.11.10"
+val defaultScalaVersion = "2.11.11"
 
 def testScalaVersion(logger: Logger): String = sys.env.get("TRAVIS_SCALA_VERSION").getOrElse {
   logger.warn(s"scripted tests: falling back to default Scala version $defaultScalaVersion")

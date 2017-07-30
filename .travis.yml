@@ -19,7 +19,7 @@ scala:
 
 matrix:
   include:
-    - scala: 2.11.10
+    - scala: 2.11.11
       env: TEST_SCRIPTED=1
       jdk: oraclejdk8
 
