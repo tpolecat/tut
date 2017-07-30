@@ -9,9 +9,9 @@ check := {
   // will not be part of the artifact's transitive dependencies.
   val ccp = (managedClasspath in Compile).value
   if (ccp.exists(_.data.getName.contains("tut-core")))
-    error("Compile classpath contains tut-core.")
+    sys.error("Compile classpath contains tut-core.")
   // verify that the tut classpath *does* contain tut
   val tcp = (managedClasspath in Tut).value
   if (!tcp.exists(_.data.getName.contains("tut-core")))
-    error("Tut classpath doesn't contain tut-core.")
+    sys.error("Tut classpath doesn't contain tut-core.")
 }
