@@ -15,11 +15,11 @@ jdk:
 
 scala:
   - 2.10.6
-  - 2.12.2
+  - 2.12.3
 
 matrix:
   include:
-    - scala: 2.11.8
+    - scala: 2.11.10
       env: TEST_SCRIPTED=1
       jdk: oraclejdk8
 

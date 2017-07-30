@@ -7,6 +7,9 @@ import sbt.Keys._
 import sbt.Attributed.data
 import sbt.complete.Parser
 import sbt.complete.DefaultParsers._
+import sbt.librarymanagement.ConfigRef
+import sbt.internal.io.Source
+import sbt.util.CacheStoreFactory
 
 object TutPlugin extends AutoPlugin {
 
@@ -39,15 +42,20 @@ object TutPlugin extends AutoPlugin {
       tutSourceDirectory := (sourceDirectory in Compile).value / "tut",
       tutTargetDirectory := crossTarget.value / "tut",
       tutNameFilter := """.*\.(md|markdown|txt|htm|html)""".r,
-      watchSources in Defaults.ConfigGlobal ++= (tutSourceDirectory.value ** new NameFilter {
-        override def accept(name: String): Boolean = tutNameFilter.value.pattern.matcher(name).matches()
-      }).get,
+      watchSources in Defaults.ConfigGlobal +=
+        new Source(
+          tutSourceDirectory.value,
+          new NameFilter {
+            override def accept(name: String): Boolean = tutNameFilter.value.pattern.matcher(name).matches()
+          },
+          NothingFilter
+        ),
       tutFiles := tutFilesParser(false).value,
       scalacOptions in Tut := (scalacOptions in (Compile, console)).value,
       tutPluginJars := {
         // no idea if this is the right way to do this
         val deps = (libraryDependencies in Tut).value.filter(_.configurations.fold(false)(_.startsWith("plugin->")))
-        update.value.configuration("plugin").map(_.modules).getOrElse(Nil).filter { m =>
+        update.value.configuration(ConfigRef("plugin")).map(_.modules).getOrElse(Nil).filter { m =>
           deps.exists { d =>
             d.organization == m.module.organization &&
             d.name         == m.module.name &&
@@ -96,12 +104,12 @@ object TutPlugin extends AutoPlugin {
             new File(outR, inR.toURI.relativize(inDir.toURI).getPath) // output dir
           }
 
-          tutAll(streams.value, r, in, out, cp, opts, pOpts, re).map(_._1).toSet
+          tutAll(streams.value, r, in.toList, out, cp, opts, pOpts, re).map(_._1).toSet
         }
 
         val files = safeListFiles(inR, recurse = true).toSet
 
-        FileFunction.cached(cache)(FilesInfo.hash, FilesInfo.exists)(handleUpdate)(files)
+        FileFunction.cached(CacheStoreFactory(cache), FilesInfo.hash, FilesInfo.exists)(handleUpdate)(files)
       }
     )
 
@@ -139,10 +147,11 @@ object TutPlugin extends AutoPlugin {
 
   /** Run the Tut CLI for a single input file or directory */
   def tutOne(streams: TaskStreams, r: ScalaRun, in: File, out: File, cp: Classpath, opts: Seq[String], pOpts: Seq[String], re: String): List[(File, String)] = {
-    toError(r.run("tut.TutMain",
+    r.run("tut.TutMain",
       data(cp),
       Seq(in.getAbsolutePath, out.getAbsolutePath, re) ++ opts ++ pOpts,
-      streams.log))
+      streams.log
+    ).failed foreach (sys error _.getMessage)
     // We can't return a value from the runner, but we know what TutMain is looking at so we'll
     // fake it here. Returning all files potentially touched.
     safeRelativize(in, out, recurse = true)

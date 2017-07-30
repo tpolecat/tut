@@ -1,6 +1,6 @@
 name := "tut-plugin"
 
-scalaVersion := "2.10.6"
+scalaVersion := "2.12.3"
 
 sbtPlugin := true
 
