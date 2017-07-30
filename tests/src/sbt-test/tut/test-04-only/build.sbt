@@ -19,5 +19,5 @@ check := {
     case (b, f) if f.exists != b => (b, f)
   }
   if (failed.nonEmpty)
-    error("Expectation failed for:" + failed.mkString("\n\t", "\n\t", ""))
+    sys.error("Expectation failed for:" + failed.mkString("\n\t", "\n\t", ""))
 }

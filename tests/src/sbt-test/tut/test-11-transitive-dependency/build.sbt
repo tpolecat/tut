@@ -9,5 +9,5 @@ lazy val check = TaskKey[Unit]("check")
 
 check := {
   if(IO.readLines((artifactPath in makePom).value).exists(_.contains("tut-core")))
-    error(s"Found tut-core in the POM file")
+    sys.error(s"Found tut-core in the POM file")
 }

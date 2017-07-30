@@ -1,11 +1,9 @@
-val defaultScalaVersion = "2.11.8"
+val defaultScalaVersion = "2.11.11"
 
 def testScalaVersion(logger: Logger): String = sys.env.get("TRAVIS_SCALA_VERSION").getOrElse {
   logger.warn(s"scripted tests: falling back to default Scala version $defaultScalaVersion")
   defaultScalaVersion
 }
-
-scriptedSettings
 
 scriptedLaunchOpts ++= Seq(
   "-Dfile.encoding=UTF-8",
@@ -21,7 +19,6 @@ scriptedLaunchOpts ++= Seq(
   "-Dscala.version=" + testScalaVersion(sLog.value)
 )
 
-publishLocal := () // do tutPublishLocal at the top
+publishLocal := (()) // do tutPublishLocal at the top
 
-// SBT 0.13.x plugin requires 2.10.x
-scalaVersion := "2.10.6"
+scalaVersion := "2.12.3"
