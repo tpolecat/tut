@@ -27,7 +27,6 @@ object TutPlugin extends AutoPlugin {
     lazy val tutOnly            = inputKey[Unit]("Run tut on a single file.")
     lazy val tutTargetDirectory = settingKey[File]("Where tut output goes")
     lazy val tutNameFilter      = settingKey[Regex]("tut skips files whose names don't match")
-    lazy val tutFiles           = settingKey[State => Parser[File]]("parser identifying files visible to tut")
     lazy val tutQuick           = taskKey[Set[File]]("Run tut incrementally on recently changed files")
   }
 
@@ -50,7 +49,6 @@ object TutPlugin extends AutoPlugin {
           },
           NothingFilter
         ),
-      tutFiles := tutFilesParser(false).value,
       scalacOptions in Tut := (scalacOptions in (Compile, console)).value,
       tutPluginJars := {
         // no idea if this is the right way to do this
@@ -74,7 +72,7 @@ object TutPlugin extends AutoPlugin {
         tutOne(streams.value, r, in, out, cp, opts, pOpts, re)
       },
       tutOnly := {
-        val in = tutFilesParser(true).parsed
+        val in = tutFilesParser.parsed
         val r     = (runner in Tut).value
         val inR   = tutSourceDirectory.value // input root
         val inDir = if (in.isDirectory) in
@@ -133,16 +131,13 @@ object TutPlugin extends AutoPlugin {
   def flatten(f: File): List[File] =
     f :: (if (f.isDirectory) f.listFiles.toList.flatMap(flatten) else Nil)
 
-  def tutFilesParser(space: Boolean): Def.Initialize[State => Parser[File]] = Def.setting { (state: State) =>
+  val tutFilesParser: Def.Initialize[State => Parser[File]] = Def.setting { (state: State) =>
     val extracted = Project.extract(state)
     val dir     = extracted.getOpt(tutSourceDirectory)
     val files   = dir.fold(List.empty[File])(d => safeListFiles(d, recurse = true))
     val parsers = dir.fold(List.empty[Parser[File]])(dir => files.map(f => literal(dir.toURI.relativize(f.toURI).getPath).map(_ => f)))
     val folded  = parsers.foldRight[Parser[File]](failure("<no input files>"))(_ | _)
-    if (space)
-      token(Space ~> folded)
-    else
-      token(folded)
+    token(Space ~> folded)
   }
 
   /** Run the Tut CLI for a single input file or directory */
