@@ -6,7 +6,7 @@ sbtPlugin := true
 
 publishMavenStyle := false
 
-bintrayOrganization in bintray := Some("tpolecat")
+bintrayOrganization := Some("tpolecat")
 
 enablePlugins(BuildInfoPlugin)
 buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)

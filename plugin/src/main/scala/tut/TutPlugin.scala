@@ -17,16 +17,14 @@ object TutPlugin extends AutoPlugin {
   type Dir = File
 
   object autoImport {
-    lazy val Tut                = config("tut") extend Compile hide
+    lazy val Tut                = (config("tut") extend Compile).hide
     lazy val tut                = taskKey[Seq[(File,String)]]("create tut documentation")
     lazy val tutSourceDirectory = settingKey[File]("where to look for tut sources")
     lazy val tutPluginJars      = taskKey[Seq[File]]("Plugin jars to be used by tut REPL.")
     lazy val tutOnly            = inputKey[Unit]("Run tut on a single file.")
     lazy val tutTargetDirectory = settingKey[File]("Where tut output goes")
     lazy val tutNameFilter      = settingKey[Regex]("tut skips files whose names don't match")
-    lazy val tutFiles           = settingKey[State => Parser[File]]("parser identifying files visible to tut")
     lazy val tutQuick           = taskKey[Set[File]]("Run tut incrementally on recently changed files")
-    lazy val tutQuickCache      = settingKey[File]("Cache directory for tutQuick metadata")
   }
 
   import autoImport._
@@ -43,7 +41,6 @@ object TutPlugin extends AutoPlugin {
       watchSources in Defaults.ConfigGlobal ++= (tutSourceDirectory.value ** new NameFilter {
         override def accept(name: String): Boolean = tutNameFilter.value.pattern.matcher(name).matches()
       }).get,
-      tutFiles := tutFilesParser,
       scalacOptions in Tut := (scalacOptions in (Compile, console)).value,
       tutPluginJars := {
         // no idea if this is the right way to do this
@@ -66,24 +63,20 @@ object TutPlugin extends AutoPlugin {
         val re    = tutNameFilter.value.pattern.toString
         tutOne(streams.value, r, in, out, cp, opts, pOpts, re)
       },
-      tutOnly <<= InputTask.createDyn(Def.setting((state: State) => Space ~> tutFilesParser(state))) {
-        Def.task{ in =>
-          Def.task{
-            val r     = (runner in Tut).value
-            val inR   = tutSourceDirectory.value // input root
-            val inDir = if (in.isDirectory) in
-            else in.getParentFile    // input dir
-            val outR  = tutTargetDirectory.value // output root
-            val out   = new File(outR, inR.toURI.relativize(inDir.toURI).getPath) // output dir
-            val cp    = (fullClasspath in Tut).value
-            val opts  = (scalacOptions in Tut).value
-            val pOpts = tutPluginJars.value.map(f => "–Xplugin:" + f.getAbsolutePath)
-            val re    = tutNameFilter.value.pattern.toString
-            tutOne(streams.value, r, in, out, cp, opts, pOpts, re)
-          }
-        }
+      tutOnly := {
+        val in = tutFilesParser.parsed
+        val r     = (runner in Tut).value
+        val inR   = tutSourceDirectory.value // input root
+        val inDir = if (in.isDirectory) in
+        else in.getParentFile    // input dir
+        val outR  = tutTargetDirectory.value // output root
+        val out   = new File(outR, inR.toURI.relativize(inDir.toURI).getPath) // output dir
+        val cp    = (fullClasspath in Tut).value
+        val opts  = (scalacOptions in Tut).value
+        val pOpts = tutPluginJars.value.map(f => "–Xplugin:" + f.getAbsolutePath)
+        val re    = tutNameFilter.value.pattern.toString
+        tutOne(streams.value, r, in, out, cp, opts, pOpts, re)
       },
-      tutQuickCache := cacheDirectory.value / "tut",
       tutQuick := {
         val r     = (runner in Tut).value
         val inR   = tutSourceDirectory.value
@@ -92,7 +85,7 @@ object TutPlugin extends AutoPlugin {
         val opts  = (scalacOptions in Tut).value
         val pOpts = tutPluginJars.value.map(f => "–Xplugin:" + f.getAbsolutePath)
         val re    = tutNameFilter.value.pattern.toString
-        val cache = tutQuickCache.value
+        val cache = streams.value.cacheDirectory / "tut"
 
         def handleUpdate(inReport: ChangeReport[File], outReport: ChangeReport[File]) = {
           val in    = (inReport.modified -- inReport.removed).toList
@@ -130,21 +123,21 @@ object TutPlugin extends AutoPlugin {
   def flatten(f: File): List[File] =
     f :: (if (f.isDirectory) f.listFiles.toList.flatMap(flatten) else Nil)
 
-  def tutFilesParser(state: State): Parser[File] = {
+  val tutFilesParser: Def.Initialize[State => Parser[File]] = Def.setting { (state: State) =>
     val extracted = Project.extract(state)
     val dir     = extracted.getOpt(tutSourceDirectory)
     val files   = dir.fold(List.empty[File])(d => safeListFiles(d, recurse = true))
     val parsers = dir.fold(List.empty[Parser[File]])(dir => files.map(f => literal(dir.toURI.relativize(f.toURI).getPath).map(_ => f)))
     val folded  = parsers.foldRight[Parser[File]](failure("<no input files>"))(_ | _)
-    token(folded)
+    token(Space ~> folded)
   }
 
   /** Run the Tut CLI for a single input file or directory */
   def tutOne(streams: TaskStreams, r: ScalaRun, in: File, out: File, cp: Classpath, opts: Seq[String], pOpts: Seq[String], re: String): List[(File, String)] = {
-    toError(r.run("tut.TutMain",
+    r.run("tut.TutMain",
       data(cp),
       Seq(in.getAbsolutePath, out.getAbsolutePath, re) ++ opts ++ pOpts,
-      streams.log))
+      streams.log).foreach(sys.error)
     // We can't return a value from the runner, but we know what TutMain is looking at so we'll
     // fake it here. Returning all files potentially touched.
     safeRelativize(in, out, recurse = true)
