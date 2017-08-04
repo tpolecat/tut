@@ -10,23 +10,19 @@ before_cache:
   - find $HOME/.ivy2 -name "ivydata-*.properties" -delete
   - find $HOME/.sbt -name "*.lock" -delete
 
-jdk:
-  - oraclejdk8
-
-scala:
-  - 2.10.6
-  - 2.12.2
-
 matrix:
   include:
-    - scala: 2.11.8
+    - scala: 2.11.11
       env: TEST_SCRIPTED=1
+      jdk: oraclejdk8
+    - scala: 2.12.3
+      env: TEST_SCRIPTED=0
       jdk: oraclejdk8
 
 script:
   - sbt ++$TRAVIS_SCALA_VERSION core/compile core/publishLocal
   - sbt plugin/compile plugin/publishLocal
-  - "if [[ $TEST_SCRIPTED = 1 ]]; then sbt scripted; fi"
+  - "if [[ $TEST_SCRIPTED = 1 ]]; then sbt tests/scripted; fi"
 
 notifications:
   webhooks:
