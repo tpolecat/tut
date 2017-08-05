@@ -10,9 +10,7 @@ crossScalaVersions := Seq("2.11.11", "2.12.3", "2.13.0-M1")
 
 libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.0.5"
 
-// scripted-plugin is enabled by default, in particular in this non-sbt subproject
-// this means that switching to 2.11.11 will result in non-existent dependencies
-libraryDependencies ~= { _.filterNot(_.organization == "org.scala-sbt") }
+disablePlugins(ScriptedPlugin)
 
 scalacOptions ++= Seq(
   "-deprecation",
