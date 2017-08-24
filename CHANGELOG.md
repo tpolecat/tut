@@ -2,7 +2,7 @@
 
 This file summarizes **notable** changes for each release, but does not describe internal changes unless they are particularly exciting. For complete details please see the corresponding [milestones](https://github.com/tpolecat/tut/milestones?state=closed) and their associated issues.
 
-### <a name="0.5.2"></a>New and Noteworthy for Version 0.5.2
+### <a name="0.5.3"></a>New and Noteworthy for Version 0.5.3
 
 This adds support for Scala 2.13.0-M1. No other changes.
 
