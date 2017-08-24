@@ -4,6 +4,10 @@ This file summarizes **notable** changes for each release, but does not describe
 
 ### <a name="0.5.2"></a>New and Noteworthy for Version 0.5.2
 
+This adds support for Scala 2.13.0-M1. No other changes.
+
+### <a name="0.5.2"></a>New and Noteworthy for Version 0.5.2
+
 Somehow :confused: tpolecat :confused: botched the 0.5.1 release, which didn't actually include the only change it was intended to include. This uh, fixes that.
 
 ### <a name="0.5.1"></a>New and Noteworthy for Version 0.5.1
