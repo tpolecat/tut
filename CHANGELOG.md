@@ -2,6 +2,18 @@
 
 This file summarizes **notable** changes for each release, but does not describe internal changes unless they are particularly exciting. For complete details please see the corresponding [milestones](https://github.com/tpolecat/tut/milestones?state=closed) and their associated issues.
 
+### <a name="0.6.1"></a>New and Noteworthy for Version 0.6.1
+
+This updates scala-xml to 1.0.6 as required by Scala 2.13.0-M1, and reverts removal of 2.10 support. Thanks :sparkles: Frank Thomas :sparkles: for this contribution.
+
+### <a name="0.6.0"></a>New and Noteworthy for Version 0.6.0
+
+First release for sbt 1.0, courtesy of sparkly :sparkles: Lars Hupel :sparkles:.
+
+------
+
+*See the `master` branch for further developments in the 0.5.x series.*
+
 ### <a name="0.5.2"></a>New and Noteworthy for Version 0.5.2
 
 Somehow :confused: tpolecat :confused: botched the 0.5.1 release, which didn't actually include the only change it was intended to include. This uh, fixes that.
