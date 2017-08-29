@@ -12,6 +12,9 @@ before_cache:
 
 matrix:
   include:
+    - scala: 2.10.6
+      env: TEST_SCRIPTED=0
+      jdk: oraclejdk8
     - scala: 2.11.11
       env: TEST_SCRIPTED=1
       jdk: oraclejdk8
