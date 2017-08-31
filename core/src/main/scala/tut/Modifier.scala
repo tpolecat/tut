@@ -12,6 +12,7 @@ final case object Plain                         extends Modifier
 final case object Invisible                     extends Modifier
 final case object Evaluated                     extends Modifier
 final case class  Decorate(decoration: String)  extends Modifier
+final case object Passthrough                   extends Modifier
 final case object Reset                         extends Modifier
 
 object Modifier {
@@ -26,6 +27,7 @@ object Modifier {
     case "invisible"            => Invisible
     case "evaluated"            => Evaluated
     case DecorateP(decoration)  => Decorate(decoration)
+    case "passthrough"          => Passthrough
     case "reset"                => Reset
   }
 
