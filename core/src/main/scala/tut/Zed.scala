@@ -1,7 +1,5 @@
 package tut
 
-import java.io.OutputStream
-
 // A stub of the old Zed micro-library, just to let us replace it without disturbing other code.
 object Zed extends tut.felix.Syntax {
 
