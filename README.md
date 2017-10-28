@@ -146,7 +146,7 @@ This setting does not exist anymore, but you can replace it with `(scalacOptions
 Tut does not filter out `-Ywarn-unused-imports` from its `scalacOptions` anymore. If you need to re-enable that behaviour, simply add:
 
 ```scala
-scalacOptions in Tut := (scalacOptions in Tut).value.filterNot(Set("-Ywarn-unused-import"))
+scalacOptions in Tut -= "-Ywarn-unused-import"
 ```
 
 ##### Missing dependencies
