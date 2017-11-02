@@ -59,7 +59,11 @@ object FileIO {
     }}}}}}
 
   private def newInterpreter(pw: PrintWriter, opts: List[String]): IO[IMain] =
-    IO(new IMain(new Settings <| (_.embeddedDefaults[TutMain.type]) <| (_.processArguments(opts, true)), pw))
+    IO(new IMain(new Settings <|
+      (_.embeddedDefaults[TutMain.type]) <|
+      (_.processArguments(opts, true)) <|
+      (_.usejavacp.value = true), pw)
+    )
 
   private[tut] def ls(dir: File): IO[List[File]] =
     IO(Option(dir.listFiles).fold(List.empty[File])(_.toList))
