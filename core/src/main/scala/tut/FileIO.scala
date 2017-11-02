@@ -61,8 +61,8 @@ object FileIO {
   private def newInterpreter(pw: PrintWriter, opts: List[String]): IO[IMain] =
     IO(new IMain(new Settings <|
       (_.embeddedDefaults[TutMain.type]) <|
-      (_.processArguments(opts, true)) <|
-      (_.usejavacp.value = true), pw)
+      (_.usejavacp.value = !sys.props("java.class.path").contains("sbt-launch")) <|
+      (_.processArguments(opts, true)), pw)
     )
 
   private[tut] def ls(dir: File): IO[List[File]] =
