@@ -22,7 +22,7 @@ object Tut {
   private def line(text: String, lineNumber: Int): Tut[Unit] =
     for {
       s <- Tut.state
-      inv = s.mods.filter(m => m == Invisible || m.isInstanceOf[Decorate])
+      inv = s.mods.filter(m => m == Invisible || m == Passthrough || m.isInstanceOf[Decorate])
       _ <- checkBoundary(text, "```", false, Set())
       s <- Tut.state
       mods = modifiers(text)
@@ -67,7 +67,11 @@ object Tut {
     if (mods(Invisible)) {
       ""
     } else if (text.startsWith("```tut")) {
-      if (mods(Plain) || mods(Evaluated)) "```" else "```scala"
+      (mods(Plain), mods(Evaluated), mods(Passthrough)) match {
+        case (_, _, true) ⇒ ""
+        case (true, _, _) | (_, true, _) ⇒ "```"
+        case _ ⇒ "```scala"
+      }
     } else {
       if (text.startsWith("```") && decorationMods.nonEmpty) {
         val decorations = decorationMods map { case m: Decorate =>
@@ -77,6 +81,8 @@ object Tut {
         s"""$text
            |{: $decorations }""".stripMargin
       }
+      else if(mods(Passthrough))
+        ""
       else
         text
     }
@@ -91,7 +97,7 @@ object Tut {
   private def out(text: String): Tut[Unit] =
     for {
       s <- Tut.state
-      _ <- (s.mods(Invisible) || s.mods(Evaluated)).unlessM(IO { s.pw.println(text); s.pw.flush() }.liftIO[Tut])
+      _ <- (s.mods(Invisible) || s.mods(Evaluated) || s.mods(Passthrough)).unlessM(IO { s.pw.println(text); s.pw.flush() }.liftIO[Tut])
     } yield ()
 
   private def success: Tut[Unit] =
@@ -113,7 +119,7 @@ object Tut {
     } yield ()
 
   private def prompt(s: TutState): String =
-    if (s.mods(Silent) || s.mods(Book) || s.mods(Evaluated)) ""
+    if (s.mods(Silent) || s.mods(Book) || s.mods(Evaluated) || s.mods(Passthrough)) ""
     else if (s.partial.isEmpty) "scala> "
     else                        "     | "
 }
