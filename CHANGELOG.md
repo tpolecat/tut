@@ -2,6 +2,12 @@
 
 This file summarizes **notable** changes for each release, but does not describe internal changes unless they are particularly exciting. For complete details please see the corresponding [milestones](https://github.com/tpolecat/tut/milestones?state=closed) and their associated issues.
 
+### <a name="0.5.6"></a>New and Noteworthy for Version 0.5.6
+
+- New `passthrough` modifier for code that generates markdown (thanks @metasim).
+- `fork in (Tut, run) := true` now works (thanks again @metasim).
+- `scalacOptions in Tut` now defaults to `scalacOptions in Test` which allows Scalameta to work properly (it doesn't work in console for some reason ... thanks @kailuowang and @suhasgaddam).
+
 ### <a name="0.5.5"></a>New and Noteworthy for Version 0.5.5
 
 This version fixes stack overflows with large input files and cleans up the FP micro-library.
