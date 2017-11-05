@@ -49,7 +49,7 @@ object TutPlugin extends AutoPlugin {
           },
           NothingFilter
         ),
-      scalacOptions in Tut := (scalacOptions in (Compile, console)).value,
+      scalacOptions in Tut := (scalacOptions in Test).value,
       tutPluginJars := {
         // no idea if this is the right way to do this
         val deps = (libraryDependencies in Tut).value.filter(_.configurations.fold(false)(_.startsWith("plugin->")))
