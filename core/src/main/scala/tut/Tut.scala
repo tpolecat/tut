@@ -14,12 +14,16 @@ object Tut {
 
   def file(in: File): Tut[Unit] = for {
     lines <- FileIO.lines(in).liftIO[Tut]
-    _     <- lines.zipWithIndex.traverse { case (l, num) => line(l, num + 1) }
+    _     <- lines.zipWithIndexAndNext(false)(nextCloses)
+                  .traverse { case (l, nextCloses, num) => line(l, num + 1, nextCloses) }
   } yield ()
 
   // Private, utility methods
 
-  private def line(text: String, lineNumber: Int): Tut[Unit] =
+  private val nextCloses: String => Boolean =
+    _.trim.startsWith("```")
+
+  private def line(text: String, lineNumber: Int, nextCloses: Boolean): Tut[Unit] =
     for {
       s <- Tut.state
       inv = s.mods.filter(m => m == Invisible || m == Passthrough || m.isInstanceOf[Decorate])
@@ -35,11 +39,11 @@ object Tut {
           s
         }
       }.liftIO[Tut]
-      _ <- s.isCode.fold(interp(text, lineNumber), out(fixShed(text, mods ++ inv)))
+      _ <- s.isCode.fold(interp(text, lineNumber, nextCloses), out(fixShed(text, mods ++ inv)))
       _ <- checkBoundary(text, "```tut", true, mods)
     } yield ()
 
-  private def interp(text: String, lineNum: Int): Tut[Unit] =
+  private def interp(text: String, lineNum: Int, nextCloses: Boolean): Tut[Unit] =
     Tut.state >>= { s =>
       (text.trim.nonEmpty || s.partial.nonEmpty || s.mods(Silent)).whenM[Tut,Unit] {
         for {
@@ -48,6 +52,7 @@ object Tut {
           _ <- s.spigot.setActive(!(s.mods(Silent) || (s.mods(Invisible)))).liftIO[Tut]
           _ <- s.mods(Book).whenM(s.spigot.commentAfter(s.partial + "\n" + text).liftIO[Tut])
           r <- IO(s.imain.interpret(s.partial + "\n" + text)).liftIO[Tut] >>= {
+            case Results.Incomplete if nextCloses => error(lineNum, Some("incomplete input in code block, missing brace or paren?"))
             case Results.Incomplete => incomplete(text)
             case Results.Success    => if (s.mods(Fail)) error(lineNum, Some("failure was asserted but no failure occurred")) else success
             case Results.Error      => if (s.mods(NoFail) || s.mods(Fail)) success else error(lineNum)

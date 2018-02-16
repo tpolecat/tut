@@ -1,6 +1,7 @@
 package tut.felix
 
 import java.io.OutputStream
+import scala.annotation.tailrec
 
 trait Syntax {
 
@@ -35,6 +36,17 @@ trait Syntax {
   implicit class ListOps[A](as: List[A]) {
     def traverse[M[_]: Monad, B](f: A => M[B]): M[List[B]] =
       as.foldRight(List.empty[B].point[M])((a, mlb) => f(a).flatMap(b => mlb.map(b :: _)))
+
+    def zipWithIndexAndNext[B](z: => B)(f: A => B): List[(A, B, Int)] = {
+      @tailrec
+      def fold(xs: List[(A, Int)], acc: List[(A, B, Int)]): List[(A, B, Int)] =
+        xs match {
+          case (x, i) :: (xs @ ((y, _) :: _)) => fold(xs, acc :+ ((x, f(y), i)))
+          case (x, i) :: Nil => acc :+ ((x, z, i))
+          case Nil => Nil
+        }
+      fold(as.zipWithIndex, Nil)
+    }
   }
 
   implicit class BooleanOps(b: Boolean) {
