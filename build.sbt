@@ -61,7 +61,7 @@ lazy val root = project
   )
 
 lazy val core = project
-  .in(file("core"))
+  .in(file("modules/core"))
   .settings(publishSettings)
   .settings(
     name := "tut-core",
@@ -97,7 +97,7 @@ lazy val core = project
   )
 
 lazy val plugin = project
-  .in(file("plugin"))
+  .in(file("modules/plugin"))
   .settings(publishSettings)
   .settings(
     name := "tut-plugin",
@@ -112,7 +112,7 @@ lazy val plugin = project
   )
 
 lazy val tests = project
-  .in(file("tests"))
+  .in(file("modules/tests"))
   .settings(noPublishSettings)
   .settings(
     scriptedLaunchOpts ++= Seq(
