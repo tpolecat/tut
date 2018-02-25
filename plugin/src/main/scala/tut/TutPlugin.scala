@@ -62,7 +62,7 @@ object TutPlugin extends AutoPlugin {
         }.flatMap(_.artifacts.map(_._2))
       },
       tut := {
-        val r     = (runner in Tut).value
+        val r     = (runner in (Tut, run)).value
         val in    = tutSourceDirectory.value
         val out   = tutTargetDirectory.value
         val cp    = (fullClasspath in Tut).value
@@ -73,7 +73,7 @@ object TutPlugin extends AutoPlugin {
       },
       tutOnly := {
         val in = tutFilesParser.parsed
-        val r     = (runner in Tut).value
+        val r     = (runner in (Tut, run)).value
         val inR   = tutSourceDirectory.value // input root
         val inDir = if (in.isDirectory) in
         else in.getParentFile    // input dir
@@ -86,7 +86,7 @@ object TutPlugin extends AutoPlugin {
         tutOne(streams.value, r, in, out, cp, opts, pOpts, re)
       },
       tutQuick := {
-        val r     = (runner in Tut).value
+        val r     = (runner in (Tut, run)).value
         val inR   = tutSourceDirectory.value
         val outR  = tutTargetDirectory.value
         val cp    = (fullClasspath in Tut).value
