@@ -15,10 +15,10 @@ matrix:
     - scala: 2.10.6
       env: TEST_SCRIPTED=0
       jdk: oraclejdk8
-    - scala: 2.11.11
+    - scala: 2.11.12
       env: TEST_SCRIPTED=1
       jdk: oraclejdk8
-    - scala: 2.12.3
+    - scala: 2.12.4
       env: TEST_SCRIPTED=0
       jdk: oraclejdk8
     - scala: 2.13.0-M1
