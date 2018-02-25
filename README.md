@@ -7,7 +7,7 @@
 
 **tut** is a very simple documentation tool for Scala that reads Markdown files and interprets Scala code in `tut` sheds, allowing you to write documentation that is typechecked and run as part of your build.
 
-The current version is **0.6.2** (changelog [here](CHANGELOG.md)) for **sbt 1.0** on **Scala 2.10**, **2.11**, **2.12**, and **2.13.0-M1**.
+The current version is **0.6.2** (changelog [here](CHANGELOG.md)) for **sbt 1.x** on **Scala 2.10**, **2.11**, **2.12**, and **2.13.0-M1**.
 
 See the **master** branch for **sbt 0.13** support.
 

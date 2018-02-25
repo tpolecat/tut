@@ -2,7 +2,7 @@ import ReleaseTransformations._
 
 lazy val `2.10` = "2.10.6"
 lazy val `2.12` = "2.12.4"
-lazy val `2.11` = "2.11.11"
+lazy val `2.11` = "2.11.12"
 lazy val `2.13` = "2.13.0-M1"
 
 lazy val commonSettings =
