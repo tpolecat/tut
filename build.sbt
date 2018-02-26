@@ -45,7 +45,7 @@ lazy val root = project
   .dependsOn(core, plugin, tests)
   .aggregate(core, plugin, tests)
   .settings(
-    releaseCrossBuild := true,
+    // releaseCrossBuild := true,
     releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
       inquireVersions,
@@ -54,7 +54,7 @@ lazy val root = project
       setReleaseVersion,
       commitReleaseVersion,
       tagRelease,
-      releaseStepCommand("+publish"),
+      releaseStepCommandAndRemaining("+publish"),
       // publishArtifacts,
       setNextVersion,
       commitNextVersion,
