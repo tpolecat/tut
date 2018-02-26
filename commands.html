@@ -1,0 +1,41 @@
+<html><head><title>tut</title><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Rob Norris" /><meta name="description" content="A tutorial generator for Scala." /><meta name="og:image" content="/tut//img/poster.png" /><meta name="og:title" content="tut" /><meta name="og:site_name" content="tut" /><meta name="og:url" content="" /><meta name="og:type" content="website" /><meta name="og:description" content="A tutorial generator for Scala." /><link rel="icon" type="image/png" href="/tut//img/favicon.png" /><meta name="twitter:title" content="tut" /><meta name="twitter:image" content="img/poster.png" /><meta name="twitter:description" content="A tutorial generator for Scala." /><meta name="twitter:card" content="summary_large_image" /><link rel="icon" type="image/png" sizes="16x16" href="/tut//img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/tut//img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/tut//img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/tut//img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/tut//img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/tut//img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/tut//img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/tut//img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/tut//img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/tut//img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/tut//img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/tut//img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/tut//img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/tut//img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/tut//img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/tut//img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/tut//img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/tut//img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/tut//img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/tut//img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/tut//highlight/styles/color-brewer.css" /><link rel="stylesheet" href="/tut//css/style.css" /><link rel="stylesheet" href="/tut//css/palette.css" /><link rel="stylesheet" href="/tut//css/codemirror.css" /><link rel="stylesheet" href="/tut//css/tweak.css" /></head><body><header id="site-header"><div class="navbar-wrapper navbar-inverse"><div class="container"><div class="navbar-header"><button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/tut//" class="brand"><div class="icon-wrapper"><span>tut</span></div></a></div><nav class="text-right"><ul class=""><li><a href="https://github.com/tpolecat/tut"><i class="fa fa-github"></i><span class="hidden-xs">GitHub</span></a></li></ul></nav></div></div><div class="jumbotron" style="background-image:url('/tut//img/jumbotron_pattern.png')"></div><div><ul class="horizontalNav">       <li><a class="" href="/tut//standalone.html">Standalone Usage</a></li>  <li><a class=" active " href="/tut//commands.html">Commands</a></li>  <li><a class="" href="/tut//modifiers.html">Modifiers</a></li>  <li><a class="" href="/tut//configuration.html">Configuration</a></li>  <li><a class="" href="/tut//integrations.html">Integrations</a></li>  <li><a class="" href="/tut//faq.html">FAQ</a></li>  <li><a class="" href="/tut//changelog.html">Changelog</a></li>  <li><a class="" href="/tut//license.html">License</a></li> </ul></div></header><main id="site-main"><section class="use"><div class="container"><div id="content"><h3 id="commands">Commands</h3>
+
+<p><strong>tut</strong> adds the following sbt commands:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Command</th>
+      <th>Explanation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">tut</code></td>
+      <td>Moves the contents of <code class="highlighter-rouge">tutSourceDirectory</code> into <code class="highlighter-rouge">tutTargetDirectory</code>, interpreting code in <code class="highlighter-rouge">tut</code> sheds in any file whose name matches <code class="highlighter-rouge">tutNameFilter</code> (other files are copied but not interpreted).</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">tutQuick</code></td>
+      <td>Like <code class="highlighter-rouge">tut</code> but compiles only files that have changed since last compilation. Note that this does <em>not</em> detect changes in Scala sources; it only looks at tut sources.</td>
+    </tr>
+    <tr>
+      <td><code>tutOnly&nbsp;&lt;path&gt;</code></td>
+      <td>Does the same thing as <code class="highlighter-rouge">tut</code> but only for the specified path under <code class="highlighter-rouge">tutSourceDirectory</code>. Note that tab completion works for this command</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Interpretation obeys the following particulars:</p>
+
+<ul>
+  <li>Each file is interpreted with an independent REPL session. Definitions earlier in the file are available later in the file.</li>
+  <li>Each REPL has the same classpath as your build’s <code class="highlighter-rouge">Test</code> configuration, and by default also has the same scalac options and compiler plugins.</li>
+  <li>By default any error in interpretation (compilation failure or runtime exception) will cause the <code class="highlighter-rouge">tut</code> command to fail. If this command is part of your CI configuration then your build will fail. Yay!</li>
+  <li><strong>tut</strong> captures output from the REPL, as well as anything your code writes to standard output (<code class="highlighter-rouge">System.out</code>). ANSI escapes are removed from this output, so colorized console output will show up as plaintext.</li>
+  <li>In modes that show REPL prompts (see below) blank lines <em>in between statements</em> are discarded and a single blank line is introduced between prompts, as in the normal REPL. Otherwise blank lines are neither introduced nor discarded. This is a change from prior versions.</li>
+</ul>
+</div></div></section></main><footer id="site-footer"><div class="container"><div class="row"><div class="col-xs-6"><p>tut is designed and developed by <a href="" target="_blank">Rob Norris</a></p></div><div class="col-xs-6"><p class="text-right"><a href="https://github.com/tpolecat/tut"><span class="fa fa-github"></span>View on GitHub</a></p></div></div><div class="row"><div class="col-xs-6"><p>Website built with <a href="https://47deg.github.io/sbt-microsites/" target="_blank">Sbt-microsites</a> - © 2016 <a href="https://www.47deg.com/" target="_blank">47 Degrees</a></p></div></div></div></footer><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/tut//highlight/highlight.pack.js"></script><script>hljs.configure({
+languages:['scala','java','bash']
+});
+hljs.initHighlighting();
+             </script></body></html>

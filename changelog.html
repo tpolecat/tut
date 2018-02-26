@@ -1,0 +1,127 @@
+<html><head><title>tut</title><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Rob Norris" /><meta name="description" content="A tutorial generator for Scala." /><meta name="og:image" content="/tut//img/poster.png" /><meta name="og:title" content="tut" /><meta name="og:site_name" content="tut" /><meta name="og:url" content="" /><meta name="og:type" content="website" /><meta name="og:description" content="A tutorial generator for Scala." /><link rel="icon" type="image/png" href="/tut//img/favicon.png" /><meta name="twitter:title" content="tut" /><meta name="twitter:image" content="img/poster.png" /><meta name="twitter:description" content="A tutorial generator for Scala." /><meta name="twitter:card" content="summary_large_image" /><link rel="icon" type="image/png" sizes="16x16" href="/tut//img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/tut//img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/tut//img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/tut//img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/tut//img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/tut//img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/tut//img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/tut//img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/tut//img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/tut//img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/tut//img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/tut//img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/tut//img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/tut//img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/tut//img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/tut//img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/tut//img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/tut//img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/tut//img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/tut//img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/tut//highlight/styles/color-brewer.css" /><link rel="stylesheet" href="/tut//css/style.css" /><link rel="stylesheet" href="/tut//css/palette.css" /><link rel="stylesheet" href="/tut//css/codemirror.css" /><link rel="stylesheet" href="/tut//css/tweak.css" /></head><body><header id="site-header"><div class="navbar-wrapper navbar-inverse"><div class="container"><div class="navbar-header"><button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/tut//" class="brand"><div class="icon-wrapper"><span>tut</span></div></a></div><nav class="text-right"><ul class=""><li><a href="https://github.com/tpolecat/tut"><i class="fa fa-github"></i><span class="hidden-xs">GitHub</span></a></li></ul></nav></div></div><div class="jumbotron" style="background-image:url('/tut//img/jumbotron_pattern.png')"></div><div><ul class="horizontalNav">       <li><a class="" href="/tut//standalone.html">Standalone Usage</a></li>  <li><a class="" href="/tut//commands.html">Commands</a></li>  <li><a class="" href="/tut//modifiers.html">Modifiers</a></li>  <li><a class="" href="/tut//configuration.html">Configuration</a></li>  <li><a class="" href="/tut//integrations.html">Integrations</a></li>  <li><a class="" href="/tut//faq.html">FAQ</a></li>  <li><a class=" active " href="/tut//changelog.html">Changelog</a></li>  <li><a class="" href="/tut//license.html">License</a></li> </ul></div></header><main id="site-main"><section class="use"><div class="container"><div id="content"><h1 id="changelog">changelog</h1>
+
+<p>This file summarizes <strong>notable</strong> changes for each release, but does not describe internal changes unless they are particularly exciting. For complete details please see the corresponding <a href="https://github.com/tpolecat/tut/milestones?state=closed">milestones</a> and their associated issues.</p>
+
+<h3 id="work-in-progress-for-version-063"><a name="0.6.2"></a>Work in Progress for Version 0.6.3</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">fork in (Tut, run) := true</code> now works for real, sorry (thanks again @metasim).</li>
+  <li>Build is now modern and uses <code class="highlighter-rouge">sbt-release</code> (finally!) so publishing is no longer a nightmare.</li>
+</ul>
+
+<h3 id="new-and-noteworthy-for-version-062"><a name="0.6.2"></a>New and Noteworthy for Version 0.6.2</h3>
+
+<p>This release forward-ports improvements from 0.5.5 and 0.5.6.</p>
+
+<ul>
+  <li>New <code class="highlighter-rouge">passthrough</code> modifier for code that generates markdown (thanks @metasim).</li>
+  <li><code class="highlighter-rouge">fork in (Tut, run) := true</code> now works (thanks again @metasim).</li>
+  <li><code class="highlighter-rouge">scalacOptions in Tut</code> now defaults to <code class="highlighter-rouge">scalacOptions in Test</code> which allows Scalameta to work properly (it doesn’t work in console for some reason … thanks @kailuowang and @suhasgaddam).</li>
+  <li>Fixes stack overflows with large input files and cleans up the FP micro-library.</li>
+</ul>
+
+<h3 id="new-and-noteworthy-for-version-061"><a name="0.6.1"></a>New and Noteworthy for Version 0.6.1</h3>
+
+<p>This updates scala-xml to 1.0.6 as required by Scala 2.13.0-M1, and reverts removal of 2.10 support. Thanks :sparkles: Frank Thomas :sparkles: for this contribution.</p>
+
+<h3 id="new-and-noteworthy-for-version-060"><a name="0.6.0"></a>New and Noteworthy for Version 0.6.0</h3>
+
+<p>First release for sbt 1.0, courtesy of sparkly :sparkles: Lars Hupel :sparkles:.</p>
+
+<hr />
+
+<p><em>See the <code class="highlighter-rouge">master</code> branch for further developments in the 0.5.x series.</em></p>
+
+<h3 id="new-and-noteworthy-for-version-052"><a name="0.5.2"></a>New and Noteworthy for Version 0.5.2</h3>
+
+<p>Somehow :confused: tpolecat :confused: botched the 0.5.1 release, which didn’t actually include the only change it was intended to include. This uh, fixes that.</p>
+
+<h3 id="new-and-noteworthy-for-version-051"><a name="0.5.1"></a>New and Noteworthy for Version 0.5.1</h3>
+
+<p>This is a bugfix release that fixes an issue which could cause the tut-core dependency to be included in the POM information for artifacts of projects that use tut. Many thanks to :sparkles: <a href="https://github.com/nrinaudo">Nicolas Rinaudo</a> :sparkles: and :sparkles: <a href="https://github.com/dwijnand">Dale Wijnand</a> :sparkles: for prompt and clever sleuthing.</p>
+
+<h3 id="new-and-noteworthy-for-version-050"><a name="0.5.0"></a>New and Noteworthy for Version 0.5.0</h3>
+
+<p>Many thanks to :sparkles: <a href="https://github.com/nrinaudo">Nicolas Rinaudo</a> :sparkles: and :sparkles: <a href="https://github.com/guersam">Jisoo Park</a> :sparkles: for their work on this release.</p>
+
+<ul>
+  <li><strong>tut</strong> is now an autoplugin.</li>
+  <li>Added a <code class="highlighter-rouge">Tut</code> SBT configuration.</li>
+  <li>Removed <code class="highlighter-rouge">tutScalacOptions</code> (replaced by <code class="highlighter-rouge">scalacOptions in Tut</code>).</li>
+  <li>No longer filters <code class="highlighter-rouge">-Ywarn-unused-imports</code> out, but inherits the default <code class="highlighter-rouge">scalacOptions</code> from the REPL ones.</li>
+  <li><code class="highlighter-rouge">tutNameFilter</code> is now honoured when monitoring modified files.</li>
+</ul>
+
+<h3 id="new-and-noteworthy-for-version-048"><a name="0.4.8"></a>New and Noteworthy for Version 0.4.8</h3>
+
+<ul>
+  <li>Added <code class="highlighter-rouge">decorate</code> modifier for use with Kramdown, courtesy of Juan Pedro Moreno.</li>
+</ul>
+
+<h3 id="new-and-noteworthy-for-version-047"><a name="0.4.7"></a>New and Noteworthy for Version 0.4.7</h3>
+
+<ul>
+  <li>Added long-awaited <code class="highlighter-rouge">tutQuick</code> command, courtesy of Dave Gurnell.</li>
+</ul>
+
+<h3 id="new-and-noteworthy-for-version-046"><a name="0.4.6"></a>New and Noteworthy for Version 0.4.6</h3>
+
+<ul>
+  <li>Added support for 2.12.0 final (thanks Lars Hupel).</li>
+  <li>Improved management of Scala versions with scripted tests (thanks again Lars Hupel).</li>
+</ul>
+
+<h3 id="new-and-noteworthy-for-version-045"><a name="0.4.5"></a>New and Noteworthy for Version 0.4.5</h3>
+
+<ul>
+  <li>Added support for 2.12.0-RC2 (thanks Lars Hupel).</li>
+</ul>
+
+<h3 id="new-and-noteworthy-for-version-044"><a name="0.4.4"></a>New and Noteworthy for Version 0.4.4</h3>
+
+<ul>
+  <li>Added support for 2.12.0-RC1 (thanks BenyHill).</li>
+  <li>Added <code class="highlighter-rouge">:evaluated</code> modifier to show <em>only</em> output (thanks Juan Pedro Moreno).</li>
+</ul>
+
+<h3 id="new-and-noteworthy-for-version-043"><a name="0.4.3"></a>New and Noteworthy for Version 0.4.3</h3>
+
+<ul>
+  <li>Updated for 2.12.0-M4 and M5, both of which are in use at the moment.</li>
+  <li>Error are now reported using canonical file paths, making it consistent with scalac and sbt (thanks Olivier Blanvillain).</li>
+  <li>Compiler option <code class="highlighter-rouge">-Ywarn-unused-import</code> is now removed from options passed to <code class="highlighter-rouge">IMain</code> by <strong>tut</strong> since it makes the REPL freak out (thanks Jentsch).</li>
+  <li>The <code class="highlighter-rouge">.markdown</code> extension is now included in the default name filter (thanks Chris Coffey).</li>
+  <li>The <code class="highlighter-rouge">tut</code> task now returns the complete list of examined files; subdirectories were being ignored (thanks Cody Allen).</li>
+  <li>The <code class="highlighter-rouge">tutOnly</code> filename completion parser is now available as a public setting, for evil purposes (thanks Adelbert Chang).</li>
+  <li>The <code class="highlighter-rouge">scala-xml</code> version has been updated to <code class="highlighter-rouge">1.0.5</code> for compatibility with Scala 2.12 (thanks Tsukasa Kitachi).</li>
+</ul>
+
+<h3 id="new-and-noteworthy-for-version-042"><a name="0.4.2"></a>New and Noteworthy for Version 0.4.2</h3>
+
+<ul>
+  <li>Fixed a bug that broke tab completion for multi-project builds.</li>
+  <li>Initial support for Scala 2.12 and other build improvements courtesy of @guersam.</li>
+</ul>
+
+<h3 id="new-and-noteworthy-for-version-041"><a name="0.4.1"></a>New and Noteworthy for Version 0.4.1</h3>
+
+<ul>
+  <li><strong>tut</strong> is now linked to the sbt org, so an explicit resolver is no longer needed.</li>
+  <li>New <code class="highlighter-rouge">:reset</code> and <code class="highlighter-rouge">:book</code> modifiers! See the README for details. Thanks @xuwei-k and @d6y!</li>
+</ul>
+
+<h3 id="new-and-noteworthy-for-version-040"><a name="0.4.0"></a>New and Noteworthy for Version 0.4.0</h3>
+
+<ul>
+  <li>The <code class="highlighter-rouge">tutSourceDirectory</code> can now contain subdirectories, and can also contain non-text resources like images, which will be copied verbatim. The <code class="highlighter-rouge">tutNameFilter</code> setting specifies a regex for filenames to interpret (<code class="highlighter-rouge">.md</code> <code class="highlighter-rouge">.txt</code> <code class="highlighter-rouge">.htm</code> <code class="highlighter-rouge">.html</code> by default).</li>
+  <li>The new <code class="highlighter-rouge">tutOnly</code> command allows you to run <strong>tut</strong> on a single file or subdirectory of <code class="highlighter-rouge">tutSourceDirectory</code>. Tab completion works.</li>
+  <li><strong>tut</strong> is now run in the <code class="highlighter-rouge">Test</code> scope, which means (a) you can include test examples, and (b) the <strong>tut</strong> runtime does not become a transitive dependency of your project.</li>
+  <li>Newlines are preserved verbatim in <code class="highlighter-rouge">silent</code> blocks and in all definitions. In modes where REPL output is shown there is always exactly one blank line between statements, but otherwise newlines are neither removed nor introduced. This really improves formatting.</li>
+  <li>The new <code class="highlighter-rouge">:fail</code> modifier asserts that the code in the shed <em>must</em> throw an exception or fail to compile, otherwise it fails the build.</li>
+</ul>
+
+</div></div></section></main><footer id="site-footer"><div class="container"><div class="row"><div class="col-xs-6"><p>tut is designed and developed by <a href="" target="_blank">Rob Norris</a></p></div><div class="col-xs-6"><p class="text-right"><a href="https://github.com/tpolecat/tut"><span class="fa fa-github"></span>View on GitHub</a></p></div></div><div class="row"><div class="col-xs-6"><p>Website built with <a href="https://47deg.github.io/sbt-microsites/" target="_blank">Sbt-microsites</a> - © 2016 <a href="https://www.47deg.com/" target="_blank">47 Degrees</a></p></div></div></div></footer><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/tut//highlight/highlight.pack.js"></script><script>hljs.configure({
+languages:['scala','java','bash']
+});
+hljs.initHighlighting();
+             </script></body></html>

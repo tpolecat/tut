@@ -1,0 +1,78 @@
+<html><head><title>tut</title><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Rob Norris" /><meta name="description" content="A tutorial generator for Scala." /><meta name="og:image" content="/tut//img/poster.png" /><meta name="og:title" content="tut" /><meta name="og:site_name" content="tut" /><meta name="og:url" content="" /><meta name="og:type" content="website" /><meta name="og:description" content="A tutorial generator for Scala." /><link rel="icon" type="image/png" href="/tut//img/favicon.png" /><meta name="twitter:title" content="tut" /><meta name="twitter:image" content="img/poster.png" /><meta name="twitter:description" content="A tutorial generator for Scala." /><meta name="twitter:card" content="summary_large_image" /><link rel="icon" type="image/png" sizes="16x16" href="/tut//img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/tut//img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/tut//img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/tut//img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/tut//img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/tut//img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/tut//img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/tut//img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/tut//img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/tut//img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/tut//img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/tut//img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/tut//img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/tut//img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/tut//img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/tut//img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/tut//img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/tut//img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/tut//img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/tut//img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/tut//highlight/styles/color-brewer.css" /><link rel="stylesheet" href="/tut//css/style.css" /><link rel="stylesheet" href="/tut//css/palette.css" /><link rel="stylesheet" href="/tut//css/codemirror.css" /><link rel="stylesheet" href="/tut//css/tweak.css" /></head><body><header id="site-header"><div class="navbar-wrapper navbar-inverse"><div class="container"><div class="navbar-header"><button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/tut//" class="brand"><div class="icon-wrapper"><span>tut</span></div></a></div><nav class="text-right"><ul class=""><li><a href="https://github.com/tpolecat/tut"><i class="fa fa-github"></i><span class="hidden-xs">GitHub</span></a></li></ul></nav></div></div><div class="jumbotron" style="background-image:url('/tut//img/jumbotron_pattern.png')"></div><div><ul class="horizontalNav">       <li><a class="" href="/tut//standalone.html">Standalone Usage</a></li>  <li><a class="" href="/tut//commands.html">Commands</a></li>  <li><a class=" active " href="/tut//modifiers.html">Modifiers</a></li>  <li><a class="" href="/tut//configuration.html">Configuration</a></li>  <li><a class="" href="/tut//integrations.html">Integrations</a></li>  <li><a class="" href="/tut//faq.html">FAQ</a></li>  <li><a class="" href="/tut//changelog.html">Changelog</a></li>  <li><a class="" href="/tut//license.html">License</a></li> </ul></div></header><main id="site-main"><section class="use"><div class="container"><div id="content"><h3 id="modifiers">Modifiers</h3>
+
+<p>By default <strong>tut</strong> will interpret code in <code class="highlighter-rouge">tut</code> sheds as if it had been pasted into a Scala REPL. However sometimes you might want a definition without REPL noise, or might want to demonstrate non-compiling code (which would normally cause the build to fail). For these occasions <strong>tut</strong> provides a number of modifiers that you can add to the shed declaration. For instance,</p>
+
+<pre><code class="language-tut:invisible">object com { object woozle { object fnord }}
+</code></pre>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>```tut:silent
+import com.woozle.fnord._
+```
+</code></pre>
+</div>
+
+<p>will produce the following output, suppressing REPL noise:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>```scala
+import com.woozle.fnord._
+```
+</code></pre>
+</div>
+
+<p>The following modifiers are supported. Note that you can use multiples if you like; for example you could use <code class="highlighter-rouge">tut:silent:fail</code> to show code that doesn’t compile, without showing the compilation error.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Modifier</th>
+      <th>Explanation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">:fail</code></td>
+      <td>Code in the shed <em>must</em> throw an exception or fail to compile. Successful interpretation will cause a build failure.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:nofail</code></td>
+      <td>Code in the shed <em>might</em> throw an exception or fail to compile. Such failure will <em>not</em> cause a build failure. Note that this modifier is <strong>deprecated</strong> in favor of <code class="highlighter-rouge">:fail</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:silent</code></td>
+      <td>Suppresses REPL prompts and output; under this modifier the input and output text are identical.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:plain</code></td>
+      <td>Output will not have <code class="highlighter-rouge">scala</code> syntax highlighting.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:invisible</code></td>
+      <td>Suppresses all output. This is not recommended since the point of <strong>tut</strong> is to provide code that the user can type in and expect to work. But in rare cases you might want one of these at the bottom of your file to clean up filesystem mess that your code left behind.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:book</code></td>
+      <td>Output will be suitable for copy and paste into the REPL. That is, there are no REPL prompts or margins, and output from the REPL is commented.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:evaluated</code></td>
+      <td>Suppresses REPL prompts and input statement, output only will be the evaluated statement.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:passthrough</code></td>
+      <td>Same as <code class="highlighter-rouge">evaluated</code> but code fences are also removed. Useful for code generating Markdown.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:decorate(param)</code></td>
+      <td>Decorates the output scala code block with <code class="highlighter-rouge">param</code>, enclosed in this way: <code class="highlighter-rouge"><span class="p">{</span><span class="err">:</span><span class="w"> </span><span class="err">param</span><span class="w"> </span><span class="p">}</span></code>, for use with Kramdown. You can add several <code class="highlighter-rouge">decorate</code> modifiers if you wish.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">:reset</code></td>
+      <td>Resets the REPL state prior to evaluating the code block. Use this option with care, as it has no visible indication and can be confusing to readers who are following along in their own REPLs.</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></section></main><footer id="site-footer"><div class="container"><div class="row"><div class="col-xs-6"><p>tut is designed and developed by <a href="" target="_blank">Rob Norris</a></p></div><div class="col-xs-6"><p class="text-right"><a href="https://github.com/tpolecat/tut"><span class="fa fa-github"></span>View on GitHub</a></p></div></div><div class="row"><div class="col-xs-6"><p>Website built with <a href="https://47deg.github.io/sbt-microsites/" target="_blank">Sbt-microsites</a> - © 2016 <a href="https://www.47deg.com/" target="_blank">47 Degrees</a></p></div></div></div></footer><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/tut//highlight/highlight.pack.js"></script><script>hljs.configure({
+languages:['scala','java','bash']
+});
+hljs.initHighlighting();
+             </script></body></html>
