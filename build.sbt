@@ -50,12 +50,12 @@ lazy val root = project
       checkSnapshotDependencies,
       inquireVersions,
       runClean,
-      // releaseStepCommand("tests/scripted"),
+      releaseStepCommand("tests/scripted"),
       setReleaseVersion,
       commitReleaseVersion,
       tagRelease,
+      // publishArtifacts, // doesn't work, rats
       releaseStepCommandAndRemaining("+publish"),
-      // publishArtifacts,
       setNextVersion,
       commitNextVersion,
       pushChanges
