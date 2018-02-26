@@ -11,7 +11,7 @@ layout: home
 
 **tut** is a very simple documentation tool for Scala that reads Markdown files and interprets Scala code in `tut` sheds, allowing you to write documentation that is typechecked and run as part of your build.
 
-The current version is **{{site.tutVersion}}** for **sbt 1.1** and **Scala {{site.scalaVersions}}**.
+The current version is **{{site.tutVersion}}** for **sbt 1.1** and **Scala {{site.scalaVersions}}** ({{site.scala213}}).
 
 **tut** is a [Typelevel](http://typelevel.org/) project. This means we embrace pure, typeful, functional programming, and provide a safe and friendly environment for teaching, learning, and contributing as described in the Typelevel [Code of Conduct](http://typelevel.org/conduct.html).
 

@@ -167,7 +167,8 @@ lazy val docs = project
     micrositeConfigYaml := ConfigYml(
       yamlCustomProperties = Map(
         "tutVersion"     -> version.value,
-        "scalaVersions"  -> (crossScalaVersions in core).value.map(CrossVersion.partialVersion).flatten.map(_._2).mkString("2.", "/", "") // 2.11/12
+        "scalaVersions"  -> (crossScalaVersions in core).value.map(CrossVersion.partialVersion).flatten.map(_._2).mkString("2.", "/", ""), // 2.11/12
+        "scala213"       -> `2.13`
       )
     ),
     micrositeExtraMdFiles := Map(
