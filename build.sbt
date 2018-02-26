@@ -1,4 +1,5 @@
 import ReleaseTransformations._
+import microsites._
 
 lazy val `2.10` = "2.10.6"
 lazy val `2.12` = "2.12.4"
@@ -61,7 +62,7 @@ lazy val root = project
   )
 
 lazy val core = project
-  .in(file("core"))
+  .in(file("modules/core"))
   .settings(publishSettings)
   .settings(
     name := "tut-core",
@@ -97,7 +98,7 @@ lazy val core = project
   )
 
 lazy val plugin = project
-  .in(file("plugin"))
+  .in(file("modules/plugin"))
   .settings(publishSettings)
   .settings(
     name := "tut-plugin",
@@ -112,7 +113,7 @@ lazy val plugin = project
   )
 
 lazy val tests = project
-  .in(file("tests"))
+  .in(file("modules/tests"))
   .settings(noPublishSettings)
   .settings(
     scriptedLaunchOpts ++= Seq(
@@ -128,4 +129,51 @@ lazy val tests = project
       "-Dproject.version=" + version.value,
       "-Dscala.version=" + `2.11`
     ),
+  )
+
+lazy val docs = project
+  .in(file("modules/docs"))
+  .dependsOn(core)
+  .enablePlugins(MicrositesPlugin)
+  .settings(commonSettings)
+  .settings(noPublishSettings)
+  .settings(
+    scalacOptions in (Compile, console) += "-Xfatal-warnings", // turn this back on for tut
+    libraryDependencies ++= Seq(
+      // doc dependencies here
+    ),
+    fork in Test := true,
+    // Settings for sbt-microsites https://47deg.github.io/sbt-microsites/
+    micrositeImgDirectory     := baseDirectory.value / "src/main/resources/microsite/img",
+    micrositeName             := "tut",
+    micrositeDescription      := "A tutorial generator for Scala.",
+    micrositeAuthor           := "Rob Norris",
+    micrositeGithubOwner      := "tpolecat",
+    micrositeGithubRepo       := "tut",
+    micrositeGitterChannel    := false, // no me gusta
+    micrositeBaseUrl          := "/tut/",
+    // micrositeDocumentationUrl := "https://www.javadoc.io/doc/org.tpolecat/tut-core_2.12",
+    micrositeHighlightTheme   := "color-brewer",
+    micrositePalette := micrositePalette.value ++ Map(
+      "brand-primary"     -> "#A07138",
+      "brand-secondary"   -> "#A07138",
+      "brand-tertiary"    -> "#A07138",
+      // "gray-dark"         -> "#453E46",
+      // "gray"              -> "#837F84",
+      // "gray-light"        -> "#E3E2E3",
+      // "gray-lighter"      -> "#F4F3F4",
+      // "white-color"       -> "#FFFFFF"
+    ),
+    micrositeConfigYaml := ConfigYml(
+      yamlCustomProperties = Map(
+        "tutVersion"     -> version.value,
+        "scalaVersions"  -> (crossScalaVersions in core).value.map(CrossVersion.partialVersion).flatten.map(_._2).mkString("2.", "/", ""), // 2.11/12
+        "scala213"       -> `2.13`
+      )
+    ),
+    micrositeExtraMdFiles := Map(
+      file("CHANGELOG.md") -> ExtraMdFileConfig("changelog.md", "page", Map("title" -> "Changelog", "section" -> "Changelog", "position" -> "100")),
+      file("LICENSE")      -> ExtraMdFileConfig("license.md",   "page", Map("title" -> "License",   "section" -> "License",   "position" -> "101"))
+    ),
+    tutNameFilter := "xyz".r // don't run tut on anything (ironic eh?)
   )
