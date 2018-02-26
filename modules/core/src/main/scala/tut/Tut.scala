@@ -47,11 +47,13 @@ object Tut {
           _ <- (s.mods(Invisible)).unlessM(out(prompt(s) + text))
           _ <- s.spigot.setActive(!(s.mods(Silent) || (s.mods(Invisible)))).liftIO[Tut]
           _ <- s.mods(Book).whenM(s.spigot.commentAfter(s.partial + "\n" + text).liftIO[Tut])
-          r <- IO(s.imain.interpret(s.partial + "\n" + text)).liftIO[Tut] >>= {
-            case Results.Incomplete => incomplete(text)
-            case Results.Success    => if (s.mods(Fail)) error(lineNum, Some("failure was asserted but no failure occurred")) else success
-            case Results.Error      => if (s.mods(NoFail) || s.mods(Fail)) success else error(lineNum)
-          }
+          r <- // in 2.13 it's an error to interpret an empty line of text, evidently
+               if (text.trim.isEmpty && s.partial.isEmpty) success
+               else IO(s.imain.interpret(s.partial + "\n" + text)).liftIO[Tut] >>= {
+                 case Results.Incomplete => incomplete(text)
+                 case Results.Success    => if (s.mods(Fail)) error(lineNum, Some("failure was asserted but no failure occurred")) else success
+                 case Results.Error      => if (s.mods(NoFail) || s.mods(Fail)) success else error(lineNum)
+               }
           _ <- s.mods(Book).whenM(s.spigot.stopCommenting().liftIO[Tut])
           _ <- s.spigot.setActive(true).liftIO[Tut]
           _ <- IO(s.pw.flush).liftIO[Tut]

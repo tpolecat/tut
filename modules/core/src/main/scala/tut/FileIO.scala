@@ -2,15 +2,13 @@ package tut
 
 import java.io.{File, FileInputStream, FileOutputStream, OutputStreamWriter, PrintStream, PrintWriter}
 
-import scala.tools.nsc.Settings
-import scala.tools.nsc.interpreter.IMain
 import scala.util.matching.Regex
-
 import scala.io.Source
+import scala.tools.nsc.Settings
 
 import tut.Zed._
 
-object FileIO {
+object FileIO extends IMainPlatform /* scala version-specific */ {
   val Encoding = "UTF-8"
 
   /**
@@ -52,18 +50,11 @@ object FileIO {
     IO(new OutputStreamWriter(printStream, Encoding)).using { streamWriter =>
     IO(new PrintWriter(streamWriter)).using                 { printWriter =>
       (for {
-        interp <- newInterpreter(printWriter, opts)
+        interp <- newInterpreter(printWriter, iMainSettings(opts))
         state  =  TutState(false, Set(), false, interp, printWriter, filterSpigot, "", false, in, opts)
         endSt  <- Tut.file(in).exec(state)
       } yield endSt).withOut(printStream)
     }}}}}}
-
-  private def newInterpreter(pw: PrintWriter, opts: List[String]): IO[IMain] =
-    IO(new IMain(new Settings <|
-      (_.embeddedDefaults[TutMain.type]) <|
-      (_.usejavacp.value = !sys.props("java.class.path").contains("sbt-launch")) <|
-      (_.processArguments(opts, true)), pw)
-    )
 
   private[tut] def ls(dir: File): IO[List[File]] =
     IO(Option(dir.listFiles).fold(List.empty[File])(_.toList))
@@ -81,4 +72,11 @@ object FileIO {
 
   private[tut] def lines(f: File): IO[List[String]] =
     IO(Source.fromFile(f, Encoding).getLines.toList)
+
+  private def iMainSettings(opts: List[String]): Settings =
+    new Settings <|
+      (_.embeddedDefaults[TutMain.type]) <|
+      (_.usejavacp.value = !sys.props("java.class.path").contains("sbt-launch")) <|
+      (_.processArguments(opts, true))
+
 }
