@@ -4,7 +4,7 @@ import microsites._
 lazy val `2.10` = "2.10.6"
 lazy val `2.12` = "2.12.4"
 lazy val `2.11` = "2.11.12"
-lazy val `2.13` = "2.13.0-M1"
+lazy val `2.13` = "2.13.0-M3"
 
 lazy val commonSettings =
   Seq(
@@ -45,7 +45,7 @@ lazy val root = project
   .dependsOn(core, plugin, tests)
   .aggregate(core, plugin, tests)
   .settings(
-    releaseCrossBuild := true,
+    // releaseCrossBuild := true,
     releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
       inquireVersions,
@@ -54,7 +54,8 @@ lazy val root = project
       setReleaseVersion,
       commitReleaseVersion,
       tagRelease,
-      publishArtifacts,
+      // publishArtifacts, // doesn't work, rats
+      releaseStepCommandAndRemaining("+publish"),
       setNextVersion,
       commitNextVersion,
       pushChanges
@@ -64,6 +65,18 @@ lazy val root = project
 lazy val core = project
   .in(file("modules/core"))
   .settings(publishSettings)
+  .settings(
+    Seq(Compile, Test).map { sc =>
+      (unmanagedSourceDirectories in sc) ++= {
+        (unmanagedSourceDirectories in sc ).value.map { dir: File =>
+          CrossVersion.partialVersion(scalaVersion.value) match {
+            case Some((2, y)) if y <= 12 => new File(dir.getPath + "-2.12-")
+            case Some((2, y))            => new File(dir.getPath + "-2.13+")
+          }
+        }
+      }
+    }
+  )
   .settings(
     name := "tut-core",
     libraryDependencies += scalaOrganization.value % "scala-compiler" % scalaVersion.value,
