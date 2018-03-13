@@ -12,7 +12,7 @@ position: 6
 Tut does not filter out `-Ywarn-unused-imports` from its `scalacOptions` anymore. If you need to re-enable that behaviour, simply add:
 
 ```scala
-scalacOptions in Tut -= "-Ywarn-unused-import"
+scalacOptions in Tut --= Seq("-Ywarn-unused-import", "-Ywarn-unused:imports")
 ```
 
 #### I have missing dependencies!
