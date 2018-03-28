@@ -56,6 +56,7 @@ lazy val root = project
       tagRelease,
       // publishArtifacts, // doesn't work, rats
       releaseStepCommandAndRemaining("+publish"),
+      releaseStepCommand("docs/publishMicrosite"),
       setNextVersion,
       commitNextVersion,
       pushChanges
