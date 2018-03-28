@@ -2,6 +2,8 @@ package tut.felix
 
 import java.io.OutputStream
 
+import scala.annotation.tailrec
+
 trait Syntax {
 
   implicit class MonadOps[M[_], A](ma: M[A])(implicit M: Monad[M]) {
@@ -35,6 +37,18 @@ trait Syntax {
   implicit class ListOps[A](as: List[A]) {
     def traverse[M[_]: Monad, B](f: A => M[B]): M[List[B]] =
       as.foldRight(List.empty[B].point[M])((a, mlb) => f(a).flatMap(b => mlb.map(b :: _)))
+
+    def zipWithIndexAndNext[B](z: => B)(f: A => B): List[(A, B, Int)] = {
+      @tailrec
+      def fold(xs: List[(A, Int)], acc: Vector[(A, B, Int)]): Vector[(A, B, Int)] =
+        xs match {
+          case (x, i) :: (xs @ ((y, _) :: _)) => fold(xs, acc :+ ((x, f(y), i)))
+          case (x, i) :: Nil => acc :+ ((x, z, i))
+          case Nil => Vector.empty
+        }
+
+      fold(as.zipWithIndex, Vector.empty).toList
+    }
   }
 
   implicit class BooleanOps(b: Boolean) {
