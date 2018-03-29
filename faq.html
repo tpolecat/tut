@@ -4,7 +4,7 @@
 
 <p>Tut does not filter out <code class="highlighter-rouge">-Ywarn-unused-imports</code> from its <code class="highlighter-rouge">scalacOptions</code> anymore. If you need to re-enable that behaviour, simply add:</p>
 
-<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scalacOptions</span> <span class="n">in</span> <span class="nc">Tut</span> <span class="o">-=</span> <span class="s">"-Ywarn-unused-import"</span>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scalacOptions</span> <span class="n">in</span> <span class="nc">Tut</span> <span class="o">--=</span> <span class="nc">Seq</span><span class="o">(</span><span class="s">"-Ywarn-unused-import"</span><span class="o">,</span> <span class="s">"-Ywarn-unused:imports"</span><span class="o">)</span>
 </code></pre>
 </div>
 
