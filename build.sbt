@@ -50,6 +50,7 @@ lazy val root = project
       checkSnapshotDependencies,
       inquireVersions,
       runClean,
+      releaseStepCommandAndRemaining("+publishLocal"),
       releaseStepCommand("tests/scripted"),
       setReleaseVersion,
       commitReleaseVersion,
