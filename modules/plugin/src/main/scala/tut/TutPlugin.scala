@@ -131,12 +131,11 @@ object TutPlugin extends AutoPlugin {
   def flatten(f: File): List[File] =
     f :: (if (f.isDirectory) f.listFiles.toList.flatMap(flatten) else Nil)
 
-  val tutFilesParser: Def.Initialize[State => Parser[File]] = Def.setting { (state: State) =>
-    val extracted = Project.extract(state)
-    val dir     = extracted.getOpt(tutSourceDirectory)
-    val files   = dir.fold(List.empty[File])(d => safeListFiles(d, recurse = true))
-    val parsers = dir.fold(List.empty[Parser[File]])(dir => files.map(f => literal(dir.toURI.relativize(f.toURI).getPath).map(_ => f)))
-    val folded  = parsers.foldRight[Parser[File]](failure("<no input files>"))(_ | _)
+  val tutFilesParser: Def.Initialize[Parser[File]] = Def.setting {
+    val dir     = tutSourceDirectory.value
+    val files   = safeListFiles(dir, recurse = true)
+    val parsers = files.map(f => literal(dir.toURI.relativize(f.toURI).getPath).map(_ => f))
+    val folded  = parsers.foldRight[Parser[File]](failure(s"<no input files>"))(_ | _)
     token(Space ~> folded)
   }
 
