@@ -4,7 +4,7 @@ import microsites._
 lazy val `2.10` = "2.10.6"
 lazy val `2.12` = "2.12.4"
 lazy val `2.11` = "2.11.12"
-lazy val `2.13` = "2.13.0-M3"
+lazy val `2.13` = "2.13.0-M4"
 
 lazy val commonSettings =
   Seq(
@@ -86,7 +86,7 @@ lazy val core = project
     libraryDependencies := {
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, scalaMajor)) if scalaMajor >= 11 =>
-          libraryDependencies.value :+ "org.scala-lang.modules" %% "scala-xml" % "1.0.6"
+          libraryDependencies.value :+ "org.scala-lang.modules" %% "scala-xml" % "1.1.0"
         case _ =>
           libraryDependencies.value
       }
@@ -94,7 +94,7 @@ lazy val core = project
     // scripted-plugin is enabled by default, in particular in this non-sbt subproject
     // this means that switching to 2.11.11 will result in non-existent dependencies
     libraryDependencies ~= { _.filterNot(_.organization == "org.scala-sbt") },
-    scalacOptions ++= Seq(
+    scalacOptions ++= (Seq(
       "-deprecation",
       "-encoding", "UTF-8",
       "-feature",
@@ -104,12 +104,16 @@ lazy val core = project
       "-unchecked",
       "-Xfatal-warnings",
       "-Xlint",
-      "-Yno-adapted-args",
       "-Ywarn-dead-code",
       "-Ywarn-numeric-widen",
       "-Ywarn-value-discard",
       "-Xfuture"
-    )
+    ) ++ (CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, scalaMajor)) if scalaMajor >= 13 => Seq.empty[String]
+      case _ => Seq(
+        "-Yno-adapted-args"
+      )
+    })),
   )
 
 lazy val plugin = project
