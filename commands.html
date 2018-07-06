@@ -29,7 +29,7 @@
 
 <ul>
   <li>Each file is interpreted with an independent REPL session. Definitions earlier in the file are available later in the file.</li>
-  <li>Each REPL has the same classpath as your build’s <code class="highlighter-rouge">Test</code> configuration, and by default also has the same scalac options and compiler plugins.</li>
+  <li>Each REPL has the same classpath as your build’s <code class="highlighter-rouge">Compile</code> configuration, and by default also has the same scalac options and compiler plugins.</li>
   <li>By default any error in interpretation (compilation failure or runtime exception) will cause the <code class="highlighter-rouge">tut</code> command to fail. If this command is part of your CI configuration then your build will fail. Yay!</li>
   <li><strong>tut</strong> captures output from the REPL, as well as anything your code writes to standard output (<code class="highlighter-rouge">System.out</code>). ANSI escapes are removed from this output, so colorized console output will show up as plaintext.</li>
   <li>In modes that show REPL prompts (see below) blank lines <em>in between statements</em> are discarded and a single blank line is introduced between prompts, as in the normal REPL. Otherwise blank lines are neither introduced nor discarded. This is a change from prior versions.</li>
