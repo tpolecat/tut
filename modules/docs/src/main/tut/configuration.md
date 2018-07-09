@@ -11,7 +11,7 @@ position: 4
 
 | Setting | Explanation | Default Value |
 |---------|-------------|---------------|
-| `tutSourceDirectory`  | Location of **tut** source files. | `(sourceDirectory.value in Compile) / "tut"` |
+| `tutSourceDirectory`  | Location of **tut** source files. | `(sourceDirectory in Compile).value / "tut"` |
 | `tutNameFilter`       | Regex specifying files that should be interpreted. | Names ending in `.md` `.txt` `.htm` `.html` |
 | `tutTargetDirectory`  | Destination for **tut** output. | `crossTarget.value / "tut"` |
 | `scalacOptions in Tut` | Compiler options that will be passed to the **tut** REPL. | Same as `Test` configuration. |
