@@ -68,4 +68,3 @@ class AnsiFilterStream(os: OutputStream) extends FilterOutputStream(os) {
     }
 
 }
-

@@ -43,18 +43,19 @@ object FileIO extends IMainPlatform /* scala version-specific */ {
    * @return Ending state of tut after processing
    */
   def tut(in: File, out: File, opts: List[String]): IO[TutState] =
-    IO(new FileOutputStream(out)).using                     { outputStream =>
-    IO(new AnsiFilterStream(outputStream)).using            { filterStream =>
-    IO(new Spigot(filterStream)).using                      { filterSpigot =>
+    IO(new FileOutputStream(out)).using                     { outputstream =>
+    IO(new ImageFilterStream(outputstream)).using           { imageFilterStream =>
+    IO(new AnsiFilterStream(imageFilterStream)).using       { ansiFilterStream =>
+    IO(new Spigot(ansiFilterStream)).using                  { filterSpigot =>
     IO(new PrintStream(filterSpigot, true, Encoding)).using { printStream =>
     IO(new OutputStreamWriter(printStream, Encoding)).using { streamWriter =>
     IO(new PrintWriter(streamWriter)).using                 { printWriter =>
       (for {
         interp <- newInterpreter(printWriter, iMainSettings(opts))
-        state  =  TutState(false, Set(), false, interp, printWriter, filterSpigot, "", false, in, opts)
+        state  =  TutState(false, Set(), false, interp, imageFilterStream, printWriter, filterSpigot, "", false, in, opts)
         endSt  <- Tut.file(in).exec(state)
       } yield endSt).withOut(printStream)
-    }}}}}}
+    }}}}}}}
 
   private[tut] def ls(dir: File): IO[List[File]] =
     IO(Option(dir.listFiles).fold(List.empty[File])(_.toList))
