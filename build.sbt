@@ -134,6 +134,7 @@ lazy val plugin = project
 lazy val tests = project
   .in(file("modules/tests"))
   .settings(noPublishSettings)
+  .enablePlugins(SbtPlugin)
   .settings(
     scriptedLaunchOpts ++= Seq(
       "-Dfile.encoding=UTF-8",
