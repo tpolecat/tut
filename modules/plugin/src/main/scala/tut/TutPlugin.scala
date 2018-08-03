@@ -16,6 +16,7 @@ object TutPlugin extends AutoPlugin {
   override def trigger = noTrigger
 
   override def requires = sbt.plugins.JvmPlugin
+  override def projectConfigurations = Seq(autoImport.Tut)
 
   type Dir = File
 
