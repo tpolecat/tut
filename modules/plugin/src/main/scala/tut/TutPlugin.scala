@@ -16,11 +16,12 @@ object TutPlugin extends AutoPlugin {
   override def trigger = noTrigger
 
   override def requires = sbt.plugins.JvmPlugin
+  override def projectConfigurations = Seq(autoImport.Tut)
 
   type Dir = File
 
   object autoImport {
-    lazy val Tut                = (config("tut") extend Compile).hide
+    lazy val Tut                = (config("Tut") extend Compile).hide
     lazy val tut                = taskKey[Seq[(File,String)]]("create tut documentation")
     lazy val tutSourceDirectory = settingKey[File]("where to look for tut sources")
     lazy val tutPluginJars      = taskKey[Seq[File]]("Plugin jars to be used by tut REPL.")
