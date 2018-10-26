@@ -2,6 +2,11 @@
 
 This file summarizes **notable** changes for each release, but does not describe internal changes unless they are particularly exciting. For complete details please see the corresponding [milestones](https://github.com/tpolecat/tut/milestones?state=closed) and their associated issues.
 
+### <a name="0.6.6"></a>New and Noteworthy for Version 0.6.8
+
+- Scala 2.13.0-M5
+- Build updates, thanks Christopher Davenport!
+
 ### <a name="0.6.6"></a>New and Noteworthy for Version 0.6.7
 
 - Scala 2.12.6, to fix bincompat issue in scala-reflect (see https://github.com/outr/scribe/issues/80)

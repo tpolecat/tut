@@ -21,7 +21,7 @@ matrix:
     - scala: 2.12.6
       env: TEST_SCRIPTED=0
       jdk: oraclejdk8
-    - scala: 2.13.0-M4
+    - scala: 2.13.0-M5
       env: TEST_SCRIPTED=0
       jdk: oraclejdk8
 
