@@ -4,7 +4,7 @@ import microsites._
 lazy val `2.10` = "2.10.6"
 lazy val `2.12` = "2.12.7"
 lazy val `2.11` = "2.11.12"
-lazy val `2.13` = "2.13.0-M5"
+lazy val `2.13` = "2.13.0-RC1"
 
 lazy val commonSettings =
   Seq(
@@ -86,7 +86,7 @@ lazy val core = project
     libraryDependencies := {
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, scalaMajor)) if scalaMajor >= 11 =>
-          libraryDependencies.value :+ "org.scala-lang.modules" %% "scala-xml" % "1.1.0"
+          libraryDependencies.value :+ "org.scala-lang.modules" %% "scala-xml" % "1.2.0"
         case _ =>
           libraryDependencies.value
       }
@@ -106,12 +106,12 @@ lazy val core = project
       "-Xlint",
       "-Ywarn-dead-code",
       "-Ywarn-numeric-widen",
-      "-Ywarn-value-discard",
-      "-Xfuture"
+      "-Ywarn-value-discard"
     ) ++ (CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, scalaMajor)) if scalaMajor >= 13 => Seq.empty[String]
       case _ => Seq(
-        "-Yno-adapted-args"
+        "-Yno-adapted-args",
+        "-Xfuture"
       )
     })),
   )
