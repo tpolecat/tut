@@ -75,9 +75,9 @@ object Tut {
       ""
     } else if (text.startsWith("```tut")) {
       (mods(Plain), mods(Evaluated), mods(Passthrough)) match {
-        case (_, _, true) ⇒ ""
-        case (true, _, _) | (_, true, _) ⇒ "```"
-        case _ ⇒ "```scala"
+        case (_, _, true) => ""
+        case (true, _, _) | (_, true, _) => "```"
+        case _ => "```scala"
       }
     } else {
       if (text.startsWith("```") && decorationMods.nonEmpty) {
