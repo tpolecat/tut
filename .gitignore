@@ -21,3 +21,5 @@ bin/
 
 # OS X
 .DS_Store
+.metals/
+.bloop/

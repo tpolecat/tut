@@ -2,6 +2,10 @@
 
 This file summarizes **notable** changes for each release, but does not describe internal changes unless they are particularly exciting. For complete details please see the corresponding [milestones](https://github.com/tpolecat/tut/milestones?state=closed) and their associated issues.
 
+### <a name="0.6.11"></a>New and Noteworthy for Version 0.6.11
+
+- Scala 2.13.0-RC1
+
 ### <a name="0.6.9"></a>New and Noteworthy for Version 0.6.9
 
 - Updated build to sbt 1.2.6 in hopes of fixing CCE people were getting on project load with 0.6.8. Confidence low!
