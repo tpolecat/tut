@@ -83,14 +83,6 @@ lazy val core = project
     name := "tut-core",
     libraryDependencies += scalaOrganization.value % "scala-compiler" % scalaVersion.value,
     crossScalaVersions := Seq(`2.10`, `2.11`, `2.12`, `2.13`),
-    libraryDependencies := {
-      CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, scalaMajor)) if scalaMajor >= 11 =>
-          libraryDependencies.value :+ "org.scala-lang.modules" %% "scala-xml" % "1.2.0"
-        case _ =>
-          libraryDependencies.value
-      }
-    },
     // scripted-plugin is enabled by default, in particular in this non-sbt subproject
     // this means that switching to 2.11.11 will result in non-existent dependencies
     libraryDependencies ~= { _.filterNot(_.organization == "org.scala-sbt") },
