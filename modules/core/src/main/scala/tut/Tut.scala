@@ -104,8 +104,25 @@ object Tut {
   private def out(text: String): Tut[Unit] =
     for {
       s <- Tut.state
-      _ <- (s.mods(Invisible) || s.mods(Evaluated) || s.mods(Passthrough)).unlessM(IO { s.pw.println(text); s.pw.flush() }.liftIO[Tut])
+      _ <- (s.mods(Invisible) || s.mods(Evaluated) || s.mods(Passthrough)).unlessM(IO { s.pw.println(unsafeImagery(text, s)); s.pw.flush() }.liftIO[Tut])
     } yield ()
+
+  val TutImageTag = raw"!\[([^\]]+)\]\(tut\:(\d+)\)".r
+  import ImageFilterStream.Entry
+
+  private def unsafeImagery(text: String, s: TutState): String = {
+    TutImageTag.replaceAllIn(text, _ match {
+      case TutImageTag(alt, indexStr) =>
+        val res = s.ifs.get(indexStr.toInt).map(_ match {
+          case Entry.URL(urlStr, maybeAlt) =>
+            s"![${maybeAlt getOrElse alt}]($urlStr)"
+          case entry @ Entry.Base64(dataStr, maybeAlt) =>
+            val lol = "it's a " + entry.fileExtension
+            s"![${maybeAlt getOrElse alt}]($lol)"
+        })
+        res getOrElse s"<<tut error: image $indexStr does not exist on the image stack>>"
+    })
+  }
 
   private def success: Tut[Unit] =
     for {

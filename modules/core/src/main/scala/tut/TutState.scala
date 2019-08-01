@@ -8,6 +8,7 @@ final case class TutState(
   mods: Set[Modifier],
   needsNL: Boolean,
   imain: IMain,
+  ifs: ImageFilterStream,
   pw: PrintWriter,
   spigot: Spigot,
   partial: String,
