@@ -14,16 +14,16 @@ matrix:
   include:
     - scala: 2.10.6
       env: TEST_SCRIPTED=0
-      jdk: oraclejdk8
+      jdk: openjdk8
     - scala: 2.11.12
       env: TEST_SCRIPTED=1
-      jdk: oraclejdk8
+      jdk: openjdk8
     - scala: 2.12.7
       env: TEST_SCRIPTED=0
-      jdk: oraclejdk8
+      jdk: openjdk8
     - scala: 2.13.0
       env: TEST_SCRIPTED=0
-      jdk: oraclejdk8
+      jdk: openjdk8
 
 script:
   - sbt ++$TRAVIS_SCALA_VERSION core/compile core/publishLocal
