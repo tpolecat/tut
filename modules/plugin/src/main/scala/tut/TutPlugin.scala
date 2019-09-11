@@ -36,7 +36,7 @@ object TutPlugin extends AutoPlugin {
   override lazy val projectSettings =
     inConfig(Tut)(Defaults.configSettings) ++
     Seq(
-      resolvers += "tpolecat" at "http://dl.bintray.com/tpolecat/maven",
+      resolvers += "tpolecat" at "https://dl.bintray.com/tpolecat/maven",
       libraryDependencies += "org.tpolecat" %% "tut-core" % BuildInfo.version % Tut,
       ivyConfigurations += Tut,
       tutSourceDirectory := (sourceDirectory in Compile).value / "tut",
