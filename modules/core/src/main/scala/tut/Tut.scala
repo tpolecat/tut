@@ -65,7 +65,7 @@ object Tut {
                if (text.trim.isEmpty && s.partial.isEmpty) success
                else IO({
                 if (!s.mods(Paste)) s.imain.interpret(s.partial + "\n" + text)
-                else s.imain.withLabel("<pastie>") { s.imain.interpret(pasteCode) }
+                else s.imain.interpret(pasteCode)
                }).liftIO[Tut] >>= {
                  case Results.Incomplete if nextCloses => error(lineNum, Some("incomplete input in code block, missing brace or paren?"))
                  case Results.Incomplete => incomplete(text)
