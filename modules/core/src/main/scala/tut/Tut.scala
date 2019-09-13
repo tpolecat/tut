@@ -39,7 +39,9 @@ object Tut {
           s
         }
       }.liftIO[Tut]
-      _ <- s.isCode.fold(interp(text, lineNumber, nextCloses), out(fixShed(text, mods ++ inv)))
+      _ <-
+        if (s.mods(Paste) && !nextCloses) trackPaste(text)
+        else s.isCode.fold(interp(text, lineNumber, nextCloses), out(fixShed(text, mods ++ inv)))
       _ <- checkBoundary(text, "```tut", true, mods)
     } yield ()
 
@@ -48,17 +50,29 @@ object Tut {
       (text.trim.nonEmpty || s.partial.nonEmpty || s.mods(Silent)).whenM[Tut,Unit] {
         for {
           _ <- s.needsNL.whenM(out(""))
-          _ <- (s.mods(Invisible)).unlessM(out(prompt(s) + text))
+          _ <- (s.mods(Invisible) || s.mods(Paste)).unlessM(out(prompt(s) + text))
           _ <- s.spigot.setActive(!(s.mods(Silent) || (s.mods(Invisible)))).liftIO[Tut]
           _ <- s.mods(Book).whenM(s.spigot.commentAfter(s.partial + "\n" + text).liftIO[Tut])
+          pasteCode = if (s.mods(Paste)) s.paste.mkString("\n") + "\n" + (if (s.partial == "") "" else (s.partial + "\n")) + text else ""
+          _ <- s.mods(Paste).whenM(out(prompt(s) +
+                 s""":paste
+                    |// Entering paste mode (ctrl-D to finish)
+                    |$pasteCode
+                    |
+                    |// Exiting paste mode, now interpreting.
+                    |""".stripMargin))
           r <- // in 2.13 it's an error to interpret an empty line of text, evidently
                if (text.trim.isEmpty && s.partial.isEmpty) success
-               else IO(s.imain.interpret(s.partial + "\n" + text)).liftIO[Tut] >>= {
+               else IO({
+                if (!s.mods(Paste)) s.imain.interpret(s.partial + "\n" + text)
+                else s.imain.withLabel("<pastie>") { s.imain.interpret(pasteCode) }
+               }).liftIO[Tut] >>= {
                  case Results.Incomplete if nextCloses => error(lineNum, Some("incomplete input in code block, missing brace or paren?"))
                  case Results.Incomplete => incomplete(text)
                  case Results.Success    => if (s.mods(Fail)) error(lineNum, Some("failure was asserted but no failure occurred")) else success
                  case Results.Error      => if (s.mods(NoFail) || s.mods(Fail)) success else error(lineNum)
                }
+          _ <- s.mods(Paste).whenM(clearPaste)
           _ <- s.mods(Book).whenM(s.spigot.stopCommenting().liftIO[Tut])
           _ <- s.spigot.setActive(true).liftIO[Tut]
           _ <- IO(s.pw.flush).liftIO[Tut]
@@ -68,6 +82,12 @@ object Tut {
 
   private def checkBoundary(text: String, find: String, code: Boolean, mods: Set[Modifier]): Tut[Unit] =
     (text.trim.startsWith(find)).whenM(Tut.mod(s => s.copy(isCode = code, needsNL = false, mods = mods)))
+
+  private def trackPaste(text: String): Tut[Unit] =
+    (!text.trim.startsWith("```")).whenM(Tut.mod(s => s.copy(paste = s.paste :+ text)))
+
+  private def clearPaste: Tut[Unit] =
+    Tut.mod(s => s.copy(paste = Vector.empty))
 
   private def fixShed(text: String, mods: Set[Modifier]): String = {
     val decorationMods = mods.filter(_.isInstanceOf[Decorate])

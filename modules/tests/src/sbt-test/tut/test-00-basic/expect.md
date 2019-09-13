@@ -131,4 +131,38 @@ scala> thing
        ^
 ```
 
+Pasting.
+
+```scala
+scala> :paste
+// Entering paste mode (ctrl-D to finish)
+trait Show[A] { def show(a: A): String }
+object Show {
+  implicit val intShow: Show[Int] = new Show[Int] { def show(a: Int): String = a.toString }
+}
+
+// Exiting paste mode, now interpreting.
+
+defined trait Show
+defined object Show
+```
+
+Pasting again.
+
+```scala
+scala> :paste
+// Entering paste mode (ctrl-D to finish)
+trait Show2[A] { def show(a: A): String }
+object Show2 {
+  implicit val intShow: Show2[Int] = new Show2[Int] { def show(a: Int): String = a.toString }
+}
+val str = implicitly[Show2[Int]].show(123)
+
+// Exiting paste mode, now interpreting.
+
+defined trait Show2
+defined object Show2
+str: String = 123
+```
+
 The end

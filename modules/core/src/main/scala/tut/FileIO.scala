@@ -51,7 +51,7 @@ object FileIO extends IMainPlatform /* scala version-specific */ {
     IO(new PrintWriter(streamWriter)).using                 { printWriter =>
       (for {
         interp <- newInterpreter(printWriter, iMainSettings(opts))
-        state  =  TutState(false, Set(), false, interp, printWriter, filterSpigot, "", false, in, opts)
+        state  =  TutState(false, Set(), false, interp, printWriter, filterSpigot, "", false, in, opts, Vector.empty)
         endSt  <- Tut.file(in).exec(state)
       } yield endSt).withOut(printStream)
     }}}}}}

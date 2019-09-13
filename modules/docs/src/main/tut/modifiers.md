@@ -37,3 +37,4 @@ The following modifiers are supported. Note that you can use multiples if you li
 | `:passthrough`| Same as `evaluated` but code fences are also removed. Useful for code generating Markdown. |
 | `:decorate(param)` | Decorates the output scala code block with `param`, enclosed in this way: `{: param }`, for use with Kramdown. You can add several `decorate` modifiers if you wish. |
 | `:reset`    | Resets the REPL state prior to evaluating the code block. Use this option with care, as it has no visible indication and can be confusing to readers who are following along in their own REPLs. |
+| `:paste`    | Code in the shed is pasted to the REPL. |
