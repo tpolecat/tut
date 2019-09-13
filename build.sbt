@@ -116,6 +116,7 @@ lazy val plugin = project
     scalaVersion := `2.12`,
     sbtPlugin := true,
     publishMavenStyle := false,
+    dependencyOverrides += "org.scala-sbt" % "sbt" % "1.2.8",
   )
   .enablePlugins(BuildInfoPlugin)
   .settings(
