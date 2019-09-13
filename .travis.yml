@@ -12,13 +12,13 @@ before_cache:
 
 matrix:
   include:
-    - scala: 2.10.6
+    - scala: 2.10.7
       env: TEST_SCRIPTED=0
       jdk: openjdk8
     - scala: 2.11.12
       env: TEST_SCRIPTED=1
       jdk: openjdk8
-    - scala: 2.12.7
+    - scala: 2.12.10
       env: TEST_SCRIPTED=0
       jdk: openjdk8
     - scala: 2.13.0
