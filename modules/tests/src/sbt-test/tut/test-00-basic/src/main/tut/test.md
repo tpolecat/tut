@@ -114,4 +114,23 @@ val thing = "a" * 1000
 thing
 ```
 
+Pasting.
+
+```tut:paste
+trait Show[A] { def show(a: A): String }
+object Show {
+  implicit val intShow: Show[Int] = new Show[Int] { def show(a: Int): String = a.toString }
+}
+```
+
+Pasting again.
+
+```tut:paste
+trait Show2[A] { def show(a: A): String }
+object Show2 {
+  implicit val intShow: Show2[Int] = new Show2[Int] { def show(a: Int): String = a.toString }
+}
+val str = implicitly[Show2[Int]].show(123)
+```
+
 The end

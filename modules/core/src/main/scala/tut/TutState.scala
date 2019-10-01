@@ -13,5 +13,6 @@ final case class TutState(
   partial: String,
   err: Boolean,
   in: File,
-  opts: List[String]
+  opts: List[String],
+  paste: Vector[String]
 )

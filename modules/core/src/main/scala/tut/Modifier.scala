@@ -14,6 +14,7 @@ final case object Evaluated                     extends Modifier
 final case class  Decorate(decoration: String)  extends Modifier
 final case object Passthrough                   extends Modifier
 final case object Reset                         extends Modifier
+final case object Paste                         extends Modifier
 
 object Modifier {
   private val DecorateP: Regex = "decorate\\((.*)\\)".r
@@ -29,6 +30,7 @@ object Modifier {
     case DecorateP(decoration)  => Decorate(decoration)
     case "passthrough"          => Passthrough
     case "reset"                => Reset
+    case "paste"                => Paste
   }
 
   def unsafeFromString(s: String): Modifier =

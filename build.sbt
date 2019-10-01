@@ -1,8 +1,8 @@
 import ReleaseTransformations._
 import microsites._
 
-lazy val `2.10` = "2.10.6"
-lazy val `2.12` = "2.12.7"
+lazy val `2.10` = "2.10.7"
+lazy val `2.12` = "2.12.10"
 lazy val `2.11` = "2.11.12"
 lazy val `2.13` = "2.13.0"
 
@@ -116,6 +116,7 @@ lazy val plugin = project
     scalaVersion := `2.12`,
     sbtPlugin := true,
     publishMavenStyle := false,
+    dependencyOverrides += "org.scala-sbt" % "sbt" % "1.2.8",
   )
   .enablePlugins(BuildInfoPlugin)
   .settings(
