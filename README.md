@@ -5,6 +5,8 @@
 
 <img alt="How'd you get so funky?" align=right src="tut.jpg"/>
 
+> ### **tut** is deprecated. Please switch to [**mdoc**](https://scalameta.org/mdoc/). See the [migration guide](https://scalameta.org/mdoc/docs/tut.html).
+
 **tut** is a very simple documentation tool for Scala that reads Markdown files and interprets Scala code in `tut` sheds, allowing you to write documentation that is typechecked and run as part of your build.
 
 Please proceed to the [**microsite**](http://tpolecat.github.io/tut/) for more information.
