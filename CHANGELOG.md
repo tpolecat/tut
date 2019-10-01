@@ -2,7 +2,13 @@
 
 This file summarizes **notable** changes for each release, but does not describe internal changes unless they are particularly exciting. For complete details please see the corresponding [milestones](https://github.com/tpolecat/tut/milestones?state=closed) and their associated issues.
 
-### <a name="0.6.11"></a>New and Noteworthy for Version 0.6.12
+### <a name="0.6.13"></a>New and Noteworthy for Version 0.6.13
+
+- As of 0.6.13 **tut** is deprecated. Please switch to [**mdoc**](https://scalameta.org/mdoc/). See the [migration guide](https://scalameta.org/mdoc/docs/tut.html).
+- Added `:paste` mode, thanks Eugene Yokota!
+- Switched bintray resolver to https, thanks James Collier!
+
+### <a name="0.6.12"></a>New and Noteworthy for Version 0.6.12
 
 - Scala 2.13.0
 
